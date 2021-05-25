@@ -1,0 +1,155 @@
+<div class="default-height">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <ng-container *ngFor="let btn of toolBarLeftButtons">
+        <button
+          pButton
+          style="margin-left: 10px"
+          icon="{{ btn.icon }}"
+          type="button"
+          label="{{ btn.title }}"
+          class="{{ btn.class }}"
+          [disabled]="btn.disable"
+          (click)="btn.onClick()"
+        ></button>
+      </ng-container>
+    </div>
+    <div class="p-toolbar-group-right">
+      <ng-container *ngFor="let btn of toolBarRightButtons">
+        <button
+          style="margin-right: 10px"
+          pButton
+          icon="{{ btn.icon }}"
+          type="button"
+          label="{{ btn.title }}"
+          class="{{ btn.class }}"
+          [disabled]="btn.disable"
+          (click)="btn.onClick()"
+        ></button>
+      </ng-container>
+    </div>
+  </p-toolbar>
+  <div class="chip-info-margin">
+    <p-chip
+      label="{{ tmplInfo.tmplNo | formType }}"
+      icon="pi pi-info-circle"
+      styleClass="p-mr-2 custom-chip"
+    ></p-chip>
+    <p-chip
+      label="{{ tmplInfo.replyRule | formReplyRule }}"
+      icon="pi pi-info-circle"
+      styleClass="p-mr-2"
+    ></p-chip>
+    <p-chip
+      label="表單編號: {{ tmplInfo.tmplNo }}"
+      icon="pi pi-info-circle"
+      styleClass="p-mr-2"
+    ></p-chip>
+    <p-chip
+      label="表單名稱: {{ tmplInfo.formName }}"
+      icon="pi pi-info-circle"
+      styleClass="p-mr-2"
+    ></p-chip>
+  </div>
+  <p-tabView
+    styleClass="tabview-default"
+    [(activeIndex)]="tabIndex"
+    (onChange)="onTabChange($event.index)"
+  >
+    <p-tabPanel header="填寫紀錄">
+      <p-table
+        [value]="replyList"
+        selectionMode="single"
+        [(selection)]="selectedReplyInfo"
+        [scrollable]="true"
+        [scrollHeight]="'flex'"
+        dataKey="replyNo"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>表單編號</th>
+            <th>回覆狀態</th>
+            <th>回覆者身分證</th>
+            <th>回覆時間</th>
+            <th>單位異動人員</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-reply>
+          <tr [pSelectableRow]="reply" (click)="onReplyListClick(reply)">
+            <td>{{ reply.replyNo }}</td>
+            <td>{{ reply.tranStatus | formTeplyTranStatus }}</td>
+            <td>{{ reply.replyUser }}</td>
+            <td>{{ reply.replyTime | date: "yyyy-MM-dd HH:mm" }}</td>
+            <td>{{ reply.tranUserName }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-tabPanel>
+    <p-tabPanel header="表單內容" [disabled]="!enableTabPanel">
+      <formio
+        [readOnly]="formReadOnly"
+        [form]="tmplInfo.formTmpl"
+        [refresh]="triggerRefresh"
+        [submission]="submitData"
+        (change)="onChange($event)"
+      ></formio>
+    </p-tabPanel>
+  </p-tabView>
+</div>
+
+<p-toast  key="generalFormReplyMessage" position="bottom-right"></p-toast>
+
+<!-- 放棄填寫確認 -->
+<p-toast
+  position="center"
+  key="confirmMessage"
+  (onClose)="onReject()"
+  [baseZIndex]="5000"
+>
+  <ng-template let-message pTemplate="message">
+    <div class="p-flex p-flex-column" style="flex: 1">
+      <div class="p-text-center">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+        <h4>{{ message.summary }}</h4>
+        <p>{{ message.detail }}</p>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-6">
+          <button
+            type="button"
+            pButton
+            (click)="onConfirm()"
+            label="確定"
+            class="p-button-danger"
+          ></button>
+        </div>
+        <div class="p-col-6">
+          <button
+            type="button"
+            pButton
+            (click)="onReject()"
+            label="取消"
+            class="p-button-secondary"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- 讀取資料的處理動畫 -->
+<p-blockUI [blocked]="displayProgress"></p-blockUI>
+<p-progressSpinner
+  *ngIf="displayProgress"
+  [style]="{
+    width: '50px',
+    height: '50px',
+    position: 'fixed',
+    left: '50%',
+    top: '50%'
+  }"
+  styleClass="custom-spinner"
+  strokeWidth="8"
+  fill="#EEEEEE"
+  animationDuration=".5s"
+></p-progressSpinner>

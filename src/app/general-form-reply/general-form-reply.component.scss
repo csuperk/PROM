@@ -1,0 +1,46 @@
+// 給高度，扣掉外層的
+.default-height {
+  height: 100vh;
+}
+:host ::ng-deep {
+  .p-tabview-panels {
+    height: calc(100% - 40px);
+    overflow: auto;
+  }
+}
+:host ::ng-deep {
+  .p-tabview-panel {
+    height: 100%;
+    overflow: auto;
+  }
+}
+// tabView預設高度
+:host ::ng-deep {
+  .tabview-default {
+    margin-top: 5px;
+    width: 100%;
+    // 減掉toolBar高度
+    height: calc(100% - 90px);
+  }
+}
+
+:host ::ng-deep {
+  .p-toast-message-custom {
+    background-color: #e1cfe7;
+    border: solid #8a427a;
+    border-width: 0 0 0 6px;
+    color: #2c1e30;
+    .p-toast-icon-close {
+      color: #2c1e30;
+    }
+  }
+}
+.chip-info-margin {
+  margin: 5px;
+}
+
+// chip顏色調整
+:host ::ng-deep .p-chip.custom-chip {
+  background: var(--cyan-200);
+  color: black;
+}
