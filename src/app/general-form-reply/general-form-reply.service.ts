@@ -14,16 +14,11 @@ import { JwtHelper } from '@cmuh/jwt';
 })
 export class GeneralFormReplyService {
   public userInfoService;
+  public tmplNo;
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
     this.userInfoService = this.jwtHelper.decodeAuthorized(
       localStorage.getItem('userInfo')
     );
-    // 取得登入員的詳細資訊
-    this.getEmpInfo(this.userInfoService.userNo)
-      .toPromise()
-      .then((res) => {
-        this.userInfoService = { ...this.userInfoService, ...res[0] };
-      });
   }
 
   /**

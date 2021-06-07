@@ -7,7 +7,8 @@ import {
   FormReplyListReq,
   FormReplyList,
 } from '@cmuh-viewmodel/form-master';
-import { Formio } from '@formio/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'general-form-reply',
@@ -84,18 +85,38 @@ export class GeneralFormReplyComponent implements OnInit {
 
   constructor(
     private generalFormReplyService: GeneralFormReplyService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    // 如果是透過input進來的，就不用再取url的連結
+    this.tmplNo = isNaN(parseInt(this.route.snapshot.paramMap.get('tmplNo')))
+      ? this.tmplNo
+      : parseInt(this.route.snapshot.paramMap.get('tmplNo'));
     this.getFormTmplInfo(this.tmplNo);
-    this.getFormReplyList(this.tmplNo);
+    this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
   }
 
   ngOnChanges(): void {
     this.getFormTmplInfo(this.tmplNo);
+    this.initReplyListReq();
+  }
+
+  /**
+   * 因需要等待api先取回emp的idNo，所以增加此method
+   */
+  public async initReplyListReq() {
+    let empInfo = await this.generalFormReplyService
+      .getEmpInfo(this.generalFormReplyService.userInfoService.userNo)
+      .toPromise();
+    this.generalFormReplyService.userInfoService = {
+      ...this.generalFormReplyService.userInfoService,
+      ...empInfo[0],
+    };
     this.getFormReplyList(this.tmplNo);
   }
 
@@ -261,7 +282,6 @@ export class GeneralFormReplyComponent implements OnInit {
       this.toolBarRightButtons.forEach((element) => {
         element.disable = false;
       });
-      console.log(this.submitData);
       // 假使是點填寫記錄進來的，將放棄填寫按鈕取消賦能
       if (this.formReplyInfo.replyNo !== 0) {
         this.toolBarRightButtons[2].disable = true;
