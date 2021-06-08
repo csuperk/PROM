@@ -1,7 +1,7 @@
 <div class="default-height">
   <p-toolbar>
     <div class="p-toolbar-group-left">
-      <ng-container *ngFor="let btn of toolBarLeftButtons">
+      <ng-container *ngFor="let btn of toolBarButtons">
         <button
           pButton
           style="margin-left: 10px"
@@ -14,20 +14,7 @@
         ></button>
       </ng-container>
     </div>
-    <div class="p-toolbar-group-right">
-      <ng-container *ngFor="let btn of toolBarRightButtons">
-        <button
-          style="margin-right: 10px"
-          pButton
-          icon="{{ btn.icon }}"
-          type="button"
-          label="{{ btn.title }}"
-          class="{{ btn.class }}"
-          [disabled]="btn.disable"
-          (click)="btn.onClick()"
-        ></button>
-      </ng-container>
-    </div>
+
   </p-toolbar>
   <div class="chip-info-margin">
     <p-chip

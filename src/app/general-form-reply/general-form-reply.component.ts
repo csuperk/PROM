@@ -35,7 +35,7 @@ export class GeneralFormReplyComponent implements OnInit {
 
   /**工具列變數 */
   // 工具列左側按鈕
-  public toolBarLeftButtons = [
+  public toolBarButtons = [
     {
       title: '新建',
       class: '',
@@ -43,9 +43,6 @@ export class GeneralFormReplyComponent implements OnInit {
       disable: false,
       onClick: (event) => this.onNewReplyClick(),
     },
-  ];
-  // 進入填寫表單時，右側功能按鈕
-  public toolBarRightButtons = [
     {
       title: '暫存',
       class: 'p-button-secondary',
@@ -133,7 +130,7 @@ export class GeneralFormReplyComponent implements OnInit {
   private onTempReplyClick() {
     this.displayProgress = true;
     // 暫存後，將放棄填寫按鈕取消賦能
-    this.toolBarRightButtons[2].disable = true;
+    this.toolBarButtons[3].disable = true;
     this.setReplyData(20);
     this.setFormReply();
   }
@@ -264,9 +261,7 @@ export class GeneralFormReplyComponent implements OnInit {
   private btnEmpower(index: number, auth: number = 0) {
     // 如果頁籤是0
     if (index === 0) {
-      this.toolBarRightButtons.forEach((element) => {
-        element.disable = true;
-      });
+      this.toolBarButtons[0].disable = false;
       // 如果是正式表單，且限填一份，且已有回覆，則將新建按鈕取消賦能
       if (
         this.tmplInfo.replyRule >= 10 &&
@@ -274,20 +269,31 @@ export class GeneralFormReplyComponent implements OnInit {
         this.tmplInfo.tmplNo > 0 &&
         this.replyList.length !== 0
       ) {
-        this.toolBarLeftButtons[0].disable = true;
+        this.toolBarButtons[0].disable = true;
       }
+      this.toolBarButtons.forEach((element, index) => {
+        if (index != 0) {
+          element.disable = true;
+        }
+      });
     }
     // 如果頁籤是1
     if (index === 1) {
-      this.toolBarRightButtons.forEach((element) => {
-        element.disable = false;
+      this.toolBarButtons.forEach((element, index) => {
+        if (index != 0) {
+          element.disable = false;
+        } else {
+          element.disable = true;
+        }
       });
       // 假使是點填寫記錄進來的，將放棄填寫按鈕取消賦能
       if (this.formReplyInfo.replyNo !== 0) {
-        this.toolBarRightButtons[2].disable = true;
+        this.toolBarButtons[3].disable = true;
       }
     }
   }
+
+  private;
 
   /**
    * 顯示需要二次確認的message
