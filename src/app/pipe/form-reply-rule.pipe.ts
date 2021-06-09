@@ -8,16 +8,16 @@ export class FormReplyRulePipe implements PipeTransform {
     let reault = '無填答規範';
     switch (value) {
       case 10:
-        reault = '限填一份，繳交後不可異動';
+        reault = '繳交後不可異動';
         break;
       case 11:
-        reault = '限填一份，繳交後可異動';
+        reault = '繳交後可異動';
         break;
       case 20:
-        reault = '可多份，繳交後不可異動';
+        reault = '繳交後不可異動';
         break;
       case 21:
-        reault = '可多份，繳交後可異動';
+        reault = '繳交後可異動';
         break;
 
       default:

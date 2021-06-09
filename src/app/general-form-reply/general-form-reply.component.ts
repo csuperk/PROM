@@ -58,11 +58,18 @@ export class GeneralFormReplyComponent implements OnInit {
       onClick: (event) => this.onSaveReplyClick(),
     },
     {
-      title: '放棄填寫',
+      title: '放棄',
+      class: 'p-button-warning',
+      icon: 'pi pi-times',
+      disable: true,
+      onClick: (event) => this.onCancelReplyClick(),
+    },
+    {
+      title: '撤回',
       class: 'p-button-danger',
       icon: 'pi pi-trash',
       disable: true,
-      onClick: (event) => this.onCancelReplyClick(),
+      onClick: (event) => this.onWithdrawClick(),
     },
   ];
 
@@ -129,8 +136,6 @@ export class GeneralFormReplyComponent implements OnInit {
    */
   private onTempReplyClick() {
     this.displayProgress = true;
-    // 暫存後，將放棄填寫按鈕取消賦能
-    this.toolBarButtons[3].disable = true;
     this.setReplyData(20);
     this.setFormReply();
   }
@@ -147,7 +152,24 @@ export class GeneralFormReplyComponent implements OnInit {
    * 放棄填寫
    */
   private onCancelReplyClick() {
-    this.showConfirm(500, '確定放棄填寫?', '本次填寫資料將刪除');
+    this.showConfirm(
+      404,
+      '確定放棄填寫?',
+      '本次填寫資料將不存儲',
+      'confirmMessage'
+    );
+  }
+
+  /**
+   * 撤銷回覆
+   */
+  private onWithdrawClick() {
+    this.showConfirm(
+      500,
+      '確定撤銷回覆?',
+      '問券將無法填寫，需由權責單位解除',
+      'confirmWithdrawMessage'
+    );
   }
 
   /**
@@ -271,6 +293,7 @@ export class GeneralFormReplyComponent implements OnInit {
       ) {
         this.toolBarButtons[0].disable = true;
       }
+      // 回到頁籤0時，針對form的功能全部取消
       this.toolBarButtons.forEach((element, index) => {
         if (index != 0) {
           element.disable = true;
@@ -279,6 +302,7 @@ export class GeneralFormReplyComponent implements OnInit {
     }
     // 如果頁籤是1
     if (index === 1) {
+      console.log(this.tmplInfo);
       this.toolBarButtons.forEach((element, index) => {
         if (index != 0) {
           element.disable = false;
@@ -286,10 +310,6 @@ export class GeneralFormReplyComponent implements OnInit {
           element.disable = true;
         }
       });
-      // 假使是點填寫記錄進來的，將放棄填寫按鈕取消賦能
-      if (this.formReplyInfo.replyNo !== 0) {
-        this.toolBarButtons[3].disable = true;
-      }
     }
   }
 
@@ -304,7 +324,8 @@ export class GeneralFormReplyComponent implements OnInit {
   private showConfirm(
     severity: number = 404,
     summary: string,
-    detail: string = ''
+    detail: string = '',
+    key: string = 'confirmMessage'
   ) {
     enum severityType {
       success = 200,
@@ -313,7 +334,7 @@ export class GeneralFormReplyComponent implements OnInit {
     }
     this.messageService.clear();
     this.messageService.add({
-      key: 'confirmMessage',
+      key: key,
       sticky: true,
       severity: severityType[`${severity}`],
       summary: summary,
@@ -334,6 +355,16 @@ export class GeneralFormReplyComponent implements OnInit {
    */
   public onReject() {
     this.messageService.clear('confirmMessage');
+    this.messageService.clear('confirmWithdrawMessage');
+  }
+  /**
+   * 確定撤銷回覆
+   */
+  public onConfirmWithdraw() {
+    this.messageService.clear('confirmWithdrawMessage');
+    this.displayProgress = true;
+    this.setReplyData(40);
+    this.setFormReply();
   }
 
   /**

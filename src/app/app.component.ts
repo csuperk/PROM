@@ -8,7 +8,7 @@ import { Component, isDevMode, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'general-form-reply';
 
-  public tmplNo = 10100;
+  public tmplNo = 20100;
   constructor(){
   }
 

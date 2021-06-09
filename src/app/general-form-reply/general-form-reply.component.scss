@@ -20,7 +20,7 @@
     margin-top: 5px;
     width: 100%;
     // 減掉toolBar高度
-    height: calc(100% - 90px);
+    height: calc(100% - 100px);
   }
 }
 
@@ -39,8 +39,19 @@
   margin: 5px;
 }
 
-// chip顏色調整
-:host ::ng-deep .p-chip.custom-chip {
-  background: var(--cyan-200);
-  color: black;
+:host ::ng-deep {
+  .change {
+    p-tag {
+      span {
+        background: #caccd1;
+      }
+    }
+  }
+}
+:host ::ng-deep {
+  p-tag {
+    span {
+      margin: 2px;
+    }
+  }
 }

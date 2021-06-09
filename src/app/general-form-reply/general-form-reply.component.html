@@ -14,29 +14,48 @@
         ></button>
       </ng-container>
     </div>
-
   </p-toolbar>
   <div class="chip-info-margin">
-    <p-chip
-      label="{{ tmplInfo.tmplNo | formType }}"
+    <ng-container *ngIf="tmplInfo.tmplNo < 0">
+      <span class="change">
+        <p-tag
+          icon="pi pi-info-circle"
+          value="{{ tmplInfo.tmplNo | formType }}"
+          severity="primary"
+        ></p-tag>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="tmplInfo.tmplNo > 0">
+      <p-tag
+        icon="pi pi-info-circle"
+        value="{{ tmplInfo.tmplNo | formType }}"
+        severity="success"
+      ></p-tag>
+    </ng-container>
+
+    <p-tag
       icon="pi pi-info-circle"
-      styleClass="p-mr-2 custom-chip"
-    ></p-chip>
-    <p-chip
-      label="{{ tmplInfo.replyRule | formReplyRule }}"
+      value="表單編號: {{ tmplInfo.tmplNo }}"
+      severity="info"
+    ></p-tag>
+    <p-tag
       icon="pi pi-info-circle"
-      styleClass="p-mr-2"
-    ></p-chip>
-    <p-chip
-      label="表單編號: {{ tmplInfo.tmplNo }}"
-      icon="pi pi-info-circle"
-      styleClass="p-mr-2"
-    ></p-chip>
-    <p-chip
-      label="表單名稱: {{ tmplInfo.formName }}"
-      icon="pi pi-info-circle"
-      styleClass="p-mr-2"
-    ></p-chip>
+      value="表單名稱: {{ tmplInfo.formName }}"
+      severity="info"
+    ></p-tag>
+    <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
+      <p-tag
+        icon="pi pi-exclamation-triangle"
+        value="限填一份"
+        severity="warning"
+      ></p-tag>
+    </ng-container>
+
+    <p-tag
+      icon="pi pi-exclamation-triangle"
+      value="{{ tmplInfo.replyRule | formReplyRule }}"
+      severity="warning"
+    ></p-tag>
   </div>
   <p-tabView
     styleClass="tabview-default"
@@ -84,7 +103,7 @@
   </p-tabView>
 </div>
 
-<p-toast  key="generalFormReplyMessage" position="bottom-right"></p-toast>
+<p-toast key="generalFormReplyMessage" position="bottom-right"></p-toast>
 
 <!-- 放棄填寫確認 -->
 <p-toast
@@ -106,6 +125,44 @@
             type="button"
             pButton
             (click)="onConfirm()"
+            label="確定"
+            class="p-button-danger"
+          ></button>
+        </div>
+        <div class="p-col-6">
+          <button
+            type="button"
+            pButton
+            (click)="onReject()"
+            label="取消"
+            class="p-button-secondary"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>
+
+<!-- 撤回確認 -->
+<p-toast
+  position="center"
+  key="confirmWithdrawMessage"
+  (onClose)="onReject()"
+  [baseZIndex]="5000"
+>
+  <ng-template let-message pTemplate="message">
+    <div class="p-flex p-flex-column" style="flex: 1">
+      <div class="p-text-center">
+        <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+        <h4>{{ message.summary }}</h4>
+        <p>{{ message.detail }}</p>
+      </div>
+      <div class="p-grid p-fluid">
+        <div class="p-col-6">
+          <button
+            type="button"
+            pButton
+            (click)="onConfirmWithdraw()"
             label="確定"
             class="p-button-danger"
           ></button>

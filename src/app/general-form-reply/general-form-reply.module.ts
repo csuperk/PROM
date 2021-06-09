@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { BlockUIModule } from 'primeng/blockui';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { ChipModule } from 'primeng/chip';
+import { TagModule } from 'primeng/tag';
 
 // formio
 import { FormioModule } from '@formio/angular';
@@ -47,7 +47,7 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     ProgressSpinnerModule,
     BlockUIModule,
     ScrollPanelModule,
-    ChipModule,
+    TagModule,
 
     // formIo
     FormioModule,
