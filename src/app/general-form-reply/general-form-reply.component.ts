@@ -302,7 +302,6 @@ export class GeneralFormReplyComponent implements OnInit {
     }
     // 如果頁籤是1
     if (index === 1) {
-      console.log(this.tmplInfo);
       this.toolBarButtons.forEach((element, index) => {
         if (index != 0) {
           element.disable = false;
