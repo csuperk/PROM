@@ -7,8 +7,7 @@ import {
   FormReplyListReq,
   FormReplyList,
 } from '@cmuh-viewmodel/form-master';
-import { ActivatedRoute, Router } from '@angular/router';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'general-form-reply',
@@ -32,6 +31,7 @@ export class GeneralFormReplyComponent implements OnInit {
   public enableTabPanel = false;
   // tabView頁籤index
   public tabIndex = 0;
+  public tabClassActive = true;
 
   /**工具列變數 */
   // 工具列左側按鈕
@@ -57,19 +57,15 @@ export class GeneralFormReplyComponent implements OnInit {
       disable: true,
       onClick: (event) => this.onSaveReplyClick(),
     },
-    {
-      title: '放棄',
-      class: 'p-button-warning',
-      icon: 'pi pi-times',
-      disable: true,
-      onClick: (event) => this.onCancelReplyClick(),
-    },
+  ];
+
+  public tableFunctionBtn = [
     {
       title: '撤回',
       class: 'p-button-danger',
       icon: 'pi pi-trash',
-      disable: true,
-      onClick: (event) => this.onWithdrawClick(),
+      disable: false,
+      onClick: (event) => this.onWithdrawClick(event),
     },
   ];
 
@@ -87,11 +83,13 @@ export class GeneralFormReplyComponent implements OnInit {
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
+  // 判斷是否異動formIo
+  public changeFlag = false;
+
   constructor(
     private generalFormReplyService: GeneralFormReplyService,
     private messageService: MessageService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -148,22 +146,12 @@ export class GeneralFormReplyComponent implements OnInit {
     this.setReplyData(30);
     this.setFormReply();
   }
-  /**
-   * 放棄填寫
-   */
-  private onCancelReplyClick() {
-    this.showConfirm(
-      404,
-      '確定放棄填寫?',
-      '本次填寫資料將不存儲',
-      'confirmMessage'
-    );
-  }
 
   /**
    * 撤銷回覆
    */
-  private onWithdrawClick() {
+  private onWithdrawClick(replyInfo: FormReplyInfo) {
+    this.getFormReplyInfo(replyInfo.replyNo, 20);
     this.showConfirm(
       500,
       '確定撤銷回覆?',
@@ -179,6 +167,7 @@ export class GeneralFormReplyComponent implements OnInit {
   public onChange(event) {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
+    this.changeFlag = true;
   }
 
   /**
@@ -234,8 +223,9 @@ export class GeneralFormReplyComponent implements OnInit {
         if (this.formReplyInfo.tranStatus === 30) {
           this.onConfirm();
         }
-
+        this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
+        this.changeFlag = false;
       },
       (err) => {
         this.showToastMsg(500, '儲存失敗');
@@ -262,10 +252,35 @@ export class GeneralFormReplyComponent implements OnInit {
   }
 
   /**
-   * 切換頁籤
+   * 因需增加當內容有異動時，頁籤要跳出確認視窗，所以要再多加一層判斷，判斷要切到哪個tab
    * @param index
    */
   public onTabChange(index: number) {
+    if (index === 0 && this.changeFlag === true) {
+      this.showConfirm(
+        404,
+        '確定放棄填寫?',
+        '本次填寫資料將不存儲',
+        'confirmMessage'
+      );
+    }
+    if (index === 0 && this.changeFlag === false) {
+      this.tabChange(0);
+    }
+    if (index === 1) {
+      this.tabChange(1);
+    }
+  }
+
+  /**
+   * 實際切換頁籤的動作觸發
+   */
+  private tabChange(index: number) {
+    if (index === 0) {
+      this.tabClassActive = true;
+    } else {
+      this.tabClassActive = false;
+    }
     // 如果頁籤回到填寫紀錄頁面
     if (index === 0) {
       this.getFormReplyList(this.tmplNo);
@@ -312,8 +327,6 @@ export class GeneralFormReplyComponent implements OnInit {
     }
   }
 
-  private;
-
   /**
    * 顯示需要二次確認的message
    * @param severity
@@ -324,7 +337,7 @@ export class GeneralFormReplyComponent implements OnInit {
     severity: number = 404,
     summary: string,
     detail: string = '',
-    key: string = 'confirmMessage'
+    key: string
   ) {
     enum severityType {
       success = 200,
@@ -345,9 +358,10 @@ export class GeneralFormReplyComponent implements OnInit {
    * 確定放棄填寫內容
    */
   public onConfirm() {
+    this.changeFlag = false;
     this.messageService.clear('confirmMessage');
     this.initDataVariable();
-    this.onTabChange(0);
+    this.tabChange(0);
   }
   /**
    * 取消放棄填寫內容動作
@@ -362,16 +376,31 @@ export class GeneralFormReplyComponent implements OnInit {
   public onConfirmWithdraw() {
     this.messageService.clear('confirmWithdrawMessage');
     this.displayProgress = true;
+
     this.setReplyData(40);
     this.setFormReply();
+    this.tabChange(0);
   }
 
   /**
-   * 取得回覆資料
+   * 清單點擊事件
    * @param replyInfo
    */
   public onReplyListClick(replyInfo: FormReplyInfo) {
-    this.generalFormReplyService.getFormReplyInfo(replyInfo.replyNo).subscribe(
+    this.getFormReplyInfo(replyInfo.replyNo, 10);
+  }
+
+  /**
+   * 取得回覆內容
+   * @param replyNo
+   */
+  public getFormReplyInfo(replyNo: number, eventFrom: number) {
+    enum eventFromType {
+      tableList = 10,
+      button = 20,
+    }
+
+    this.generalFormReplyService.getFormReplyInfo(replyNo).subscribe(
       (res) => {
         this.formReplyInfo = res;
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
@@ -381,7 +410,10 @@ export class GeneralFormReplyComponent implements OnInit {
             data: res.replyDesc,
           },
         });
-        this.onTabChange(1);
+        // 如果是table點擊的事件，才要換頁
+        if (eventFromType[`${eventFrom}`] == 'tableList') {
+          this.tabChange(1);
+        }
       },
       (err) => {
         this.showToastMsg(500, '回覆資料取得錯誤');

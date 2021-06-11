@@ -50,17 +50,40 @@
         severity="warning"
       ></p-tag>
     </ng-container>
-
-    <p-tag
-      icon="pi pi-exclamation-triangle"
-      value="{{ tmplInfo.replyRule | formReplyRule }}"
-      severity="warning"
-    ></p-tag>
+    <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
+      <p-tag
+        icon="pi pi-exclamation-triangle"
+        value="繳交後不可異動"
+        severity="warning"
+      ></p-tag>
+    </ng-container>
   </div>
+
+  <div class="p-tabview">
+    <ul class="p-tabview-nav">
+      <li [ngClass]="{ 'p-highlight': tabClassActive }">
+        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(0)"
+          ><span class="p-tabview-title ng-star-inserted">表單紀錄</span></a
+        >
+      </li>
+      <li
+        [ngClass]="{
+          'p-highlight': !tabClassActive,
+          'p-disabled': !enableTabPanel
+        }"
+        disabled
+      >
+        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(1)"
+          ><span class="p-tabview-title ng-star-inserted">表單內容</span></a
+        >
+      </li>
+    </ul>
+  </div>
+
   <p-tabView
+    id="customTabUl"
     styleClass="tabview-default"
     [(activeIndex)]="tabIndex"
-    (onChange)="onTabChange($event.index)"
   >
     <p-tabPanel header="填寫紀錄">
       <p-table
@@ -78,15 +101,30 @@
             <th>回覆者身分證</th>
             <th>回覆時間</th>
             <th>單位異動人員</th>
+            <th>功能</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-reply>
-          <tr [pSelectableRow]="reply" (click)="onReplyListClick(reply)">
+          <tr [pSelectableRow]="reply" (dblclick)="onReplyListClick(reply)">
             <td>{{ reply.replyNo }}</td>
             <td>{{ reply.tranStatus | formTeplyTranStatus }}</td>
             <td>{{ reply.replyUser }}</td>
             <td>{{ reply.replyTime | date: "yyyy-MM-dd HH:mm" }}</td>
             <td>{{ reply.tranUserName }}</td>
+            <td>
+              <ng-container *ngFor="let btn of tableFunctionBtn">
+                <button
+                  pButton
+                  style="margin-left: 10px"
+                  icon="{{ btn.icon }}"
+                  type="button"
+                  label="{{ btn.title }}"
+                  class="{{ btn.class }}"
+                  [disabled]="btn.disable"
+                  (click)="btn.onClick(reply)"
+                ></button>
+              </ng-container>
+            </td>
           </tr>
         </ng-template>
       </p-table>

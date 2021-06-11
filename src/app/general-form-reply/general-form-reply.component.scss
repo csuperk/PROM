@@ -4,7 +4,7 @@
 }
 :host ::ng-deep {
   .p-tabview-panels {
-    height: calc(100% - 40px);
+    height: calc(100%);
     overflow: auto;
   }
 }
@@ -20,7 +20,7 @@
     margin-top: 5px;
     width: 100%;
     // 減掉toolBar高度
-    height: calc(100% - 100px);
+    height: calc(100% - 134px);
   }
 }
 
@@ -54,4 +54,29 @@
       margin: 2px;
     }
   }
+}
+
+:host ::ng-deep #customTabUl {
+  ul {
+    display: none;
+  }
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: left;
+  padding: 0.3rem;
+  border: 1px solid #dee2e6;
+
+  color: white;
+  font-size: 16px;
+  background: #008e77;
+  transition: box-shadow 0.15s;
+}
+
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: left;
+  padding: 0.3rem;
+  border: 1px solid #dee2e6;
+  font-size: 16px;
 }
