@@ -256,6 +256,9 @@ export class GeneralFormReplyComponent implements OnInit {
    * @param index
    */
   public onTabChange(index: number) {
+    if (this.tabIndex === 0) {
+      return;
+    }
     if (index === 0 && this.changeFlag === true) {
       this.showConfirm(
         404,
