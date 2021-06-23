@@ -256,7 +256,13 @@ export class GeneralFormReplyComponent implements OnInit {
    * @param index
    */
   public onTabChange(index: number) {
-    if (this.tabIndex === 0) {
+    if (
+      this.tabIndex === 0 &&
+      this.tmplInfo.replyRule >= 10 &&
+      this.tmplInfo.replyRule <= 11 &&
+      this.tmplInfo.tmplNo > 0 &&
+      this.replyList.length !== 0
+    ) {
       return;
     }
     if (index === 0 && this.changeFlag === true) {
