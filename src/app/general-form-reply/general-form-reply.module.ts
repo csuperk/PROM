@@ -6,19 +6,24 @@ import { GeneralFormReplyRoutingModule } from './general-form-reply-routing.modu
 import { GeneralFormReplyComponent } from './general-form-reply.component';
 
 // primeng
-import { ToolbarModule } from 'primeng/toolbar';
-import { ButtonModule } from 'primeng/button';
-import { TabViewModule } from 'primeng/tabview';
-import { TableModule } from 'primeng/table';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { ToastModule } from 'primeng/toast';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { BlockUIModule } from 'primeng/blockui';
+import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { TableModule } from 'primeng/table';
+import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
 
 // formio
-import { FormioModule } from '@formio/angular';
+import { FormioModule, Templates } from '@formio/angular';
+Templates.framework = 'bootstrap3';
 
 //自定義pipe
 import { FormTypePipe } from '../pipe/form-type.pipe';
@@ -38,16 +43,20 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     FormsModule,
 
     // primeng
-    ToolbarModule,
-    ButtonModule,
-    TabViewModule,
-    TableModule,
-    ProgressBarModule,
-    ToastModule,
-    ProgressSpinnerModule,
     BlockUIModule,
+    ButtonModule,
+    CalendarModule,
+    DialogModule,
+    DropdownModule,
+    ProgressBarModule,
+    ProgressSpinnerModule,
+    RadioButtonModule,
     ScrollPanelModule,
+    TableModule,
+    TabViewModule,
     TagModule,
+    ToastModule,
+    ToolbarModule,
 
     // formIo
     FormioModule,

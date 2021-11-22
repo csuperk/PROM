@@ -3,22 +3,54 @@ import { CmuhHttpService } from '@cmuh/http';
 import { Observable } from 'rxjs';
 import {
   FormReplyInfo,
+  FormReplyListTimeReq,
   FormReplyListReq,
   FormReplyList,
   TmplInfo,
 } from '@cmuh-viewmodel/form-master';
 import { JwtHelper } from '@cmuh/jwt';
+import '@cmuh/extensions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeneralFormReplyService {
+
+  public searchReq = {
+    type: "chartNo",
+    values: {
+      date1: new Date().addMonths(-4),
+      date2: new Date(),
+      idNo: "",
+      chartNo: "",
+      status: 0
+    },
+    options: [
+      { chtName: '全部患者', label: 'all' },
+      { chtName: '病歷號', label: 'chartNo' },
+      { chtName: '身分證號', label: 'idNo' }
+    ]
+  };
+
   public userInfoService;
   public tmplNo;
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
     this.userInfoService = this.jwtHelper.decodeAuthorized(
       localStorage.getItem('userInfo')
     );
+  }
+
+
+  public getPtVisitList(type: string, value: string, empNo: number):Observable<Array<any>> {
+    let url = `/webapi/patientInfo/admPatient/getPtVisitList`;
+    let params = {
+      type: type,
+      value: value,
+      empNo: empNo,
+      startDate: "1911-01-01",
+      endDate: "2999-12-31"
+    };
+    return this.http.post(`${url}`, params);
   }
 
   /**
@@ -48,6 +80,19 @@ export class GeneralFormReplyService {
     const url = `/webapi/formMaster/setFormReply`;
     return this.http.put<number>(`${url}`, params);
   }
+
+    /**
+   * 取得回覆清單
+   * @param params
+   * @returns
+   */
+     public getFormReplyListByTime(
+      params: FormReplyListTimeReq
+    ): Observable<FormReplyList[]> {
+      const url = `/webapi/formMaster/getFormReplyListByTime`;
+      return this.http.put<FormReplyList[]>(`${url}`, params);
+    }
+
   /**
    * 取得回覆清單
    * @param params

@@ -1,3 +1,12 @@
+.toolbar1 {
+  display: flex;
+  align-items: center;
+}
+.toolbar1-content {
+  display: inline;
+  margin: 0 10px 0 0;
+}
+
 // 給高度，扣掉外層的
 .default-height {
   height: 100%;
@@ -62,6 +71,12 @@
   }
 }
 
+:host ::ng-deep #formIoDispplay {
+  ul {
+    display: block;
+  }
+}
+
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   text-align: left;
   padding: 0.3rem;
@@ -79,4 +94,13 @@
   padding: 0.3rem;
   border: 1px solid #dee2e6;
   font-size: 16px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header .p-dialog-title {
+  font-size: 20px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: #03a9f4;
+  color: #fdfdfd;
 }

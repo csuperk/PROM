@@ -1,99 +1,95 @@
 <div class="default-height">
   <p-toolbar>
-    <div class="p-toolbar-group-left">
+    <div class="p-toolbar-group-left toolbar1">
+      <span [hidden]="displaySearchReq">
+        <div style="display: flex; align-items: center;">
+          <ng-container *ngFor="let radio of generalFormReplySvc.searchReq.options">
+            <div class="toolbar1-content">
+              <p-radioButton [label]="radio.chtName" [value]="radio.label"
+                [(ngModel)]="generalFormReplySvc.searchReq.type">
+              </p-radioButton>
+            </div>
+          </ng-container>
+          <div class="toolbar1-content">
+            <input *ngIf="showSearchInput('chartNo')" [(ngModel)]="generalFormReplySvc.searchReq.values.chartNo"
+              placeholder="請輸入病歷號" />
+            <input *ngIf="showSearchInput('idNo')" [(ngModel)]="generalFormReplySvc.searchReq.values.idNo"
+              placeholder="請輸入身分證號" />
+          </div>
+          <div class="toolbar1-content">
+            <p style="display: inline;">查詢期間：</p>
+          </div>
+          <div class="toolbar1-content">
+            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="generalFormReplySvc.searchReq.values.date1">
+            </p-calendar>
+          </div>
+          <div class="toolbar1-content">
+            <p style="display: inline;">
+              至
+            </p>
+          </div>
+          <div class="toolbar1-content">
+            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="generalFormReplySvc.searchReq.values.date2">
+            </p-calendar>
+          </div>
+          <div class="toolbar1-content">
+            <p style="display: inline;">
+              回覆狀態
+            </p>
+          </div>
+          <div class="toolbar1-content">
+            <p-dropdown [options]="replyStatusOptions" optionLabel="name" optionValue="value"
+              [(ngModel)]="generalFormReplySvc.searchReq.values.status">
+            </p-dropdown>
+          </div>
+        </div>
+      </span>
       <ng-container *ngFor="let btn of toolBarButtons">
-        <button
-          pButton
-          style="margin-left: 10px"
-          icon="{{ btn.icon }}"
-          type="button"
-          label="{{ btn.title }}"
-          class="{{ btn.class }}"
-          [disabled]="btn.disable"
-          (click)="btn.onClick()"
-        ></button>
+        <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
+          class="{{ btn.class }}" [hidden]="btn.displayNone" [disabled]="btn.disable" (click)="btn.onClick()"></button>
       </ng-container>
     </div>
   </p-toolbar>
   <div class="chip-info-margin">
     <ng-container *ngIf="tmplInfo.tmplNo < 0">
       <span class="change">
-        <p-tag
-          icon="pi pi-info-circle"
-          value="{{ tmplInfo.tmplNo | formType }}"
-          severity="primary"
-        ></p-tag>
+        <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="primary"></p-tag>
       </span>
     </ng-container>
     <ng-container *ngIf="tmplInfo.tmplNo > 0">
-      <p-tag
-        icon="pi pi-info-circle"
-        value="{{ tmplInfo.tmplNo | formType }}"
-        severity="success"
-      ></p-tag>
+      <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="success"></p-tag>
     </ng-container>
 
-    <p-tag
-      icon="pi pi-info-circle"
-      value="表單編號: {{ tmplInfo.tmplNo }}"
-      severity="info"
-    ></p-tag>
-    <p-tag
-      icon="pi pi-info-circle"
-      value="表單名稱: {{ tmplInfo.formName }}"
-      severity="info"
-    ></p-tag>
+    <p-tag icon="pi pi-info-circle" value="表單編號: {{ tmplInfo.tmplNo }}" severity="info"></p-tag>
+    <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag>
     <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
-      <p-tag
-        icon="pi pi-exclamation-triangle"
-        value="限填一份"
-        severity="warning"
-      ></p-tag>
+      <p-tag icon="pi pi-exclamation-triangle" value="限填一份" severity="warning"></p-tag>
     </ng-container>
     <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
-      <p-tag
-        icon="pi pi-exclamation-triangle"
-        value="繳交後不可異動"
-        severity="warning"
-      ></p-tag>
+      <p-tag icon="pi pi-exclamation-triangle" value="繳交後不可異動" severity="warning"></p-tag>
     </ng-container>
   </div>
 
   <div class="p-tabview">
     <ul class="p-tabview-nav">
       <li [ngClass]="{ 'p-highlight': tabClassActive }">
-        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(0)"
-          ><span class="p-tabview-title ng-star-inserted">表單紀錄</span></a
-        >
+        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(0)"><span
+            class="p-tabview-title ng-star-inserted">表單紀錄</span></a>
       </li>
-      <li
-        [ngClass]="{
+      <li [ngClass]="{
           'p-highlight': !tabClassActive,
           'p-disabled': !enableTabPanel
-        }"
-        disabled
-      >
-        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(1)"
-          ><span class="p-tabview-title ng-star-inserted">表單內容</span></a
-        >
+        }" disabled>
+        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(1)"><span
+            class="p-tabview-title ng-star-inserted">表單內容</span></a>
       </li>
     </ul>
   </div>
 
-  <p-tabView
-    id="customTabUl"
-    styleClass="tabview-default"
-    [(activeIndex)]="tabIndex"
-  >
+  <p-tabView id="customTabUl" styleClass="tabview-default" [(activeIndex)]="tabIndex">
     <p-tabPanel header="填寫紀錄">
-      <p-table
-        [value]="replyList"
-        selectionMode="single"
-        [(selection)]="selectedReplyInfo"
-        [scrollable]="true"
-        [scrollHeight]="'flex'"
-        dataKey="replyNo"
-      >
+      <p-table [value]="replyList" selectionMode="single" [(selection)]="selectedReplyInfo" [scrollable]="true"
+        [scrollHeight]="'flex'" dataKey="replyNo">
         <ng-template pTemplate="header">
           <tr>
             <th>表單編號</th>
@@ -113,30 +109,17 @@
             <td>{{ reply.tranUserName }}</td>
             <td>
               <ng-container *ngFor="let btn of tableFunctionBtn">
-                <button
-                  pButton
-                  style="margin-left: 10px"
-                  icon="{{ btn.icon }}"
-                  type="button"
-                  label="{{ btn.title }}"
-                  class="{{ btn.class }}"
-                  [disabled]="btn.disable"
-                  (click)="btn.onClick(reply)"
-                ></button>
+                <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
+                  class="{{ btn.class }}" [disabled]="btn.disable" (click)="btn.onClick(reply)"></button>
               </ng-container>
             </td>
           </tr>
         </ng-template>
       </p-table>
     </p-tabPanel>
-    <p-tabPanel header="表單內容" [disabled]="!enableTabPanel">
-      <formio
-        [readOnly]="formReadOnly"
-        [form]="tmplInfo.formTmpl"
-        [refresh]="triggerRefresh"
-        [submission]="submitData"
-        (change)="onChange($event)"
-      ></formio>
+    <p-tabPanel header="表單內容" id="formIoDispplay" [disabled]="!enableTabPanel">
+      <formio [readOnly]="formReadOnly" [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
+        (change)="onChange($event)"></formio>
     </p-tabPanel>
   </p-tabView>
 </div>
@@ -144,12 +127,7 @@
 <p-toast key="generalFormReplyMessage" position="bottom-right"></p-toast>
 
 <!-- 放棄填寫確認 -->
-<p-toast
-  position="center"
-  key="confirmMessage"
-  (onClose)="onReject()"
-  [baseZIndex]="5000"
->
+<p-toast position="center" key="confirmMessage" (onClose)="onReject()" [baseZIndex]="5000">
   <ng-template let-message pTemplate="message">
     <div class="p-flex p-flex-column" style="flex: 1">
       <div class="p-text-center">
@@ -159,22 +137,10 @@
       </div>
       <div class="p-grid p-fluid">
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onConfirm()"
-            label="確定"
-            class="p-button-danger"
-          ></button>
+          <button type="button" pButton (click)="onConfirm()" label="確定" class="p-button-danger"></button>
         </div>
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onReject()"
-            label="取消"
-            class="p-button-secondary"
-          ></button>
+          <button type="button" pButton (click)="onReject()" label="取消" class="p-button-secondary"></button>
         </div>
       </div>
     </div>
@@ -182,12 +148,7 @@
 </p-toast>
 
 <!-- 撤回確認 -->
-<p-toast
-  position="center"
-  key="confirmWithdrawMessage"
-  (onClose)="onReject()"
-  [baseZIndex]="5000"
->
+<p-toast position="center" key="confirmWithdrawMessage" (onClose)="onReject()" [baseZIndex]="5000">
   <ng-template let-message pTemplate="message">
     <div class="p-flex p-flex-column" style="flex: 1">
       <div class="p-text-center">
@@ -197,41 +158,23 @@
       </div>
       <div class="p-grid p-fluid">
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onConfirmWithdraw()"
-            label="確定"
-            class="p-button-danger"
-          ></button>
+          <button type="button" pButton (click)="onConfirmWithdraw()" label="確定" class="p-button-danger"></button>
         </div>
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onReject()"
-            label="取消"
-            class="p-button-secondary"
-          ></button>
+          <button type="button" pButton (click)="onReject()" label="取消" class="p-button-secondary"></button>
         </div>
       </div>
     </div>
   </ng-template>
 </p-toast>
 
+
 <!-- 讀取資料的處理動畫 -->
 <p-blockUI [blocked]="displayProgress"></p-blockUI>
-<p-progressSpinner
-  *ngIf="displayProgress"
-  [style]="{
+<p-progressSpinner *ngIf="displayProgress" [style]="{
     width: '50px',
     height: '50px',
     position: 'fixed',
     left: '50%',
     top: '50%'
-  }"
-  styleClass="custom-spinner"
-  strokeWidth="8"
-  fill="#EEEEEE"
-  animationDuration=".5s"
-></p-progressSpinner>
+  }" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

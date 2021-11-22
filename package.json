@@ -12,6 +12,9 @@
   "private": true,
   "dependencies": {
     "@cmuh-viewmodel/form-master": "git+https://gitserver.cmuh.org.tw/cmuh.modules.viewmodel/form-master.git",
+    "@cmuh/patient-info": "git+https://gitserver.cmuh.org.tw/cmuh.modules/patient-info.git",
+    "@cmuh/core": "git+https://gitserver.cmuh.org.tw/cmuh.modules/core.git#ng11",
+    "@cmuh/extensions": "git+https://gitserver.cmuh.org.tw/cmuh.modules/extensions.git",
     "@formio/angular": "^5.1.0",
     "formiojs": "^4.13.0",
     "@angular/elements": "^11.2.10"
