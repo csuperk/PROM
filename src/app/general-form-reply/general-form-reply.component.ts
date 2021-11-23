@@ -89,6 +89,20 @@ export class GeneralFormReplyComponent implements OnInit {
       disable: false,
       onClick: (event) => this.onWithdrawClick(event),
     },
+    {
+      title: '顯示QrCode',
+      class: 'p-button-secondary',
+      icon: 'pi pi-pencil',
+      disable: false,
+      onClick: (event) => this.onDisplayQrCode(event),
+    },
+  ];
+
+  public displayDialog = [
+    {
+      title: 'QR-Code',
+      visible: false,
+    }
   ];
 
   /*操控formIo的相關變數*/
@@ -107,6 +121,9 @@ export class GeneralFormReplyComponent implements OnInit {
 
   // 判斷是否異動formIo
   public changeFlag = false;
+
+  // 顯示QR-Code
+  public qrCodeUrl: string = '';
 
   constructor(
     public generalFormReplySvc: GeneralFormReplyService,
@@ -163,19 +180,16 @@ export class GeneralFormReplyComponent implements OnInit {
   }
 
   /**
-   * 問題: 應該不用取得 emp資訊(有也是用 container的 localStorage.getItem('userInfo'))
    * 因需要等待api先取回emp的idNo，所以增加此method
    */
   public async initReplyListReq() {
     let empInfo = await this.generalFormReplySvc
       .getEmpInfo(this.generalFormReplySvc.userInfoService.userNo)
       .toPromise();
-    console.log('empInfo', empInfo);
     this.generalFormReplySvc.userInfoService = {
       ...this.generalFormReplySvc.userInfoService,
       ...empInfo[0],
     };
-    // 問題, 找霜姊討論 剛開始初始化是否有需要 getFormReplyList 直接用時間去找(或是等按下search才找)
     this.getFormReplyList(this.tmplNo);
   }
 
@@ -250,6 +264,41 @@ export class GeneralFormReplyComponent implements OnInit {
       '問券將無法填寫，需由權責單位解除',
       'confirmWithdrawMessage'
     );
+  }
+
+  private onDisplayQrCode(replyInfo: FormReplyInfo) {
+
+    let hostName = window.location.hostname;
+
+    if (hostName == 'his.cmubh.org.tw') {
+      hostName = 'forms.bh.cmu.edu.tw';
+    }
+
+    // 正式區 可以讓外網連
+    if (hostName == 'his.cmuh.org.tw') {
+      hostName = 'forms.cmuh.org.tw';
+      this.qrCodeUrl = `http://${hostName}/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
+      this.displayDialog[0].visible = true;
+      return;
+    }
+
+    // 本地端 連測試區
+    if (hostName == 'localhost') {
+
+      // 測試區 院內
+      hostName = 'his-alpha.cmuh.org.tw';
+      this.qrCodeUrl = `http://${hostName}/webapp/form-customer/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
+
+      // 正式區 院外
+      // hostName = 'forms.cmuh.org.tw';
+      // this.qrCodeUrl = `http://${hostName}/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
+
+      this.displayDialog[0].visible = true;
+      return;
+    }
+
+    this.qrCodeUrl = `http://${hostName}/webapp/form-customer/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
+    this.displayDialog[0].visible = true;
   }
 
   /**
@@ -404,7 +453,7 @@ export class GeneralFormReplyComponent implements OnInit {
    * @param index
    */
   public onTabChange(index: number) {
-    if (index === 0 && this.changeFlag === true) {
+    if (index === 0 && this.changeFlag === true && this.tabIndex !== 0) {
       this.showConfirm(
         404,
         '確定放棄填寫?',
@@ -448,53 +497,24 @@ export class GeneralFormReplyComponent implements OnInit {
   private btnEmpower(index: number, auth: number = 0) {
     // 如果頁籤是0
     if (index === 0) {
+      // 表單紀錄頁籤 只有 搜尋可以出現
       this.toolBarButtons[0].displayNone = false;
       this.toolBarButtons[1].displayNone = true;
       this.toolBarButtons[2].displayNone = true;
 
-      // 搜尋條件
+      // 表單紀錄頁籤中搜尋條件要出現
       this.displaySearchReq = false;
-      // 如果是正式表單，且限填一份，且已有回覆，則將新建按鈕取消賦能
-      if (
-        this.tmplInfo.replyRule >= 10 &&
-        this.tmplInfo.replyRule <= 11 &&
-        this.tmplInfo.tmplNo > 0 &&
-        this.replyList.length !== 0
-      ) {
-        /*
-        ** 問題: 限填一份 有可能要跟 表單管理不同
-        ** 目前規劃是, 新增會跳出彈窗 預帶banner上的患者(pSvc.pationInfo.idNo...)
-        ** 然後查詢的時候才去檢核是否可以填寫
-        ** 所以新增按鈕應該要always 可以按
-        */
-        console.log('限制填一份', this.tmplInfo);
-        console.log('限制填一份', this.replyList);
-        // this.toolBarButtons[1].disable = true;
-      }
 
     }
     // 如果頁籤是1
     if (index === 1) {
-
+      // 表單內容頁籤 只有 搜尋可以出現 暫存, 繳交
       this.toolBarButtons[0].displayNone = true;
       this.toolBarButtons[1].displayNone = false;
       this.toolBarButtons[2].displayNone = false;
 
       // 搜尋條件 在表單內容中不用顯示
       this.displaySearchReq = true;
-
-      /*
-      ** toolBarButtons[2] 暫存
-      ** toolBarButtons[3] 繳交
-      ** 如果是只能繳交一次的, 應該要無法暫存也無法繳交
-      */
-      // this.toolBarButtons.forEach((element, index) => {
-      //   if (index != 0) {
-      //     element.disable = false;
-      //   } else {
-      //     element.disable = true;
-      //   }
-      // });
     }
   }
 
@@ -566,7 +586,47 @@ export class GeneralFormReplyComponent implements OnInit {
       }
     }
     await this.getPtVisitList(searchReq);
+
+    // 驗證繳交後可否異動
+    await this.authTest(replyInfo);
+
     this.getFormReplyInfo(replyInfo.replyNo, 10);
+  }
+
+  private async authTest(replyInfo) {
+    // 驗證繳交後可否異動
+    let tranStatus = replyInfo.tranStatus;
+    let replyRule = this.tmplInfo.replyRule;
+    if (replyRule == 10 || replyRule == 20) {
+      if (tranStatus > 20) {
+
+        this.formReadOnly = true;
+        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
+        // 不可以暫存跟繳交
+        this.toolBarButtons[1].disable = true;
+        this.toolBarButtons[2].disable = true;
+      }
+      else {
+        this.formReadOnly = false;
+        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
+        this.toolBarButtons[1].disable = false;
+        this.toolBarButtons[2].disable = false;
+      }
+    } else {
+      // replyRule = 11, 21
+      // this.formReadOnly = tranStatus < 30 ? false : true;
+      if (tranStatus > 30) {
+        this.formReadOnly = true;
+        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
+        this.toolBarButtons[1].disable = true;
+        this.toolBarButtons[2].disable = true;
+      } else {
+        this.formReadOnly = false;
+        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
+        this.toolBarButtons[1].disable = false;
+        this.toolBarButtons[2].disable = false;
+      }
+    }
   }
 
   /**
@@ -579,7 +639,6 @@ export class GeneralFormReplyComponent implements OnInit {
       tableList = 10,
       button = 20,
     }
-
     // 確認要有患者資訊 pSvc.patientInfo
     this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
 

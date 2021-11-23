@@ -17,7 +17,7 @@ import '@cmuh/extensions';
 export class GeneralFormReplyService {
 
   public searchReq = {
-    type: "chartNo",
+    type: "all",
     values: {
       date1: new Date().addMonths(-4),
       date2: new Date(),

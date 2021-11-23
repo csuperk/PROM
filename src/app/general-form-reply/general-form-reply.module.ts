@@ -21,6 +21,9 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 
+// qrCode
+import { QrCodeModule } from 'ng-qrcode';
+
 // formio
 import { FormioModule, Templates } from '@formio/angular';
 Templates.framework = 'bootstrap3';
@@ -57,6 +60,9 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     TagModule,
     ToastModule,
     ToolbarModule,
+
+    // qrCode
+    QrCodeModule,
 
     // formIo
     FormioModule,
