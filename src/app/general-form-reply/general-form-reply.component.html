@@ -94,7 +94,7 @@
           <tr>
             <th>表單編號</th>
             <th>回覆狀態</th>
-            <th>回覆者身分證</th>
+            <th>回覆者</th>
             <th>回覆時間</th>
             <th>單位異動人員</th>
             <th>功能</th>
@@ -104,7 +104,7 @@
           <tr [pSelectableRow]="reply" (dblclick)="onReplyListClick(reply)">
             <td>{{ reply.replyNo }}</td>
             <td>{{ reply.tranStatus | formTeplyTranStatus }}</td>
-            <td>{{ reply.replyUser }}</td>
+            <td>{{ reply.replyUser }} {{ reply.replyUserName }}</td>
             <td>{{ reply.replyTime | date: "yyyy-MM-dd HH:mm" }}</td>
             <td>{{ reply.tranUserName }}</td>
             <td>
