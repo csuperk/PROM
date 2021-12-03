@@ -101,7 +101,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-reply>
-          <tr [pSelectableRow]="reply" (dblclick)="onReplyListClick(reply)">
+          <tr [pSelectableRow]="reply" (click)="onReplyListClick(reply)" (dblclick)="onReplyListDbClick(reply)">
             <td>{{ reply.replyNo }}</td>
             <td>{{ reply.tranStatus | formTeplyTranStatus }}</td>
             <td>{{ reply.replyUser }} {{ reply.replyUserName }}</td>

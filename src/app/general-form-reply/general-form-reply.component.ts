@@ -159,6 +159,15 @@ export class GeneralFormReplyComponent implements OnInit {
     // 根據表單編號 先去 FormTmpl 抓表單資訊
     this.getFormTmplInfo(this.tmplNo);
 
+    // queryParams 先抓出 route 傳遞過來的 queryParams
+    let queryParams = this.route.snapshot.queryParams;
+
+    // 如果有傳 chartNo, 則要把 搜尋條件(searchReq) 改為 chartNo
+    if (queryParams['chartNo'] !== undefined) {
+      this.generalFormReplySvc.searchReq.type = 'chartNo';
+      this.generalFormReplySvc.searchReq.values.chartNo = queryParams['chartNo'];
+    }
+
     // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
     if (this.route.snapshot.queryParams['type'] !== undefined) {
 
@@ -190,7 +199,7 @@ export class GeneralFormReplyComponent implements OnInit {
       ...this.generalFormReplySvc.userInfoService,
       ...empInfo[0],
     };
-    this.getFormReplyList(this.tmplNo);
+    this.onSearchClick();
   }
 
   /**
@@ -226,8 +235,12 @@ export class GeneralFormReplyComponent implements OnInit {
     if (ptInfos.length == 0) {
       this.showToastMsg(500, '查無此患者');
       // 清空查詢 input欄位
-      this.generalFormReplySvc.searchReq.values.chartNo = '';
-      this.generalFormReplySvc.searchReq.values.idNo = '';
+      if (searchReq.type == 'chartNo') {
+        this.generalFormReplySvc.searchReq.values.chartNo = '';
+      } else {
+        this.generalFormReplySvc.searchReq.values.idNo = '';
+      }
+
       return false;
     }
     this.pSvc.patientInfo = ptInfos[0];
@@ -574,11 +587,22 @@ export class GeneralFormReplyComponent implements OnInit {
     this.tabChange(0);
   }
 
+  public async onReplyListClick(replyInfo: FormReplyInfo) {
+    let searchReq = {
+      type: 'idNo',
+      values: {
+        idNo: replyInfo.replyUser
+      }
+    }
+    await this.getPtVisitList(searchReq);
+    this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
+  }
+
   /**
    * 清單點擊事件
    * @param replyInfo
    */
-  public async onReplyListClick(replyInfo: FormReplyInfo) {
+  public async onReplyListDbClick(replyInfo: FormReplyInfo) {
     let searchReq = {
       type: 'idNo',
       values: {
