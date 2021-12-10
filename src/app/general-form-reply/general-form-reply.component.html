@@ -168,9 +168,7 @@
   </ng-template>
 </p-toast>
 
-<p-dialog [header]="displayDialog[0].title" [(visible)]="displayDialog[0].visible"
-  [style]="{ width: '18vw', height: '45vh' }"
-  [contentStyle]="{ 'max-height': '40vh', 'font-size': '1', height: '100%' }">
+<p-dialog [header]="displayDialog[0].title" [(visible)]="displayDialog[0].visible" [style]="{ width: '330px' }">
   <qr-code value="{{qrCodeUrl}}" size="300" errorCorrectionLevel="M" centerImageSrc="../../assets/cmuh.png"
     centerImageSize="80"></qr-code>
   <div class="qr-url-size">{{qrCodeUrl}}</div>
