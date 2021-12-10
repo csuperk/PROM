@@ -41,7 +41,7 @@ export class GeneralFormReplyService {
   }
 
   public getPatientInfo(type: string, value: string): Observable<Array<any>> {
-    let url = `webapi/formMaster/getPatientInfo`;
+    let url = `/webapi/formMaster/getPatientInfo`;
     let params = {
       type: type,
       value: value
