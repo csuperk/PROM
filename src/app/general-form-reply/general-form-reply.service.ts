@@ -40,17 +40,13 @@ export class GeneralFormReplyService {
     );
   }
 
-
-  public getPtVisitList(type: string, value: string, empNo: number):Observable<Array<any>> {
-    let url = `/webapi/patientInfo/admPatient/getPtVisitList`;
+  public getPatientInfo(type: string, value: string): Observable<Array<any>> {
+    let url = `webapi/formMaster/getPatientInfo`;
     let params = {
       type: type,
-      value: value,
-      empNo: empNo,
-      startDate: "1911-01-01",
-      endDate: "2999-12-31"
-    };
-    return this.http.post(`${url}`, params);
+      value: value
+    }
+    return this.http.put(`${url}`, params);
   }
 
   /**
@@ -81,17 +77,17 @@ export class GeneralFormReplyService {
     return this.http.put<number>(`${url}`, params);
   }
 
-    /**
-   * 取得回覆清單
-   * @param params
-   * @returns
-   */
-     public getFormReplyListByTime(
-      params: FormReplyListTimeReq
-    ): Observable<FormReplyList[]> {
-      const url = `/webapi/formMaster/getFormReplyListByTime`;
-      return this.http.put<FormReplyList[]>(`${url}`, params);
-    }
+  /**
+ * 取得回覆清單
+ * @param params
+ * @returns
+ */
+  public getFormReplyListByTime(
+    params: FormReplyListTimeReq
+  ): Observable<FormReplyList[]> {
+    const url = `/webapi/formMaster/getFormReplyListByTime`;
+    return this.http.put<FormReplyList[]>(`${url}`, params);
+  }
 
   /**
    * 取得回覆清單

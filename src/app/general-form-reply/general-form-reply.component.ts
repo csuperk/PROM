@@ -210,7 +210,7 @@ export class GeneralFormReplyComponent implements OnInit {
 
     if (this.generalFormReplySvc.searchReq.type !== 'all') {
 
-      let ptExist = await this.getPtVisitList(this.generalFormReplySvc.searchReq);
+      let ptExist = await this.getPatientInfo(this.generalFormReplySvc.searchReq);
       if (!ptExist) {
         // type !== 'all' 代表要找人 如果找不到 也不用找表單了 所以直接 return
         return;
@@ -227,11 +227,15 @@ export class GeneralFormReplyComponent implements OnInit {
    * 取得患者資訊(可以藉由 idNo 或是 chartNo)
    * @returns
    */
-  private async getPtVisitList(searchReq) {
+  private async getPatientInfo(searchReq) {
 
     const value = searchReq.type == 'chartNo' ? searchReq.values.chartNo : searchReq.values.idNo;
-    let ptInfos: Array<any> = await this.generalFormReplySvc.getPtVisitList(searchReq.type, value, 33878).toPromise();
 
+    if (this.pSvc.patientInfo?.chartNo == value || this.pSvc.patientInfo?.idNo == value) {
+      return true;
+    }
+
+    let ptInfos: Array<any> = await this.generalFormReplySvc.getPatientInfo(searchReq.type, value).toPromise();
     if (ptInfos.length == 0) {
       this.showToastMsg(500, '查無此患者');
       // 清空查詢 input欄位
@@ -367,7 +371,7 @@ export class GeneralFormReplyComponent implements OnInit {
     params.endTime = this.generalFormReplySvc.searchReq.values.date2;
     params.replyUser = this.pSvc.patientInfo?.idNo || '';
 
-    // 看是不是用 idNo去找(就算是用 chartNo 也已經在 getPtVisitList找到了)
+    // 看是不是用 idNo去找(就算是用 chartNo 也已經在 getPatientInfo找到了)
     if (this.generalFormReplySvc.searchReq.type === 'all') {
       // 沒有選人
       this.generalFormReplySvc.getFormReplyListByTime(params).subscribe(
@@ -588,13 +592,14 @@ export class GeneralFormReplyComponent implements OnInit {
   }
 
   public async onReplyListClick(replyInfo: FormReplyInfo) {
+
     let searchReq = {
       type: 'idNo',
       values: {
         idNo: replyInfo.replyUser
       }
     }
-    await this.getPtVisitList(searchReq);
+    await this.getPatientInfo(searchReq);
     this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
   }
 
@@ -603,13 +608,6 @@ export class GeneralFormReplyComponent implements OnInit {
    * @param replyInfo
    */
   public async onReplyListDbClick(replyInfo: FormReplyInfo) {
-    let searchReq = {
-      type: 'idNo',
-      values: {
-        idNo: replyInfo.replyUser
-      }
-    }
-    await this.getPtVisitList(searchReq);
 
     // 驗證繳交後可否異動
     await this.authTest(replyInfo);
