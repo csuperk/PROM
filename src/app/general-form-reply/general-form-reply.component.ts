@@ -285,37 +285,10 @@ export class GeneralFormReplyComponent implements OnInit {
 
   private onDisplayQrCode(replyInfo: FormReplyInfo) {
 
-    let hostName = window.location.hostname;
-
-    if (hostName == 'his.cmubh.org.tw') {
-      hostName = 'forms.bh.cmu.edu.tw';
-    }
-
-    // 正式區 可以讓外網連
-    if (hostName == 'his.cmuh.org.tw') {
-      hostName = 'forms.cmuh.org.tw';
-      this.qrCodeUrl = `http://${hostName}/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
+    this.generalFormReplySvc.getFormQrCodeUrl(replyInfo).subscribe((res) => {
+      this.qrCodeUrl = res;
       this.displayDialog[0].visible = true;
-      return;
-    }
-
-    // 本地端 連測試區
-    if (hostName == 'localhost') {
-
-      // 測試區 院內
-      hostName = 'his-alpha.cmuh.org.tw';
-      this.qrCodeUrl = `http://${hostName}/webapp/form-customer/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
-
-      // 正式區 院外
-      // hostName = 'forms.cmuh.org.tw';
-      // this.qrCodeUrl = `http://${hostName}/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
-
-      this.displayDialog[0].visible = true;
-      return;
-    }
-
-    this.qrCodeUrl = `http://${hostName}/webapp/form-customer/?replyNo=${replyInfo.replyNo}&tmplNo=${replyInfo.tmplNo}`;
-    this.displayDialog[0].visible = true;
+    });
   }
 
   /**

@@ -110,4 +110,13 @@ export class GeneralFormReplyService {
     const url = `/webapi/formMaster/getFormReplyInfo`;
     return this.http.get<FormReplyInfo>(`${url}/${replyNo}`);
   }
+
+  /**
+ * 產生qrCode
+ * @returns
+ */
+   public getFormQrCodeUrl(param: FormReplyInfo): Observable<any> {
+    const url = `/webapi/formMaster/getFormQrCodeUrl`;
+    return this.http.put(url, param);
+  }
 }
