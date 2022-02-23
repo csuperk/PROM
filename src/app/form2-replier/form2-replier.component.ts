@@ -12,14 +12,14 @@ import { PatientInfoService } from '@cmuh/patient-info';
 import { BannerService } from '@cmuh/core';
 import '@cmuh/extensions';
 
-import { GeneralFormReplyService } from './general-form-reply.service';
+import { Form2ReplierService } from './form2-replier.service';
 
 @Component({
-  selector: 'general-form-reply',
-  templateUrl: './general-form-reply.component.html',
-  styleUrls: ['./general-form-reply.component.scss'],
+  selector: 'form2-replier',
+  templateUrl: './form2-replier.component.html',
+  styleUrls: ['./form2-replier.component.scss'],
 })
-export class GeneralFormReplyComponent implements OnInit {
+export class Form2ReplierComponent implements OnInit {
 
   @Input()
   public tmplNo: number;
@@ -45,24 +45,9 @@ export class GeneralFormReplyComponent implements OnInit {
   // 顯示處理進度
   public displayProgress = false;
 
-  /*TabPanel 操控變數 */
-  // tabpanel頁籤賦能
-  public enableTabPanel = false;
-  // tabView頁籤index
-  public tabIndex = 0;
-  public tabClassActive = true;
-
   /**工具列變數 */
   // 工具列左側按鈕
   public toolBarButtons = [
-    {
-      title: '搜尋',
-      class: '',
-      icon: 'pi pi-search',
-      disable: false,
-      displayNone: false,
-      onClick: (event) => this.onSearchClick(),
-    },
     {
       title: '暫存',
       class: 'p-button-secondary',
@@ -78,23 +63,6 @@ export class GeneralFormReplyComponent implements OnInit {
       disable: false,
       displayNone: false,
       onClick: (event) => this.onSaveReplyClick(),
-    },
-  ];
-
-  public tableFunctionBtn = [
-    {
-      title: '撤回',
-      class: 'p-button-danger',
-      icon: 'pi pi-trash',
-      disable: false,
-      onClick: (event) => this.onWithdrawClick(event),
-    },
-    {
-      title: '顯示QrCode',
-      class: 'p-button-secondary',
-      icon: 'pi pi-pencil',
-      disable: false,
-      onClick: (event) => this.onDisplayQrCode(event),
     },
   ];
 
@@ -126,7 +94,7 @@ export class GeneralFormReplyComponent implements OnInit {
   public qrCodeUrl: string = '';
 
   constructor(
-    public generalFormReplySvc: GeneralFormReplyService,
+    public f2RSvc: Form2ReplierService,
     private messageService: MessageService,
     private pSvc: PatientInfoService,
     private bannerSvc: BannerService,
@@ -141,13 +109,19 @@ export class GeneralFormReplyComponent implements OnInit {
     this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
-    this.btnEmpower(0);
+    // this.btnEmpower(1);
+
+    this.getFormTmplInfo(20100);
+    let abc: FormReplyInfo = { "replyNo": 2, "tmplNo": 20100, "replyUser": "L124065781", "replyTime": new Date("2021-11-17T16:20:41.540"), "tranUser": 0, "tranTime": new Date("2999-12-31T08:00:00.000"), "tranStatus": 20, "tranUserName": "", systemUser: 33573 }
+    this.getReplyRecord(abc);
+
   }
 
   ngOnChanges(): void {
     this.getFormTmplInfo(this.tmplNo);
     this.initReplyListReq();
   }
+
 
   // urlQuery時 導向的
   private urlQueryNavigate() {
@@ -164,8 +138,8 @@ export class GeneralFormReplyComponent implements OnInit {
 
     // 如果有傳 chartNo, 則要把 搜尋條件(searchReq) 改為 chartNo
     if (queryParams['chartNo'] !== undefined) {
-      this.generalFormReplySvc.searchReq.type = 'chartNo';
-      this.generalFormReplySvc.searchReq.values.chartNo = queryParams['chartNo'];
+      this.f2RSvc.searchReq.type = 'chartNo';
+      this.f2RSvc.searchReq.values.chartNo = queryParams['chartNo'];
     }
 
     // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
@@ -177,80 +151,18 @@ export class GeneralFormReplyComponent implements OnInit {
   }
 
   /**
-   * 決定 input 是否要顯示
-   * @param item
-   * @returns
-   */
-  public showSearchInput(item: any): boolean {
-    if (this.generalFormReplySvc.searchReq.options.some(x => x.label == item)) {
-      return this.generalFormReplySvc.searchReq.type == item;
-    }
-    return false;
-  }
-
-  /**
    * 因需要等待api先取回emp的idNo，所以增加此method
    */
   public async initReplyListReq() {
-    let empInfo = await this.generalFormReplySvc
-      .getEmpInfo(this.generalFormReplySvc.userInfoService.userNo)
+    let empInfo = await this.f2RSvc
+      .getEmpInfo(this.f2RSvc.userInfoService.userNo)
       .toPromise();
-    this.generalFormReplySvc.userInfoService = {
-      ...this.generalFormReplySvc.userInfoService,
+    this.f2RSvc.userInfoService = {
+      ...this.f2RSvc.userInfoService,
       ...empInfo[0],
     };
-    this.onSearchClick();
+    // this.onSearchClick();
   }
-
-  /**
-   * 查詢功能
-   *
-   */
-  private async onSearchClick() {
-
-    if (this.generalFormReplySvc.searchReq.type !== 'all') {
-
-      let ptExist = await this.getPatientInfo(this.generalFormReplySvc.searchReq);
-      if (!ptExist) {
-        // type !== 'all' 代表要找人 如果找不到 也不用找表單了 所以直接 return
-        return;
-      }
-    }
-
-    // 可能不用列出 type == 'all' 的情況 應該可以都在 getFormReplyList裡面做
-    // 先找 ptInfo 但是不用塞 banner
-    this.getFormReplyList(this.tmplNo);
-  }
-
-
-  /**
-   * 取得患者資訊(可以藉由 idNo 或是 chartNo)
-   * @returns
-   */
-  private async getPatientInfo(searchReq) {
-
-    const value = searchReq.type == 'chartNo' ? searchReq.values.chartNo : searchReq.values.idNo;
-
-    if (this.pSvc.patientInfo?.chartNo == value || this.pSvc.patientInfo?.idNo == value) {
-      return true;
-    }
-
-    let ptInfos: Array<any> = await this.generalFormReplySvc.getPatientInfo(searchReq.type, value).toPromise();
-    if (ptInfos.length == 0) {
-      this.showToastMsg(500, '查無此患者');
-      // 清空查詢 input欄位
-      if (searchReq.type == 'chartNo') {
-        this.generalFormReplySvc.searchReq.values.chartNo = '';
-      } else {
-        this.generalFormReplySvc.searchReq.values.idNo = '';
-      }
-
-      return false;
-    }
-    this.pSvc.patientInfo = ptInfos[0];
-    return true;
-  }
-
 
   /**
    * 暫存回覆內容
@@ -285,7 +197,7 @@ export class GeneralFormReplyComponent implements OnInit {
 
   private onDisplayQrCode(replyInfo: FormReplyInfo) {
 
-    this.generalFormReplySvc.getFormQrCodeUrl(replyInfo).subscribe((res) => {
+    this.f2RSvc.getFormQrCodeUrl(replyInfo).subscribe((res) => {
       this.qrCodeUrl = res;
       this.displayDialog[0].visible = true;
     });
@@ -315,7 +227,7 @@ export class GeneralFormReplyComponent implements OnInit {
    * @param tmplNo
    */
   private getFormTmplInfo(tmplNo: number) {
-    this.generalFormReplySvc.getFormTmplInfo(tmplNo).subscribe(
+    this.f2RSvc.getFormTmplInfo(tmplNo).subscribe(
       (res) => {
         this.tmplInfo = res;
       },
@@ -338,16 +250,16 @@ export class GeneralFormReplyComponent implements OnInit {
       replyUser: ''
     };
     params.tmplNo = tmplNo;
-    params.startTime = this.generalFormReplySvc.searchReq.values.date1;
-    this.generalFormReplySvc.searchReq.values.date2.setHours(23);
-    this.generalFormReplySvc.searchReq.values.date2.setMinutes(59);
-    params.endTime = this.generalFormReplySvc.searchReq.values.date2;
+    params.startTime = this.f2RSvc.searchReq.values.date1;
+    this.f2RSvc.searchReq.values.date2.setHours(23);
+    this.f2RSvc.searchReq.values.date2.setMinutes(59);
+    params.endTime = this.f2RSvc.searchReq.values.date2;
     params.replyUser = this.pSvc.patientInfo?.idNo || '';
 
     // 看是不是用 idNo去找(就算是用 chartNo 也已經在 getPatientInfo找到了)
-    if (this.generalFormReplySvc.searchReq.type === 'all') {
+    if (this.f2RSvc.searchReq.type === 'all') {
       // 沒有選人
-      this.generalFormReplySvc.getFormReplyListByTime(params).subscribe(
+      this.f2RSvc.getFormReplyListByTime(params).subscribe(
         (res) => {
           this.replyList = this.filterFormReplyList(res);
         },
@@ -358,7 +270,7 @@ export class GeneralFormReplyComponent implements OnInit {
       );
     } else {
       // 選人 用 idNo 去找
-      this.generalFormReplySvc.getFormReplyList(params).subscribe(
+      this.f2RSvc.getFormReplyList(params).subscribe(
         (res) => {
           this.replyList = this.filterFormReplyList(res);
         },
@@ -368,7 +280,7 @@ export class GeneralFormReplyComponent implements OnInit {
         }
       );
     }
-    this.btnEmpower(this.tabIndex);
+    // this.btnEmpower(this.tabIndex);
     this.displayProgress = false;
   }
 
@@ -379,7 +291,7 @@ export class GeneralFormReplyComponent implements OnInit {
    */
   private filterFormReplyList(replyList: Array<any>) {
 
-    let searchReq = this.generalFormReplySvc.searchReq;
+    let searchReq = this.f2RSvc.searchReq;
 
     return replyList.filter((reply) => {
       let replyTime = new Date(reply.replyTime);
@@ -398,7 +310,7 @@ export class GeneralFormReplyComponent implements OnInit {
    * 儲存回覆內容到DB
    */
   private setFormReply() {
-    this.generalFormReplySvc.setFormReply(this.formReplyInfo).subscribe(
+    this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
       (res) => {
         this.showToastMsg(200, '儲存成功');
         // 如果是按下繳交後，回到填寫紀錄清單
@@ -424,7 +336,7 @@ export class GeneralFormReplyComponent implements OnInit {
   private setReplyData(tranStatus: number = 20) {
 
     this.getSubmitData();
-    let loginUser = this.generalFormReplySvc.userInfoService.userNo;
+    let loginUser = this.f2RSvc.userInfoService.userNo;
 
     this.formReplyInfo.tmplNo = this.tmplInfo.tmplNo;
     this.formReplyInfo.replyUser = this.pSvc.patientInfo.idNo;
@@ -436,76 +348,6 @@ export class GeneralFormReplyComponent implements OnInit {
     this.formReplyInfo.systemUser = loginUser;
 
     this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
-  }
-
-  /**
-   * 因需增加當內容有異動時，頁籤要跳出確認視窗，所以要再多加一層判斷，判斷要切到哪個tab
-   * @param index
-   */
-  public onTabChange(index: number) {
-    if (index === 0 && this.changeFlag === true && this.tabIndex !== 0) {
-      this.showConfirm(
-        404,
-        '確定放棄填寫?',
-        '本次填寫資料將不存儲',
-        'confirmMessage'
-      );
-    }
-    if (index === 0 && this.changeFlag === false) {
-      this.tabChange(0);
-    }
-    if (index === 1) {
-      this.tabChange(1);
-    }
-  }
-
-  /**
-   * 實際切換頁籤的動作觸發
-   */
-  private tabChange(index: number) {
-    if (index === 0) {
-      this.tabClassActive = true;
-    } else {
-      this.tabClassActive = false;
-    }
-    // 如果頁籤回到填寫紀錄頁面
-    if (index === 0) {
-      // 清空 banner
-      this.bannerSvc.innerHtml = '';
-      this.getFormReplyList(this.tmplNo);
-      this.enableTabPanel = false;
-    }
-    this.tabIndex = index;
-    this.btnEmpower(index);
-  }
-
-  /**
-   * 功能按鈕賦能判斷
-   * @param index
-   * @param auth
-   */
-  private btnEmpower(index: number, auth: number = 0) {
-    // 如果頁籤是0
-    if (index === 0) {
-      // 表單紀錄頁籤 只有 搜尋可以出現
-      this.toolBarButtons[0].displayNone = false;
-      this.toolBarButtons[1].displayNone = true;
-      this.toolBarButtons[2].displayNone = true;
-
-      // 表單紀錄頁籤中搜尋條件要出現
-      this.displaySearchReq = false;
-
-    }
-    // 如果頁籤是1
-    if (index === 1) {
-      // 表單內容頁籤 只有 搜尋可以出現 暫存, 繳交
-      this.toolBarButtons[0].displayNone = true;
-      this.toolBarButtons[1].displayNone = false;
-      this.toolBarButtons[2].displayNone = false;
-
-      // 搜尋條件 在表單內容中不用顯示
-      this.displaySearchReq = true;
-    }
   }
 
   /**
@@ -542,7 +384,7 @@ export class GeneralFormReplyComponent implements OnInit {
     this.changeFlag = false;
     this.messageService.clear('confirmMessage');
     this.initDataVariable();
-    this.tabChange(0);
+    // this.tabChange(0);
   }
   /**
    * 取消放棄填寫內容動作
@@ -561,26 +403,13 @@ export class GeneralFormReplyComponent implements OnInit {
     // FormReply.ReplyStatus = 40: 撤銷回覆
     this.setReplyData(40);
     this.setFormReply();
-    this.tabChange(0);
-  }
-
-  public async onReplyListClick(replyInfo: FormReplyInfo) {
-
-    let searchReq = {
-      type: 'idNo',
-      values: {
-        idNo: replyInfo.replyUser
-      }
-    }
-    await this.getPatientInfo(searchReq);
-    this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
   }
 
   /**
    * 清單點擊事件
    * @param replyInfo
    */
-  public async onReplyListDbClick(replyInfo: FormReplyInfo) {
+  public async getReplyRecord(replyInfo: FormReplyInfo) {
 
     // 驗證繳交後可否異動
     await this.authTest(replyInfo);
@@ -597,15 +426,10 @@ export class GeneralFormReplyComponent implements OnInit {
 
         this.formReadOnly = true;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
-        // 不可以暫存跟繳交
-        this.toolBarButtons[1].disable = true;
-        this.toolBarButtons[2].disable = true;
       }
       else {
         this.formReadOnly = false;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
-        this.toolBarButtons[1].disable = false;
-        this.toolBarButtons[2].disable = false;
       }
     } else {
       // replyRule = 11, 21
@@ -613,13 +437,9 @@ export class GeneralFormReplyComponent implements OnInit {
       if (tranStatus > 30) {
         this.formReadOnly = true;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
-        this.toolBarButtons[1].disable = true;
-        this.toolBarButtons[2].disable = true;
       } else {
         this.formReadOnly = false;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
-        this.toolBarButtons[1].disable = false;
-        this.toolBarButtons[2].disable = false;
       }
     }
   }
@@ -635,21 +455,23 @@ export class GeneralFormReplyComponent implements OnInit {
       button = 20,
     }
     // 確認要有患者資訊 pSvc.patientInfo
-    this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
+    console.log(this.pSvc.patientInfo);
+    // this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
 
-    this.generalFormReplySvc.getFormReplyInfo(replyNo).subscribe(
+    this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
       (res) => {
+
         this.formReplyInfo = res;
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
-        this.triggerRefresh.emit({
-          form: this.tmplInfo.formTmpl,
-          submission: {
-            data: res.replyDesc,
-          },
-        });
-        // 如果是table點擊的事件，才要換頁
-        if (eventFromType[`${eventFrom}`] == 'tableList') {
-          this.tabChange(1);
+        // this.triggerRefresh.emit({
+        //   form: this.tmplInfo.formTmpl,
+        //   submission: {
+        //     data: res.replyDesc,
+        //   },
+        // });
+
+        this.submitData = {
+          data: res.replyDesc
         }
       },
       (err) => {
@@ -662,12 +484,8 @@ export class GeneralFormReplyComponent implements OnInit {
   // 新增 只能從外界帶過來
   private onNewReplyClick() {
 
-    // 確認要有患者資訊 pSvc.patientInfo
-    this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
     // 要清空
     this.initDataVariable();
-    // 切換至 表單內容頁籤
-    this.onTabChange(1);
   }
 
   /**
@@ -697,19 +515,5 @@ export class GeneralFormReplyComponent implements OnInit {
       summary: summary,
       detail: detail,
     });
-  }
-
-  private createBanner(patientInfo: any) {
-
-    let data = patientInfo;
-    let name = data.ptName;
-    let chartNo = data.chartNo;
-    let sex = data.sex;
-    let birthday: Date = new Date(data.birthday);
-    let age = data.age;
-
-    let banner: string = "";
-    banner = `<span><font size="5">${name} ${chartNo} ${sex} ${birthday.toDateTimeString('YYYY-MM-DD')} (${age})</font></span>`;
-    return banner;
   }
 }

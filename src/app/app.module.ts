@@ -7,14 +7,14 @@ import { MessagePopupModule, MessagePopupService } from '@cmuh/message-popup';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GeneralFormReplyModule } from './general-form-reply/general-form-reply.module';
+import { Form2ReplierModule } from './form2-replier/form2-replier.module';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    GeneralFormReplyModule,
+    Form2ReplierModule,
     BrowserAnimationsModule,
     HttpClientModule,
 

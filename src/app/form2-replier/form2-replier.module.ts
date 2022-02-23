@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { GeneralFormReplyRoutingModule } from './general-form-reply-routing.module';
-import { GeneralFormReplyComponent } from './general-form-reply.component';
+import { Form2ReplierRoutingModule } from './form2-replier-routing.module';
+import { Form2ReplierComponent } from './form2-replier.component';
 
 // primeng
 import { BlockUIModule } from 'primeng/blockui';
@@ -35,14 +35,14 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
 
 @NgModule({
   declarations: [
-    GeneralFormReplyComponent,
+    Form2ReplierComponent,
     FormTypePipe,
     FormReplyRulePipe,
     FormTeplyTranStatusPipe,
   ],
   imports: [
     CommonModule,
-    GeneralFormReplyRoutingModule,
+    Form2ReplierRoutingModule,
     FormsModule,
 
     // primeng
@@ -67,6 +67,6 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     // formIo
     FormioModule,
   ],
-  exports: [GeneralFormReplyComponent],
+  exports: [Form2ReplierComponent],
 })
-export class GeneralFormReplyModule {}
+export class Form2ReplierModule {}

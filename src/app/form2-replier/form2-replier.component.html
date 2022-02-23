@@ -1,26 +1,26 @@
 <div class="default-height">
   <p-toolbar>
     <div class="p-toolbar-group-left toolbar1">
-      <span [hidden]="displaySearchReq">
+      <!-- <span [hidden]="displaySearchReq">
         <div style="display: flex; align-items: center;">
-          <ng-container *ngFor="let radio of generalFormReplySvc.searchReq.options">
+          <ng-container *ngFor="let radio of f2RSvc.searchReq.options">
             <div class="toolbar1-content">
               <p-radioButton [label]="radio.chtName" [value]="radio.label"
-                [(ngModel)]="generalFormReplySvc.searchReq.type">
+                [(ngModel)]="f2RSvc.searchReq.type">
               </p-radioButton>
             </div>
           </ng-container>
           <div class="toolbar1-content">
-            <input *ngIf="showSearchInput('chartNo')" [(ngModel)]="generalFormReplySvc.searchReq.values.chartNo"
+            <input *ngIf="showSearchInput('chartNo')" [(ngModel)]="f2RSvc.searchReq.values.chartNo"
               placeholder="請輸入病歷號" />
-            <input *ngIf="showSearchInput('idNo')" [(ngModel)]="generalFormReplySvc.searchReq.values.idNo"
+            <input *ngIf="showSearchInput('idNo')" [(ngModel)]="f2RSvc.searchReq.values.idNo"
               placeholder="請輸入身分證號" />
           </div>
           <div class="toolbar1-content">
             <p style="display: inline;">查詢期間：</p>
           </div>
           <div class="toolbar1-content">
-            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="generalFormReplySvc.searchReq.values.date1">
+            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="f2RSvc.searchReq.values.date1">
             </p-calendar>
           </div>
           <div class="toolbar1-content">
@@ -29,7 +29,7 @@
             </p>
           </div>
           <div class="toolbar1-content">
-            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="generalFormReplySvc.searchReq.values.date2">
+            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="f2RSvc.searchReq.values.date2">
             </p-calendar>
           </div>
           <div class="toolbar1-content">
@@ -39,17 +39,18 @@
           </div>
           <div class="toolbar1-content">
             <p-dropdown [options]="replyStatusOptions" optionLabel="name" optionValue="value"
-              [(ngModel)]="generalFormReplySvc.searchReq.values.status">
+              [(ngModel)]="f2RSvc.searchReq.values.status">
             </p-dropdown>
           </div>
         </div>
-      </span>
+      </span> -->
       <ng-container *ngFor="let btn of toolBarButtons">
         <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
           class="{{ btn.class }}" [hidden]="btn.displayNone" [disabled]="btn.disable" (click)="btn.onClick()"></button>
       </ng-container>
     </div>
   </p-toolbar>
+
   <div class="chip-info-margin">
     <ng-container *ngIf="tmplInfo.tmplNo < 0">
       <span class="change">
@@ -70,7 +71,7 @@
     </ng-container>
   </div>
 
-  <div class="p-tabview">
+  <!-- <div class="p-tabview">
     <ul class="p-tabview-nav">
       <li [ngClass]="{ 'p-highlight': tabClassActive }">
         <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(0)"><span
@@ -84,9 +85,9 @@
             class="p-tabview-title ng-star-inserted">表單內容</span></a>
       </li>
     </ul>
-  </div>
+  </div> -->
 
-  <p-tabView id="customTabUl" styleClass="tabview-default" [(activeIndex)]="tabIndex">
+  <!-- <p-tabView id="customTabUl" styleClass="tabview-default" [(activeIndex)]="tabIndex">
     <p-tabPanel header="填寫紀錄">
       <p-table [value]="replyList" selectionMode="single" [(selection)]="selectedReplyInfo" [scrollable]="true"
         [scrollHeight]="'flex'" dataKey="replyNo">
@@ -123,7 +124,9 @@
       <formio [readOnly]="formReadOnly" [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
         (change)="onChange($event)"></formio>
     </p-tabPanel>
-  </p-tabView>
+  </p-tabView> -->
+  <formio [readOnly]="formReadOnly" [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
+        (change)="onChange($event)"></formio>
 </div>
 
 <p-toast key="generalFormReplyMessage" position="bottom-right"></p-toast>

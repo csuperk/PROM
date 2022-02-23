@@ -14,7 +14,7 @@ import '@cmuh/extensions';
 @Injectable({
   providedIn: 'root',
 })
-export class GeneralFormReplyService {
+export class Form2ReplierService {
 
   public searchReq = {
     type: "all",
@@ -35,9 +35,11 @@ export class GeneralFormReplyService {
   public userInfoService;
   public tmplNo;
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
-    this.userInfoService = this.jwtHelper.decodeAuthorized(
-      localStorage.getItem('userInfo')
-    );
+    // this.userInfoService = this.jwtHelper.decodeAuthorized(
+    //   localStorage.getItem('userInfo')
+    // );
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiaXJ0aGRheSI6IjE5NzYtMDEtMDFUMDA6MDA6MDArMDg6MDAiLCJlTWFpbCI6IjEyMzQ1NkBnbWFpbC5jb20iLCJpZE5vIjoiQTIyMzQ1Njc4OSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsInJlc3BvbnNpYmlsaXR5IjoiMUE4MCIsInNleCI6IjIiLCJ1c2VySWQiOiJBMzA2NjYiLCJ1c2VySW1hZ2UiOm51bGwsInVzZXJOYW1lIjoi5ris6Kmm5biz6JmfIiwidXNlck5vIjozMDY2Nn0._v8-C-E0XY-c48bdtW44WY2j8ba5W_q0LM55v1fkh-Q';
+    this.userInfoService = this.jwtHelper.decodeAuthorized(token);
   }
 
   public getPatientInfo(type: string, value: string): Observable<Array<any>> {

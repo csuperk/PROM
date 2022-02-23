@@ -1,12 +1,12 @@
-import { GeneralFormReplyComponent } from './general-form-reply/general-form-reply.component';
+import { Form2ReplierComponent } from './form2-replier/form2-replier.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'general-form-reply', pathMatch: 'full' },
+  { path: '', redirectTo: 'form2-replier', pathMatch: 'full' },
   {
-    path: 'general-form-reply',
-    component: GeneralFormReplyComponent,
+    path: 'form2-replier',
+    component: Form2ReplierComponent,
   },
 ];
 
