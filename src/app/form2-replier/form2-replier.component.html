@@ -1,75 +1,37 @@
 <div class="default-height">
-  <p-toolbar>
-    <div class="p-toolbar-group-left toolbar1">
-      <!-- <span [hidden]="displaySearchReq">
-        <div style="display: flex; align-items: center;">
-          <ng-container *ngFor="let radio of f2RSvc.searchReq.options">
-            <div class="toolbar1-content">
-              <p-radioButton [label]="radio.chtName" [value]="radio.label"
-                [(ngModel)]="f2RSvc.searchReq.type">
-              </p-radioButton>
-            </div>
-          </ng-container>
-          <div class="toolbar1-content">
-            <input *ngIf="showSearchInput('chartNo')" [(ngModel)]="f2RSvc.searchReq.values.chartNo"
-              placeholder="請輸入病歷號" />
-            <input *ngIf="showSearchInput('idNo')" [(ngModel)]="f2RSvc.searchReq.values.idNo"
-              placeholder="請輸入身分證號" />
-          </div>
-          <div class="toolbar1-content">
-            <p style="display: inline;">查詢期間：</p>
-          </div>
-          <div class="toolbar1-content">
-            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="f2RSvc.searchReq.values.date1">
-            </p-calendar>
-          </div>
-          <div class="toolbar1-content">
-            <p style="display: inline;">
-              至
-            </p>
-          </div>
-          <div class="toolbar1-content">
-            <p-calendar dateFormat="yy-mm-dd" [(ngModel)]="f2RSvc.searchReq.values.date2">
-            </p-calendar>
-          </div>
-          <div class="toolbar1-content">
-            <p style="display: inline;">
-              回覆狀態
-            </p>
-          </div>
-          <div class="toolbar1-content">
-            <p-dropdown [options]="replyStatusOptions" optionLabel="name" optionValue="value"
-              [(ngModel)]="f2RSvc.searchReq.values.status">
-            </p-dropdown>
-          </div>
-        </div>
-      </span> -->
-      <ng-container *ngFor="let btn of toolBarButtons">
-        <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
-          class="{{ btn.class }}" [hidden]="btn.displayNone" [disabled]="btn.disable" (click)="btn.onClick()"></button>
+  
+  <ng-container *ngIf="showToolbar">
+    <p-toolbar>
+      <div class="p-toolbar-group-left toolbar1">
+        <ng-container *ngFor="let btn of toolBarButtons">
+          <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
+            class="{{ btn.class }}" [hidden]="btn.displayNone" [disabled]="btn.disable" (click)="btn.onClick()"></button>
+        </ng-container>
+      </div>
+    </p-toolbar>
+  </ng-container>
+
+  <ng-container *ngIf="showTag">
+    <div class="chip-info-margin">
+      <ng-container *ngIf="tmplInfo.tmplNo < 0">
+        <span class="change">
+          <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="primary"></p-tag>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="tmplInfo.tmplNo > 0">
+        <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="success"></p-tag>
+      </ng-container>
+  
+      <p-tag icon="pi pi-info-circle" value="表單編號: {{ tmplInfo.tmplNo }}" severity="info"></p-tag>
+      <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag>
+      <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
+        <p-tag icon="pi pi-exclamation-triangle" value="限填一份" severity="warning"></p-tag>
+      </ng-container>
+      <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
+        <p-tag icon="pi pi-exclamation-triangle" value="繳交後不可異動" severity="warning"></p-tag>
       </ng-container>
     </div>
-  </p-toolbar>
-
-  <div class="chip-info-margin">
-    <ng-container *ngIf="tmplInfo.tmplNo < 0">
-      <span class="change">
-        <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="primary"></p-tag>
-      </span>
-    </ng-container>
-    <ng-container *ngIf="tmplInfo.tmplNo > 0">
-      <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="success"></p-tag>
-    </ng-container>
-
-    <p-tag icon="pi pi-info-circle" value="表單編號: {{ tmplInfo.tmplNo }}" severity="info"></p-tag>
-    <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag>
-    <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
-      <p-tag icon="pi pi-exclamation-triangle" value="限填一份" severity="warning"></p-tag>
-    </ng-container>
-    <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
-      <p-tag icon="pi pi-exclamation-triangle" value="繳交後不可異動" severity="warning"></p-tag>
-    </ng-container>
-  </div>
+  </ng-container>
 
   <!-- <div class="p-tabview">
     <ul class="p-tabview-nav">

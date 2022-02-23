@@ -24,6 +24,15 @@ export class Form2ReplierComponent implements OnInit {
   @Input()
   public tmplNo: number;
 
+  @Input()
+  public showTag: boolean = true;
+
+  @Input()
+  public replyInfo: FormReplyInfo;
+
+  @Input()
+  public showToolbar: boolean = true;
+
   public displaySearchReq: boolean = false;
 
   public replyStatusOptions: Array<any> = [
@@ -109,16 +118,12 @@ export class Form2ReplierComponent implements OnInit {
     this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
-    // this.btnEmpower(1);
-
-    this.getFormTmplInfo(20100);
-    let abc: FormReplyInfo = { "replyNo": 2, "tmplNo": 20100, "replyUser": "L124065781", "replyTime": new Date("2021-11-17T16:20:41.540"), "tranUser": 0, "tranTime": new Date("2999-12-31T08:00:00.000"), "tranStatus": 20, "tranUserName": "", systemUser: 33573 }
-    this.getReplyRecord(abc);
 
   }
 
   ngOnChanges(): void {
     this.getFormTmplInfo(this.tmplNo);
+    this.getReplyRecord(this.replyInfo);
     this.initReplyListReq();
   }
 
@@ -229,6 +234,7 @@ export class Form2ReplierComponent implements OnInit {
   private getFormTmplInfo(tmplNo: number) {
     this.f2RSvc.getFormTmplInfo(tmplNo).subscribe(
       (res) => {
+        console.log('tmplInfo',this.tmplInfo)
         this.tmplInfo = res;
       },
       (err) => {
