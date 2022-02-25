@@ -450,6 +450,7 @@ export class Form2ReplierComponent implements OnInit {
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
     }
+    this.displayProgress = false;
   }
 
   /**
