@@ -121,8 +121,11 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   ngOnChanges(): void {
+    this.initDataVariable();
+    this.displayProgress = true;
     this.getReplyRecord(this.replyInfo);
     this.initReplyListReq();
+
   }
 
 
@@ -500,6 +503,7 @@ export class Form2ReplierComponent implements OnInit {
     this.tempSubmitData = {};
     this.submitData = {};
     this.formReplyInfo = new FormReplyInfo();
+    this.tmplInfo = new TmplInfo();
   }
   /**
    * 顯示toast訊息
