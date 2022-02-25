@@ -114,7 +114,6 @@ export class Form2ReplierComponent implements OnInit {
 
     // 如果是透過input進來的，就不用再取url的連結
     this.urlQueryNavigate();
-
     this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
@@ -122,7 +121,6 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   ngOnChanges(): void {
-    this.getFormTmplInfo(this.tmplNo);
     this.getReplyRecord(this.replyInfo);
     this.initReplyListReq();
   }
@@ -426,6 +424,7 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest(replyInfo) {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
+    this.tmplInfo = await this.f2RSvc.getFormTmplInfo(this.tmplNo).toPromise();
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {

@@ -1,10 +1,14 @@
 .toolbar1 {
   display: flex;
   align-items: center;
+  // padding: 0.5rem;
 }
 .toolbar1-content {
   display: inline;
   margin: 0 10px 0 0;
+}
+:host ::ng-deep .p-toolbar {
+  padding: 0.5rem 0.5rem;
 }
 
 // 給高度，扣掉外層的
