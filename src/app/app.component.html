@@ -1,3 +1,7 @@
-<div style="height:100vh">
-  <form2-replier [tmplNo]="tmplNo"></form2-replier>
+<div style="height: 100vh">
+  <form2-replier
+    [tmplNo]="tmplNo"
+    [replyInfo]="replyInfo"
+    (result)="showMsg($event)"
+  ></form2-replier>
 </div>

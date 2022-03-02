@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 
@@ -20,7 +20,6 @@ import { Form2ReplierService } from './form2-replier.service';
   styleUrls: ['./form2-replier.component.scss'],
 })
 export class Form2ReplierComponent implements OnInit {
-
   @Input()
   public tmplNo: number;
 
@@ -33,17 +32,19 @@ export class Form2ReplierComponent implements OnInit {
   // @Input()
   // public showToolbar: boolean = true;
 
+  @Output() result = new EventEmitter<any>();
+
   public displaySearchReq: boolean = false;
 
   public replyStatusOptions: Array<any> = [
-    { name: "全部", value: 0 },
-    { name: "尚未回覆，預取回覆鍵值", value: 10 },
-    { name: "暫存回覆", value: 20 },
-    { name: "繳交回覆，但權責單位尚未收件", value: 30 },
-    { name: "撤銷回覆", value: 40 },
-    { name: "已經收件", value: 50 },
-    { name: "處理完成", value: 60 },
-    { name: "作廢回覆", value: 80 }
+    { name: '全部', value: 0 },
+    { name: '尚未回覆，預取回覆鍵值', value: 10 },
+    { name: '暫存回覆', value: 20 },
+    { name: '繳交回覆，但權責單位尚未收件', value: 30 },
+    { name: '撤銷回覆', value: 40 },
+    { name: '已經收件', value: 50 },
+    { name: '處理完成', value: 60 },
+    { name: '作廢回覆', value: 80 },
   ];
 
   // 回覆清單
@@ -79,7 +80,7 @@ export class Form2ReplierComponent implements OnInit {
     {
       title: 'QR-Code',
       visible: false,
-    }
+    },
   ];
 
   /*操控formIo的相關變數*/
@@ -108,16 +109,14 @@ export class Form2ReplierComponent implements OnInit {
     private pSvc: PatientInfoService,
     private bannerSvc: BannerService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     // 如果是透過input進來的，就不用再取url的連結
     this.urlQueryNavigate();
     this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
-
   }
 
   ngOnChanges(): void {
@@ -125,13 +124,10 @@ export class Form2ReplierComponent implements OnInit {
     this.displayProgress = true;
     this.getReplyRecord(this.replyInfo);
     this.initReplyListReq();
-
   }
-
 
   // urlQuery時 導向的
   private urlQueryNavigate() {
-
     // 首先先抓住 tmplNo 表單編號
     this.tmplNo = isNaN(parseInt(this.route.snapshot.paramMap.get('tmplNo')))
       ? this.tmplNo
@@ -150,10 +146,8 @@ export class Form2ReplierComponent implements OnInit {
 
     // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
     if (this.route.snapshot.queryParams['type'] !== undefined) {
-
       this.onNewReplyClick();
     }
-
   }
 
   /**
@@ -202,7 +196,6 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   private onDisplayQrCode(replyInfo: FormReplyInfo) {
-
     this.f2RSvc.getFormQrCodeUrl(replyInfo).subscribe((res) => {
       this.qrCodeUrl = res;
       this.displayDialog[0].visible = true;
@@ -235,7 +228,6 @@ export class Form2ReplierComponent implements OnInit {
   private getFormTmplInfo(tmplNo: number) {
     this.f2RSvc.getFormTmplInfo(tmplNo).subscribe(
       (res) => {
-        console.log('tmplInfo',this.tmplInfo)
         this.tmplInfo = res;
       },
       (err) => {
@@ -249,12 +241,11 @@ export class Form2ReplierComponent implements OnInit {
    * 會有三種找法, 1 找全部人, 2 用身分證, 3 用病歷號 (後兩者也都是用 idNo)
    */
   private getFormReplyList(tmplNo: number) {
-
     let params: FormReplyListTimeReq = {
       tmplNo,
-      startTime: new Date,
-      endTime: new Date,
-      replyUser: ''
+      startTime: new Date(),
+      endTime: new Date(),
+      replyUser: '',
     };
     params.tmplNo = tmplNo;
     params.startTime = this.f2RSvc.searchReq.values.date1;
@@ -297,26 +288,30 @@ export class Form2ReplierComponent implements OnInit {
    * @returns
    */
   private filterFormReplyList(replyList: Array<any>) {
-
     let searchReq = this.f2RSvc.searchReq;
 
-    return replyList.filter((reply) => {
-      let replyTime = new Date(reply.replyTime);
-      return (searchReq.values.date1 <= replyTime &&
-        searchReq.values.date2 >= replyTime);
-    }).filter((reply) => {
-      if (searchReq.values.status == 0) {
-        return true;
-      } else {
-        return reply.tranStatus == searchReq.values.status;
-      }
-    });
+    return replyList
+      .filter((reply) => {
+        let replyTime = new Date(reply.replyTime);
+        return (
+          searchReq.values.date1 <= replyTime &&
+          searchReq.values.date2 >= replyTime
+        );
+      })
+      .filter((reply) => {
+        if (searchReq.values.status == 0) {
+          return true;
+        } else {
+          return reply.tranStatus == searchReq.values.status;
+        }
+      });
   }
 
   /**
    * 儲存回覆內容到DB
    */
   private setFormReply() {
+    let resultInfo = { data: this.formReplyInfo, apiResult: false };
     this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
       (res) => {
         this.showToastMsg(200, '儲存成功');
@@ -328,10 +323,16 @@ export class Form2ReplierComponent implements OnInit {
         this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
         this.changeFlag = false;
+        resultInfo.data = this.formReplyInfo;
+        resultInfo.apiResult = true;
+        this.result.emit(resultInfo);
       },
       (err) => {
         this.showToastMsg(500, '儲存失敗');
         this.displayProgress = false;
+        resultInfo.data = this.formReplyInfo;
+        resultInfo.apiResult = false;
+        this.result.emit(resultInfo);
       }
     );
   }
@@ -341,12 +342,15 @@ export class Form2ReplierComponent implements OnInit {
    * @param tranStatus
    */
   private setReplyData(tranStatus: number = 20) {
-
     this.getSubmitData();
+
     let loginUser = this.f2RSvc.userInfoService.userNo;
 
     this.formReplyInfo.tmplNo = this.tmplInfo.tmplNo;
-    this.formReplyInfo.replyUser = this.pSvc.patientInfo.idNo;
+    this.formReplyInfo.replyUser =
+      this.pSvc.patientInfo === undefined
+        ? this.formReplyInfo.replyUser
+        : this.pSvc.patientInfo.idNo;
     this.formReplyInfo.replyTime = new Date();
     this.formReplyInfo.replyDesc = this.submitData.data;
     this.formReplyInfo.tranUser = loginUser;
@@ -417,7 +421,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyInfo
    */
   public async getReplyRecord(replyInfo: FormReplyInfo) {
-
     // 驗證繳交後可否異動
     await this.authTest(replyInfo);
 
@@ -431,11 +434,9 @@ export class Form2ReplierComponent implements OnInit {
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {
-
         this.formReadOnly = true;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
-      }
-      else {
+      } else {
         this.formReadOnly = false;
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
@@ -464,12 +465,11 @@ export class Form2ReplierComponent implements OnInit {
       button = 20,
     }
     // 確認要有患者資訊 pSvc.patientInfo
-    console.log(this.pSvc.patientInfo);
+    // console.log(this.pSvc.patientInfo);
     // this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
 
     this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
       (res) => {
-
         this.formReplyInfo = res;
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
         // this.triggerRefresh.emit({
@@ -480,8 +480,8 @@ export class Form2ReplierComponent implements OnInit {
         // });
 
         this.submitData = {
-          data: res.replyDesc
-        }
+          data: res.replyDesc,
+        };
       },
       (err) => {
         this.showToastMsg(500, '回覆資料取得錯誤');
@@ -492,7 +492,6 @@ export class Form2ReplierComponent implements OnInit {
 
   // 新增 只能從外界帶過來
   private onNewReplyClick() {
-
     // 要清空
     this.initDataVariable();
   }
