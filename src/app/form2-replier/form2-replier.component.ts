@@ -120,6 +120,7 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   ngOnChanges(): void {
+    this.messageService.clear();
     this.initDataVariable();
     this.displayProgress = true;
     this.getReplyRecord(this.replyInfo);
