@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { Form2ReplierRoutingModule } from './form2-replier-routing.module';
 import { Form2ReplierComponent } from './form2-replier.component';
 
 // primeng
@@ -42,7 +41,6 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
   ],
   imports: [
     CommonModule,
-    Form2ReplierRoutingModule,
     FormsModule,
 
     // primeng

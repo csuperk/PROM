@@ -29,8 +29,8 @@ export class Form2ReplierComponent implements OnInit {
   @Input()
   public replyInfo: FormReplyInfo;
 
-  // @Input()
-  // public showToolbar: boolean = true;
+  @Input()
+  public showToolbar: boolean = true;
 
   @Output() result = new EventEmitter<any>();
 
@@ -167,7 +167,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 暫存回覆內容
    */
-   public onTempReplyClick() {
+  private onTempReplyClick() {
     this.displayProgress = true;
     this.setReplyData(20);
     this.setFormReply();
@@ -176,7 +176,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 繳交回覆內容
    */
-  public onSaveReplyClick() {
+  private onSaveReplyClick() {
     this.displayProgress = true;
     this.setReplyData(30);
     this.setFormReply();
