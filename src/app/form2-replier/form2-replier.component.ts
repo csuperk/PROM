@@ -120,7 +120,6 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   ngOnChanges(): void {
-    this.messageService.clear();
     this.initDataVariable();
     this.displayProgress = true;
     this.getReplyRecord(this.replyInfo);
@@ -321,7 +320,7 @@ export class Form2ReplierComponent implements OnInit {
           this.onConfirm();
         }
         // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
-        this.getFormReplyList(this.tmplNo);
+        // this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
         this.changeFlag = false;
         resultInfo.data = this.formReplyInfo;
