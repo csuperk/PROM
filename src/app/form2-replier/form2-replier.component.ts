@@ -311,14 +311,15 @@ export class Form2ReplierComponent implements OnInit {
    * 儲存回覆內容到DB
    */
   private setFormReply() {
-    let resultInfo = { data: this.formReplyInfo, apiResult: false };
+    let resultInfo = {
+      data: this.formReplyInfo,
+      apiResult: false,
+      tmpl: this.tmplInfo,
+    };
     this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
       (res) => {
         this.showToastMsg(200, '儲存成功');
-        // 如果是按下繳交後，回到填寫紀錄清單
-        if (this.formReplyInfo.tranStatus === 30) {
-          this.onConfirm();
-        }
+
         // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
         // this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
