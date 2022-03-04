@@ -32,61 +32,6 @@
       </ng-container>
     </div>
   </ng-container>
-
-  <!-- <div class="p-tabview">
-    <ul class="p-tabview-nav">
-      <li [ngClass]="{ 'p-highlight': tabClassActive }">
-        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(0)"><span
-            class="p-tabview-title ng-star-inserted">表單紀錄</span></a>
-      </li>
-      <li [ngClass]="{
-          'p-highlight': !tabClassActive,
-          'p-disabled': !enableTabPanel
-        }" disabled>
-        <a class="p-tabview-nav-link p-ripple" (click)="onTabChange(1)"><span
-            class="p-tabview-title ng-star-inserted">表單內容</span></a>
-      </li>
-    </ul>
-  </div> -->
-
-  <!-- <p-tabView id="customTabUl" styleClass="tabview-default" [(activeIndex)]="tabIndex">
-    <p-tabPanel header="填寫紀錄">
-      <p-table [value]="replyList" selectionMode="single" [(selection)]="selectedReplyInfo" [scrollable]="true"
-        [scrollHeight]="'flex'" dataKey="replyNo">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>表單編號</th>
-            <th>回覆狀態</th>
-            <th>回覆者</th>
-            <th pSortableColumn="replyTime">
-              回覆時間<p-sortIcon field="replyTime"></p-sortIcon>
-            </th>
-            <th>單位異動人員</th>
-            <th>功能</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-reply>
-          <tr [pSelectableRow]="reply" (click)="onReplyListClick(reply)" (dblclick)="onReplyListDbClick(reply)">
-            <td>{{ reply.replyNo }}</td>
-            <td>{{ reply.tranStatus | formTeplyTranStatus }}</td>
-            <td>{{ reply.replyUser }} {{ reply.replyUserName }}</td>
-            <td>{{ reply.replyTime | date: "yyyy-MM-dd HH:mm" }}</td>
-            <td>{{ reply.tranUserName }}</td>
-            <td>
-              <ng-container *ngFor="let btn of tableFunctionBtn">
-                <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
-                  class="{{ btn.class }}" [disabled]="btn.disable" (click)="btn.onClick(reply)"></button>
-              </ng-container>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-tabPanel>
-    <p-tabPanel header="表單內容" id="formIoDispplay" [disabled]="!enableTabPanel">
-      <formio [readOnly]="formReadOnly" [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
-        (change)="onChange($event)"></formio>
-    </p-tabPanel>
-  </p-tabView> -->
   <formio [readOnly]="formReadOnly" [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
         (change)="onChange($event)"></formio>
 </div>
@@ -134,12 +79,6 @@
     </div>
   </ng-template>
 </p-toast>
-
-<p-dialog [header]="displayDialog[0].title" [(visible)]="displayDialog[0].visible" [style]="{ width: '330px' }">
-  <qr-code value="{{qrCodeUrl}}" size="300" errorCorrectionLevel="M" centerImageSrc="../../assets/cmuh.png"
-    centerImageSize="80"></qr-code>
-  <div class="qr-url-size">{{qrCodeUrl}}</div>
-</p-dialog>
 
 <!-- 讀取資料的處理動畫 -->
 <p-blockUI [blocked]="displayProgress"></p-blockUI>

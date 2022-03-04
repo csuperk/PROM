@@ -20,18 +20,23 @@ import { Form2ReplierService } from './form2-replier.service';
   styleUrls: ['./form2-replier.component.scss'],
 })
 export class Form2ReplierComponent implements OnInit {
+  /**表單樣板 */
   @Input()
   public tmplNo: number;
 
+  /**表單資訊顯示控制 */
   @Input()
   public showTag: boolean = true;
 
+  /**填答參數 */
   @Input()
   public replyInfo: FormReplyInfo;
 
+  /**工具列顯示控制 */
   @Input()
   public showToolbar: boolean = true;
 
+  /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
 
   public displaySearchReq: boolean = false;
@@ -49,8 +54,6 @@ export class Form2ReplierComponent implements OnInit {
 
   // 回覆清單
   public replyList: FormReplyList[];
-  // 被選擇到的清單列
-  public selectedReplyInfo: FormReplyInfo;
 
   // 顯示處理進度
   public displayProgress = false;
@@ -76,13 +79,6 @@ export class Form2ReplierComponent implements OnInit {
     },
   ];
 
-  public displayDialog = [
-    {
-      title: 'QR-Code',
-      visible: false,
-    },
-  ];
-
   /*操控formIo的相關變數*/
   // 操控formIo refresh
   public triggerRefresh;
@@ -98,22 +94,18 @@ export class Form2ReplierComponent implements OnInit {
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
   // 判斷是否異動formIo
-  public changeFlag = false;
-
-  // 顯示QR-Code
-  public qrCodeUrl: string = '';
+  // public changeFlag = false;
 
   constructor(
     public f2RSvc: Form2ReplierService,
     private messageService: MessageService,
     private pSvc: PatientInfoService,
-    private bannerSvc: BannerService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     // 如果是透過input進來的，就不用再取url的連結
-    this.urlQueryNavigate();
+    // this.urlQueryNavigate();
     this.initReplyListReq();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
@@ -127,28 +119,28 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   // urlQuery時 導向的
-  private urlQueryNavigate() {
-    // 首先先抓住 tmplNo 表單編號
-    this.tmplNo = isNaN(parseInt(this.route.snapshot.paramMap.get('tmplNo')))
-      ? this.tmplNo
-      : parseInt(this.route.snapshot.paramMap.get('tmplNo'));
-    // 根據表單編號 先去 FormTmpl 抓表單資訊
-    this.getFormTmplInfo(this.tmplNo);
+  // private urlQueryNavigate() {
+  //   // 首先先抓住 tmplNo 表單編號
+  //   this.tmplNo = isNaN(parseInt(this.route.snapshot.paramMap.get('tmplNo')))
+  //     ? this.tmplNo
+  //     : parseInt(this.route.snapshot.paramMap.get('tmplNo'));
+  //   // 根據表單編號 先去 FormTmpl 抓表單資訊
+  //   this.getFormTmplInfo(this.tmplNo);
 
-    // queryParams 先抓出 route 傳遞過來的 queryParams
-    let queryParams = this.route.snapshot.queryParams;
+  //   // queryParams 先抓出 route 傳遞過來的 queryParams
+  //   let queryParams = this.route.snapshot.queryParams;
 
-    // 如果有傳 chartNo, 則要把 搜尋條件(searchReq) 改為 chartNo
-    if (queryParams['chartNo'] !== undefined) {
-      this.f2RSvc.searchReq.type = 'chartNo';
-      this.f2RSvc.searchReq.values.chartNo = queryParams['chartNo'];
-    }
+  //   // 如果有傳 chartNo, 則要把 搜尋條件(searchReq) 改為 chartNo
+  //   if (queryParams['chartNo'] !== undefined) {
+  //     this.f2RSvc.searchReq.type = 'chartNo';
+  //     this.f2RSvc.searchReq.values.chartNo = queryParams['chartNo'];
+  //   }
 
-    // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
-    if (this.route.snapshot.queryParams['type'] !== undefined) {
-      this.onNewReplyClick();
-    }
-  }
+  //   // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
+  //   if (this.route.snapshot.queryParams['type'] !== undefined) {
+  //     this.onNewReplyClick();
+  //   }
+  // }
 
   /**
    * 因需要等待api先取回emp的idNo，所以增加此method
@@ -195,12 +187,6 @@ export class Form2ReplierComponent implements OnInit {
     );
   }
 
-  private onDisplayQrCode(replyInfo: FormReplyInfo) {
-    this.f2RSvc.getFormQrCodeUrl(replyInfo).subscribe((res) => {
-      this.qrCodeUrl = res;
-      this.displayDialog[0].visible = true;
-    });
-  }
 
   /**
    * 當formIo有異動的時候
@@ -209,7 +195,7 @@ export class Form2ReplierComponent implements OnInit {
   public onChange(event) {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
-    this.changeFlag = true;
+    // this.changeFlag = true;
   }
 
   /**
@@ -323,7 +309,7 @@ export class Form2ReplierComponent implements OnInit {
         // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
         // this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
-        this.changeFlag = false;
+        // this.changeFlag = false;
         resultInfo.data = this.formReplyInfo;
         resultInfo.apiResult = true;
         this.result.emit(resultInfo);
@@ -393,7 +379,7 @@ export class Form2ReplierComponent implements OnInit {
    * 確定放棄填寫內容
    */
   public onConfirm() {
-    this.changeFlag = false;
+    // this.changeFlag = false;
     this.messageService.clear('confirmMessage');
     this.initDataVariable();
     // this.tabChange(0);
