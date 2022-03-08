@@ -1,5 +1,5 @@
 {
-  "name": "general-form-reply",
+  "name": "@cmuh-view/form2-replier",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
