@@ -22,7 +22,7 @@
         <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="success"></p-tag>
       </ng-container> -->
   
-      <p-tag icon="pi pi-info-circle" value="表單資訊:{{ tmplInfo.tmplNo | formType }}  {{ tmplInfo.tmplNo }}  {{ tmplInfo.formName }}  {{replyInfo.replyDesc.ptName}}" severity="info"></p-tag>
+      <p-tag icon="pi pi-info-circle" value="表單資訊:{{ tmplInfo.tmplNo | formType }}  {{ tmplInfo.tmplNo }}  {{ tmplInfo.formName }}  {{replyInfo.replyUserName}}" severity="info"></p-tag>
       <!-- <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag> -->
       <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
         <p-tag icon="pi pi-exclamation-triangle" value="限填一份" severity="warning"></p-tag>
