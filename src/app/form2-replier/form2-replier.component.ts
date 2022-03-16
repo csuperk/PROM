@@ -20,9 +20,6 @@ import { Form2ReplierService } from './form2-replier.service';
   styleUrls: ['./form2-replier.component.scss'],
 })
 export class Form2ReplierComponent implements OnInit {
-  /**表單樣板 */
-  @Input()
-  public tmplNo: number;
 
   /**表單資訊顯示控制 */
   @Input()
@@ -417,7 +414,7 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest(replyInfo) {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
-    this.tmplInfo = await this.f2RSvc.getFormTmplInfo(this.tmplNo).toPromise();
+    this.tmplInfo = await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise();
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {
