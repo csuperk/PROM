@@ -1,13 +1,8 @@
 import { Injectable, isDevMode } from '@angular/core';
-import { CmuhHttpService } from '@cmuh/http';
 import { Observable } from 'rxjs';
-import {
-  FormReplyInfo,
-  FormReplyListTimeReq,
-  FormReplyListReq,
-  FormReplyList,
-  TmplInfo,
-} from '@cmuh-viewmodel/form-master';
+
+import { CmuhHttpService } from '@cmuh/http';
+import { FormReplyInfo, FormReplyReq, FormTmplInfo, FormTmplReq } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
 
@@ -15,22 +10,6 @@ import '@cmuh/extensions';
   providedIn: 'root',
 })
 export class Form2ReplierService {
-
-  public searchReq = {
-    type: "all",
-    values: {
-      date1: new Date().addMonths(-4),
-      date2: new Date(),
-      idNo: "",
-      chartNo: "",
-      status: 0
-    },
-    options: [
-      { chtName: '全部患者', label: 'all' },
-      { chtName: '病歷號', label: 'chartNo' },
-      { chtName: '身分證號', label: 'idNo' }
-    ]
-  };
 
   public userInfoService;
   public tmplNo;
@@ -47,18 +26,21 @@ export class Form2ReplierService {
    * @param empNo
    * @returns
    */
-  public getEmpInfo(empNo: number): Observable<TmplInfo> {
-    const url = `/webapi/formMaster/getEmpInfo`;
-    return this.http.get<TmplInfo>(`${url}/${empNo}`);
+  public getEmpInfo(empNo: number): Observable<FormTmplInfo> {
+    // const url = `/webapi/formMaster/getEmpInfo`;
+    const url = `/webapi/form2Kernel/form2Auth/getEmpNoAuth`;
+    return this.http.get<FormTmplInfo>(`${url}/${empNo}`);
   }
   /**
    * 取得表單資訊
    * @param tmplNo
    * @returns
    */
-  public getFormTmplInfo(tmplNo: number): Observable<TmplInfo> {
-    const url = `/webapi/formMaster/getFormTmplInfo`;
-    return this.http.get<TmplInfo>(`${url}/${tmplNo}`);
+  public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo> {
+    // const url = `/webapi/formMaster/getFormTmplInfo`;
+    const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
+    let params: FormTmplReq = { branchNo: 1, tmplNo: tmplNo, tranStatus1: 0, tranStatus2: 80 };
+    return this.http.put<FormTmplInfo>(`${url}`, params);
   }
 
   /**
@@ -67,8 +49,10 @@ export class Form2ReplierService {
    * @returns
    */
   public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo> {
-    const url = `/webapi/formMaster/getFormReplyInfo`;
-    return this.http.get<FormReplyInfo>(`${url}/${replyNo}`);
+    // const url = `/webapi/formMaster/getFormReplyInfo`;
+    const url = `/webapi/form2Kernel/form2Reply/getForm2ReplyTmpl`;
+    let params: FormReplyReq = { branchNo: 1, replyNo: replyNo };
+    return this.http.put<FormReplyInfo>(`${url}`, params);
   }
 
   /**
@@ -77,7 +61,8 @@ export class Form2ReplierService {
    * @returns
    */
   public setFormReply(params: FormReplyInfo): Observable<number> {
-    const url = `/webapi/formMaster/setFormReply`;
+    // const url = `/webapi/formMaster/setFormReply`;
+    const url = `/webapi/form2Kernel/form2Reply/setFormReply2`;
     return this.http.put<number>(`${url}`, params);
   }
 

@@ -2,15 +2,11 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 
-import {
-  TmplInfo,
-  FormReplyInfo,
-  FormReplyListTimeReq,
-  FormReplyList,
-} from '@cmuh-viewmodel/form-master';
 import { PatientInfoService } from '@cmuh/patient-info';
 import { BannerService } from '@cmuh/core';
 import '@cmuh/extensions';
+
+import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 
 import { Form2ReplierService } from './form2-replier.service';
 
@@ -50,7 +46,7 @@ export class Form2ReplierComponent implements OnInit {
   ];
 
   // 回覆清單
-  public replyList: FormReplyList[];
+  public replyList: FormReplyInfo[];
 
   // 顯示處理進度
   public displayProgress = false;
@@ -80,7 +76,7 @@ export class Form2ReplierComponent implements OnInit {
   // 操控formIo refresh
   public triggerRefresh;
   // 表單樣板資訊
-  public tmplInfo: TmplInfo = new TmplInfo();
+  public tmplInfo: FormTmplInfo = new FormTmplInfo();
   // 最後的submitData，或預帶的資料
   public submitData;
   // 暫存submitData，防止被清空
@@ -98,7 +94,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     private pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // 如果是透過input進來的，就不用再取url的連結
@@ -193,7 +189,6 @@ export class Form2ReplierComponent implements OnInit {
         this.showToastMsg(200, '儲存成功');
 
         // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
-        // this.getFormReplyList(this.tmplNo);
         this.displayProgress = false;
         // this.changeFlag = false;
         resultInfo.data = this.formReplyInfo;
@@ -220,18 +215,18 @@ export class Form2ReplierComponent implements OnInit {
     let loginUser = this.f2RSvc.userInfoService.userNo;
 
     this.formReplyInfo.tmplNo = this.tmplInfo.tmplNo;
-    this.formReplyInfo.replyUser =
+    this.formReplyInfo.subject =
       this.pSvc.patientInfo === undefined
-        ? this.formReplyInfo.replyUser
+        ? this.formReplyInfo.subject
         : this.pSvc.patientInfo.idNo;
-    this.formReplyInfo.replyTime = new Date();
+
     this.formReplyInfo.replyDesc = this.submitData.data;
     this.formReplyInfo.tranUser = loginUser;
     this.formReplyInfo.tranTime = new Date();
     this.formReplyInfo.tranStatus = tranStatus;
     this.formReplyInfo.systemUser = loginUser;
 
-    this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
+    // this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
   }
 
   /**
@@ -376,7 +371,7 @@ export class Form2ReplierComponent implements OnInit {
     this.tempSubmitData = {};
     this.submitData = {};
     this.formReplyInfo = new FormReplyInfo();
-    this.tmplInfo = new TmplInfo();
+    this.tmplInfo = new FormTmplInfo();
   }
   /**
    * 顯示toast訊息
