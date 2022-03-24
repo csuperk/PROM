@@ -115,30 +115,6 @@ export class Form2ReplierComponent implements OnInit {
     this.initReplyListReq();
   }
 
-  // urlQuery時 導向的
-  // private urlQueryNavigate() {
-  //   // 首先先抓住 tmplNo 表單編號
-  //   this.tmplNo = isNaN(parseInt(this.route.snapshot.paramMap.get('tmplNo')))
-  //     ? this.tmplNo
-  //     : parseInt(this.route.snapshot.paramMap.get('tmplNo'));
-  //   // 根據表單編號 先去 FormTmpl 抓表單資訊
-  //   this.getFormTmplInfo(this.tmplNo);
-
-  //   // queryParams 先抓出 route 傳遞過來的 queryParams
-  //   let queryParams = this.route.snapshot.queryParams;
-
-  //   // 如果有傳 chartNo, 則要把 搜尋條件(searchReq) 改為 chartNo
-  //   if (queryParams['chartNo'] !== undefined) {
-  //     this.f2RSvc.searchReq.type = 'chartNo';
-  //     this.f2RSvc.searchReq.values.chartNo = queryParams['chartNo'];
-  //   }
-
-  //   // 看有沒有type 有的話代表要 new一筆新的 跳至表單內容
-  //   if (this.route.snapshot.queryParams['type'] !== undefined) {
-  //     this.onNewReplyClick();
-  //   }
-  // }
-
   /**
    * 因需要等待api先取回emp的idNo，所以增加此method
    */
@@ -201,93 +177,6 @@ export class Form2ReplierComponent implements OnInit {
   private getSubmitData() {
     this.submitData = {};
     this.submitData.data = JSON.parse(JSON.stringify(this.tempSubmitData));
-  }
-
-  /**
-   * 取得表單詳細資訊(含正式表單驗證資訊)
-   * 不含 FormReply
-   * @param tmplNo
-   */
-  private getFormTmplInfo(tmplNo: number) {
-    this.f2RSvc.getFormTmplInfo(tmplNo).subscribe(
-      (res) => {
-        this.tmplInfo = res;
-      },
-      (err) => {
-        this.showToastMsg(500, '取得填寫表單樣板錯誤');
-      }
-    );
-  }
-
-  /**
-   * 取得回覆清單 (清單, 所以不會有 FormReply.ReplyDesc)
-   * 會有三種找法, 1 找全部人, 2 用身分證, 3 用病歷號 (後兩者也都是用 idNo)
-   */
-  private getFormReplyList(tmplNo: number) {
-    let params: FormReplyListTimeReq = {
-      tmplNo,
-      startTime: new Date(),
-      endTime: new Date(),
-      replyUser: '',
-    };
-    params.tmplNo = tmplNo;
-    params.startTime = this.f2RSvc.searchReq.values.date1;
-    this.f2RSvc.searchReq.values.date2.setHours(23);
-    this.f2RSvc.searchReq.values.date2.setMinutes(59);
-    params.endTime = this.f2RSvc.searchReq.values.date2;
-    params.replyUser = this.pSvc.patientInfo?.idNo || '';
-
-    // 看是不是用 idNo去找(就算是用 chartNo 也已經在 getPatientInfo找到了)
-    if (this.f2RSvc.searchReq.type === 'all') {
-      // 沒有選人
-      this.f2RSvc.getFormReplyListByTime(params).subscribe(
-        (res) => {
-          this.replyList = this.filterFormReplyList(res);
-        },
-        (err) => {
-          this.showToastMsg(500, '取得填寫紀錄清單失敗');
-          this.displayProgress = false;
-        }
-      );
-    } else {
-      // 選人 用 idNo 去找
-      this.f2RSvc.getFormReplyList(params).subscribe(
-        (res) => {
-          this.replyList = this.filterFormReplyList(res);
-        },
-        (err) => {
-          this.showToastMsg(500, '取得填寫紀錄清單失敗');
-          this.displayProgress = false;
-        }
-      );
-    }
-    // this.btnEmpower(this.tabIndex);
-    this.displayProgress = false;
-  }
-
-  /**
-   * 過濾篩選 FormReplyList
-   * @param replyList
-   * @returns
-   */
-  private filterFormReplyList(replyList: Array<any>) {
-    let searchReq = this.f2RSvc.searchReq;
-
-    return replyList
-      .filter((reply) => {
-        let replyTime = new Date(reply.replyTime);
-        return (
-          searchReq.values.date1 <= replyTime &&
-          searchReq.values.date2 >= replyTime
-        );
-      })
-      .filter((reply) => {
-        if (searchReq.values.status == 0) {
-          return true;
-        } else {
-          return reply.tranStatus == searchReq.values.status;
-        }
-      });
   }
 
   /**

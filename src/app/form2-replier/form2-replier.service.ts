@@ -42,15 +42,6 @@ export class Form2ReplierService {
     this.userInfoService = this.jwtHelper.decodeAuthorized(token);
   }
 
-  public getPatientInfo(type: string, value: string): Observable<Array<any>> {
-    let url = `/webapi/formMaster/getPatientInfo`;
-    let params = {
-      type: type,
-      value: value
-    }
-    return this.http.put(`${url}`, params);
-  }
-
   /**
    * 取得員工詳細資料，為了要有idNo
    * @param empNo
@@ -69,39 +60,6 @@ export class Form2ReplierService {
     const url = `/webapi/formMaster/getFormTmplInfo`;
     return this.http.get<TmplInfo>(`${url}/${tmplNo}`);
   }
-  /**
-   * 儲存表單
-   * @param params
-   * @returns
-   */
-  public setFormReply(params: FormReplyInfo): Observable<number> {
-    const url = `/webapi/formMaster/setFormReply`;
-    return this.http.put<number>(`${url}`, params);
-  }
-
-  /**
- * 取得回覆清單
- * @param params
- * @returns
- */
-  public getFormReplyListByTime(
-    params: FormReplyListTimeReq
-  ): Observable<FormReplyList[]> {
-    const url = `/webapi/formMaster/getFormReplyListByTime`;
-    return this.http.put<FormReplyList[]>(`${url}`, params);
-  }
-
-  /**
-   * 取得回覆清單
-   * @param params
-   * @returns
-   */
-  public getFormReplyList(
-    params: FormReplyListReq
-  ): Observable<FormReplyList[]> {
-    const url = `/webapi/formMaster/getFormReplyList`;
-    return this.http.put<FormReplyList[]>(`${url}`, params);
-  }
 
   /**
    * 取得回覆資訊
@@ -114,11 +72,13 @@ export class Form2ReplierService {
   }
 
   /**
- * 產生qrCode
- * @returns
- */
-   public getFormQrCodeUrl(param: FormReplyInfo): Observable<any> {
-    const url = `/webapi/formMaster/getFormQrCodeUrl`;
-    return this.http.put(url, param);
+   * 儲存表單
+   * @param params
+   * @returns
+   */
+  public setFormReply(params: FormReplyInfo): Observable<number> {
+    const url = `/webapi/formMaster/setFormReply`;
+    return this.http.put<number>(`${url}`, params);
   }
+
 }
