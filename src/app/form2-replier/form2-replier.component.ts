@@ -32,22 +32,6 @@ export class Form2ReplierComponent implements OnInit {
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
 
-  public displaySearchReq: boolean = false;
-
-  public replyStatusOptions: Array<any> = [
-    { name: '全部', value: 0 },
-    { name: '尚未回覆，預取回覆鍵值', value: 10 },
-    { name: '暫存回覆', value: 20 },
-    { name: '繳交回覆，但權責單位尚未收件', value: 30 },
-    { name: '撤銷回覆', value: 40 },
-    { name: '已經收件', value: 50 },
-    { name: '處理完成', value: 60 },
-    { name: '作廢回覆', value: 80 },
-  ];
-
-  // 回覆清單
-  public replyList: FormReplyInfo[];
-
   // 顯示處理進度
   public displayProgress = false;
 
@@ -73,21 +57,24 @@ export class Form2ReplierComponent implements OnInit {
   ];
 
   /*操控formIo的相關變數*/
+
   // 操控formIo refresh
   public triggerRefresh;
+
   // 表單樣板資訊
   public tmplInfo: FormTmplInfo = new FormTmplInfo();
+
   // 最後的submitData，或預帶的資料
   public submitData;
+
   // 暫存submitData，防止被清空
   public tempSubmitData;
+
   // formIo是否可以填寫
   public formReadOnly = false;
+
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
-
-  // 判斷是否異動formIo
-  // public changeFlag = false;
 
   constructor(
     public f2RSvc: Form2ReplierService,
@@ -97,9 +84,9 @@ export class Form2ReplierComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // 如果是透過input進來的，就不用再取url的連結
-    // this.urlQueryNavigate();
-    this.initReplyListReq();
+
+    this.initInfo();
+
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
   }
@@ -107,22 +94,27 @@ export class Form2ReplierComponent implements OnInit {
   ngOnChanges(): void {
     this.initDataVariable();
     this.displayProgress = true;
+    this.initInfo();
     this.getReplyRecord(this.replyInfo);
-    this.initReplyListReq();
   }
 
   /**
    * 因需要等待api先取回emp的idNo，所以增加此method
    */
-  public async initReplyListReq() {
+  public async initInfo() {
+    if (this.f2RSvc.userInfoService == null) {
+      setTimeout(() => {
+        this.initInfo();
+      }, 1000);
+      return;
+    }
     let empInfo = await this.f2RSvc
       .getEmpInfo(this.f2RSvc.userInfoService.userNo)
       .toPromise();
     this.f2RSvc.userInfoService = {
       ...this.f2RSvc.userInfoService,
       ...empInfo[0],
-    };
-    // this.onSearchClick();
+    }
   }
 
   /**
@@ -144,27 +136,12 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   /**
-   * 撤銷回覆
-   */
-  private onWithdrawClick(replyInfo: FormReplyInfo) {
-    this.getFormReplyInfo(replyInfo.replyNo, 20);
-    this.showConfirm(
-      500,
-      '確定撤銷回覆?',
-      '問券將無法填寫，需由權責單位解除',
-      'confirmWithdrawMessage'
-    );
-  }
-
-
-  /**
    * 當formIo有異動的時候
    * @param event
    */
   public onChange(event) {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
-    // this.changeFlag = true;
   }
 
   /**
@@ -190,7 +167,7 @@ export class Form2ReplierComponent implements OnInit {
 
         // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
         this.displayProgress = false;
-        // this.changeFlag = false;
+
         resultInfo.data = this.formReplyInfo;
         resultInfo.apiResult = true;
         this.result.emit(resultInfo);
@@ -260,7 +237,7 @@ export class Form2ReplierComponent implements OnInit {
    * 確定放棄填寫內容
    */
   public onConfirm() {
-    // this.changeFlag = false;
+
     this.messageService.clear('confirmMessage');
     this.initDataVariable();
     // this.tabChange(0);
@@ -298,25 +275,23 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest(replyInfo) {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
-    this.tmplInfo = await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise();
+
+    this.tmplInfo = (await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise())[0];
+
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {
         this.formReadOnly = true;
-        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       } else {
         this.formReadOnly = false;
-        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
     } else {
       // replyRule = 11, 21
       // this.formReadOnly = tranStatus < 30 ? false : true;
       if (tranStatus > 30) {
         this.formReadOnly = true;
-        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       } else {
         this.formReadOnly = false;
-        this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
     }
     this.displayProgress = false;
@@ -328,17 +303,17 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyNo
    */
   public getFormReplyInfo(replyNo: number, eventFrom: number) {
+
     enum eventFromType {
       tableList = 10,
       button = 20,
-    }
-    // 確認要有患者資訊 pSvc.patientInfo
-    // console.log(this.pSvc.patientInfo);
-    // this.bannerSvc.innerHtml = this.createBanner(this.pSvc.patientInfo);
+    };
 
+    // 確認要有患者資訊 pSvc.patientInfo
     this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
       (res) => {
-        this.formReplyInfo = res;
+
+        this.formReplyInfo = res[0];
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
         // this.triggerRefresh.emit({
         //   form: this.tmplInfo.formTmpl,
@@ -348,7 +323,7 @@ export class Form2ReplierComponent implements OnInit {
         // });
 
         this.submitData = {
-          data: res.replyDesc,
+          data: res[0].replyDesc,
         };
       },
       (err) => {
@@ -356,12 +331,6 @@ export class Form2ReplierComponent implements OnInit {
         this.displayProgress = false;
       }
     );
-  }
-
-  // 新增 只能從外界帶過來
-  private onNewReplyClick() {
-    // 要清空
-    this.initDataVariable();
   }
 
   /**
