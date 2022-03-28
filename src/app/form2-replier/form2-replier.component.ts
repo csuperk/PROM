@@ -20,7 +20,6 @@ import { Form2ReplierService } from './form2-replier.service';
   styleUrls: ['./form2-replier.component.scss'],
 })
 export class Form2ReplierComponent implements OnInit {
-
   /**表單資訊顯示控制 */
   @Input()
   public showTag: boolean = true;
@@ -32,6 +31,10 @@ export class Form2ReplierComponent implements OnInit {
   /**工具列顯示控制 */
   @Input()
   public showToolbar: boolean = true;
+
+  // formIo是否可以填寫
+  @Input()
+  public formReadOnly = 'false';
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -85,8 +88,7 @@ export class Form2ReplierComponent implements OnInit {
   public submitData;
   // 暫存submitData，防止被清空
   public tempSubmitData;
-  // formIo是否可以填寫
-  public formReadOnly = false;
+
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
@@ -183,7 +185,6 @@ export class Form2ReplierComponent implements OnInit {
       'confirmWithdrawMessage'
     );
   }
-
 
   /**
    * 當formIo有異動的時候
@@ -414,24 +415,26 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest(replyInfo) {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
-    this.tmplInfo = await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise();
+    this.tmplInfo = await this.f2RSvc
+      .getFormTmplInfo(replyInfo.tmplNo)
+      .toPromise();
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {
-        this.formReadOnly = true;
+        this.formReadOnly = 'true';
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       } else {
-        this.formReadOnly = false;
+        this.formReadOnly = 'false';
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
     } else {
       // replyRule = 11, 21
       // this.formReadOnly = tranStatus < 30 ? false : true;
       if (tranStatus > 30) {
-        this.formReadOnly = true;
+        this.formReadOnly = 'true';
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       } else {
-        this.formReadOnly = false;
+        this.formReadOnly = 'false';
         this.tmplInfo.formTmpl = Object.assign({}, this.tmplInfo.formTmpl);
       }
     }
