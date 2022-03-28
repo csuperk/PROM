@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  EventEmitter,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 
@@ -9,6 +16,7 @@ import '@cmuh/extensions';
 import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 
 import { Form2ReplierService } from './form2-replier.service';
+import { FormioComponent } from '@formio/angular';
 
 @Component({
   selector: 'form2-replier',
@@ -16,6 +24,8 @@ import { Form2ReplierService } from './form2-replier.service';
   styleUrls: ['./form2-replier.component.scss'],
 })
 export class Form2ReplierComponent implements OnInit {
+  @ViewChild('formIo') formIo: any;
+
   /**表單資訊顯示控制 */
   @Input()
   public showTag: boolean = true;
@@ -30,7 +40,7 @@ export class Form2ReplierComponent implements OnInit {
 
   // formIo是否可以填寫
   @Input()
-  public formReadOnly = 'false';
+  public formReadOnly = false;
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -81,10 +91,9 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     private pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     this.initInfo();
 
     // formIo官方 refresh寫法
@@ -114,7 +123,7 @@ export class Form2ReplierComponent implements OnInit {
     this.f2RSvc.userInfoService = {
       ...this.f2RSvc.userInfoService,
       ...empInfo[0],
-    }
+    };
   }
 
   /**
@@ -188,20 +197,24 @@ export class Form2ReplierComponent implements OnInit {
    */
   private setReplyData(tranStatus: number = 20) {
     this.getSubmitData();
-
-    let loginUser = this.f2RSvc.userInfoService.userNo;
+    let loginUser =
+      this.f2RSvc.userInfoService === null
+        ? 999999
+        : this.f2RSvc.userInfoService.userNo;
 
     this.formReplyInfo.tmplNo = this.tmplInfo.tmplNo;
     this.formReplyInfo.subject =
       this.pSvc.patientInfo === undefined
         ? this.formReplyInfo.subject
         : this.pSvc.patientInfo.idNo;
-
     this.formReplyInfo.replyDesc = this.submitData.data;
     this.formReplyInfo.tranUser = loginUser;
     this.formReplyInfo.tranTime = new Date();
     this.formReplyInfo.tranStatus = tranStatus;
     this.formReplyInfo.systemUser = loginUser;
+    this.formReplyInfo.replyNo = this.replyInfo.replyNo;
+    this.formReplyInfo.subjectType = this.replyInfo.subjectType;
+    this.formReplyInfo.subject = this.replyInfo.subject;
 
     // this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
   }
@@ -237,7 +250,6 @@ export class Form2ReplierComponent implements OnInit {
    * 確定放棄填寫內容
    */
   public onConfirm() {
-
     this.messageService.clear('confirmMessage');
     this.initDataVariable();
     // this.tabChange(0);
@@ -266,6 +278,15 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyInfo
    */
   public async getReplyRecord(replyInfo: FormReplyInfo) {
+    if (this.replyInfo.replyNo == undefined) {
+      this.replyInfo.replyNo = this.getFormReplyRandomNo();
+      this.tmplInfo = (
+        await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
+      )[0];
+      this.displayProgress = false;
+      this.formIo.readOnly = false;
+      return;
+    }
     // 驗證繳交後可否異動
     await this.authTest(replyInfo);
 
@@ -276,22 +297,22 @@ export class Form2ReplierComponent implements OnInit {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
 
-    this.tmplInfo = (await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise())[0];
+    this.tmplInfo = (
+      await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
+    )[0];
 
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
       if (tranStatus > 20) {
-        this.formReadOnly = 'true';
+        this.formIo.readOnly = true;
       } else {
-        this.formReadOnly = 'false';
+        this.formIo.readOnly = false;
       }
     } else {
-      // replyRule = 11, 21
-      // this.formReadOnly = tranStatus < 30 ? false : true;
       if (tranStatus > 30) {
-        this.formReadOnly = 'true';
+        this.formIo.readOnly = true;
       } else {
-        this.formReadOnly = 'false';
+        this.formIo.readOnly = false;
       }
     }
     this.displayProgress = false;
@@ -303,16 +324,14 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyNo
    */
   public getFormReplyInfo(replyNo: number, eventFrom: number) {
-
     enum eventFromType {
       tableList = 10,
       button = 20,
-    };
+    }
 
     // 確認要有患者資訊 pSvc.patientInfo
     this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
       (res) => {
-
         this.formReplyInfo = res[0];
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
         // this.triggerRefresh.emit({
@@ -361,5 +380,18 @@ export class Form2ReplierComponent implements OnInit {
       summary: summary,
       detail: detail,
     });
+  }
+
+  /**
+   * 取得正式表單回覆的replyNo
+   * @returns
+   */
+  private getFormReplyRandomNo(): number {
+    let result = 0;
+    let max = 1999999999;
+    let min = 1000000000;
+    result = Math.floor(Math.random() * (max - min + 1)) + min;
+
+    return result;
   }
 }

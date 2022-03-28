@@ -60,7 +60,8 @@
   </ng-container>
   <div style="height: 100%; overflow: auto">
     <formio
-      [readOnly]="formReadOnly"
+      #formIo
+      [viewOnly]="true"
       [form]="tmplInfo.formTmpl"
       [refresh]="triggerRefresh"
       [submission]="submitData"
