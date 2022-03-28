@@ -129,7 +129,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 暫存回覆內容
    */
-  private onTempReplyClick() {
+  public onTempReplyClick() {
     this.displayProgress = true;
     this.setReplyData(20);
     this.setFormReply();
@@ -138,7 +138,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 繳交回覆內容
    */
-  private onSaveReplyClick() {
+  public onSaveReplyClick() {
     this.displayProgress = true;
     this.setReplyData(30);
     this.setFormReply();
@@ -156,7 +156,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 取得最後submit的資料
    */
-  private getSubmitData() {
+  public getSubmitData() {
     this.submitData = {};
     this.submitData.data = JSON.parse(JSON.stringify(this.tempSubmitData));
   }
@@ -164,7 +164,7 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 儲存回覆內容到DB
    */
-  private setFormReply() {
+  public setFormReply() {
     let resultInfo = {
       data: this.formReplyInfo,
       apiResult: false,
@@ -195,7 +195,7 @@ export class Form2ReplierComponent implements OnInit {
    * 設定回覆的內容資料 (預備要存檔用的)
    * @param tranStatus
    */
-  private setReplyData(tranStatus: number = 20) {
+  public setReplyData(tranStatus: number = 20) {
     this.getSubmitData();
     let loginUser =
       this.f2RSvc.userInfoService === null
@@ -279,7 +279,7 @@ export class Form2ReplierComponent implements OnInit {
    */
   public async getReplyRecord(replyInfo: FormReplyInfo) {
     if (this.replyInfo.replyNo == undefined) {
-      this.replyInfo.replyNo = this.getFormReplyRandomNo();
+      this.replyInfo.replyNo = this.getReplyNo(this.replyInfo.tmplNo);
       this.tmplInfo = (
         await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
       )[0];
@@ -382,6 +382,21 @@ export class Form2ReplierComponent implements OnInit {
     });
   }
 
+  private getReplyNo(tmplNo: number): number {
+    let result = 0;
+
+    if (tmplNo < 0) {
+      result = this.getTestFormTmplRandomNo();
+      return result;
+    }
+    if (tmplNo > 0) {
+      result = this.getFormReplyRandomNo();
+      return result;
+    }
+
+    return result;
+  }
+
   /**
    * 取得正式表單回覆的replyNo
    * @returns
@@ -391,6 +406,17 @@ export class Form2ReplierComponent implements OnInit {
     let max = 1999999999;
     let min = 1000000000;
     result = Math.floor(Math.random() * (max - min + 1)) + min;
+
+    return result;
+  }
+
+  /**
+   * 取得測試亂數編號(給表單編號用)
+   * @returns
+   */
+  private getTestFormTmplRandomNo(): number {
+    let result = 0;
+    result = (Math.floor(Math.random() * 2147483648) + 1) * -1;
 
     return result;
   }
