@@ -35,7 +35,7 @@ export class Form2ReplierService {
    */
   public getEmpInfo(empNo: number): Observable<FormTmplInfo> {
     // const url = `/webapi/formMaster/getEmpInfo`;
-    const url = `/webapi/form2Kernel/form2Auth/getEmpNoAuth`;
+    const url = `/webapi/form2Kernel/form2Customized/getEmpNoAuth/`;
     return this.http.get<FormTmplInfo>(`${url}/${empNo}`);
   }
   /**
