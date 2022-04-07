@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@cmuh-viewmodel/form2-kernel": "git+https://gitserver.cmuh.org.tw/cmuh.modules.viewmodel/form2-kernel.git",
+    "@cmuh-viewmodel/whitelist-module": "git+https://gitserver.cmuh.org.tw/cmuh.modules.viewmodel/whitelist-module.git",
     "@angular/animations": "~11.0.5",
     "@angular/common": "~11.0.5",
     "@angular/cdk": "^11.0.3",
