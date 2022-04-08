@@ -23,7 +23,7 @@ export class Form2AuthService {
    * @param checkType
    * @returns
    */
-  public async checkWhitelistAuth(params: FormWhitelistAuthReq, checkType: string): Promise<boolean> {
+  public async checkWhitelistAuth(params: FormWhitelistAuthReq, checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
     /**
      * 讀取 1 Math.floor((authValue % 10) / 1) === 1
      * 填寫 10 Math.floor((authValue % 100) / 10) === 1
