@@ -42,6 +42,16 @@ export class Form2ReplierComponent implements OnInit {
   @Input()
   public formReadOnly = false;
 
+  /**
+   * 存檔(暫存, 繳交)的類型
+   * setFormReply2是針對某個replyNo去異動, 或是 qrCode新增時, 會用 getReplyNo 產生replyNo
+   * addFormReply2Info是正式表單新增時, 不用帶replyNo, sp會自動增加replyNo
+   * @type {('' | 'setFormReply2' | 'addFormReply2Info')}
+   * @memberof Form2ReplierComponent
+   */
+  @Input()
+  public setType: '' | 'setFormReply2' | 'addFormReply2Info' = "";
+
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
 
@@ -91,7 +101,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     private pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -117,13 +127,6 @@ export class Form2ReplierComponent implements OnInit {
       }, 1000);
       return;
     }
-    let empInfo = await this.f2RSvc
-      .getEmpInfo(this.f2RSvc.userInfoService.userNo)
-      .toPromise();
-    this.f2RSvc.userInfoService = {
-      ...this.f2RSvc.userInfoService,
-      ...empInfo[0],
-    };
   }
 
   /**
@@ -170,25 +173,47 @@ export class Form2ReplierComponent implements OnInit {
       apiResult: false,
       tmpl: this.tmplInfo,
     };
-    this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
-      (res) => {
-        this.showToastMsg(200, '儲存成功');
+    switch (this.setType) {
+      case 'setFormReply2':
+        this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
+          (res) => {
+            this.showToastMsg(200, '儲存成功');
 
-        // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
-        this.displayProgress = false;
+            // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
+            this.displayProgress = false;
 
-        resultInfo.data = this.formReplyInfo;
-        resultInfo.apiResult = true;
-        this.result.emit(resultInfo);
-      },
-      (err) => {
-        this.showToastMsg(500, '儲存失敗');
-        this.displayProgress = false;
-        resultInfo.data = this.formReplyInfo;
-        resultInfo.apiResult = false;
-        this.result.emit(resultInfo);
-      }
-    );
+            resultInfo.data = this.formReplyInfo;
+            resultInfo.apiResult = true;
+            this.result.emit(resultInfo);
+          },
+          (err) => {
+            this.showToastMsg(500, '儲存失敗');
+            this.displayProgress = false;
+            resultInfo.data = this.formReplyInfo;
+            resultInfo.apiResult = false;
+            this.result.emit(resultInfo);
+          }
+        );
+        break;
+      case 'addFormReply2Info':
+        this.f2RSvc.addFormReply2Info(this.formReplyInfo).subscribe(
+          (res) => {
+            this.showToastMsg(200, '儲存成功');
+            this.displayProgress = false;
+            resultInfo.data = this.formReplyInfo;
+            resultInfo.apiResult = true;
+            this.result.emit(resultInfo);
+          },
+          (err) => {
+            this.showToastMsg(500, '儲存失敗');
+            this.displayProgress = false;
+            resultInfo.data = this.formReplyInfo;
+            resultInfo.apiResult = false;
+            this.result.emit(resultInfo);
+          }
+        );
+        break;
+    }
   }
 
   /**

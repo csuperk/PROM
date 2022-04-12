@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CmuhHttpService } from '@cmuh/http';
-import { FormWhitelistAuthReq } from '@cmuh-viewmodel/form2-kernel';
+import { FormWhitelistAuthReq, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 import { AuthlistSubjectInfo } from '@cmuh-viewmodel/whitelist-module'
 
 import '@cmuh/extensions';
@@ -23,7 +23,18 @@ export class Form2AuthService {
    * @param checkType
    * @returns
    */
-  public async checkWhitelistAuth(params: FormWhitelistAuthReq, checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
+  public async checkWhitelistAuth(tmplInfo: FormTmplInfo, params: FormWhitelistAuthReq, checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
+
+    // 測試表單，不用驗證白名單
+    if (this.verifyTest(tmplInfo.tmplNo)) {
+      return true;
+    }
+
+    // 如果是權責人員，不需經過白名單驗證
+    if (tmplInfo.respUser == Number(params.userCode.slice(1))) {
+      return true;
+    }
+
     /**
      * 讀取 1 Math.floor((authValue % 10) / 1) === 1
      * 填寫 10 Math.floor((authValue % 100) / 10) === 1
@@ -31,7 +42,8 @@ export class Form2AuthService {
      * 列印 1000 Math.floor((authValue % 10000) / 1000) === 1
      */
     let auth: any = await this.getUserWhitelistAuth(params).toPromise();
-    if (auth.length == 0) {
+
+    if (auth.msg == false) {
       /**
        * 權限錯誤
        * 無此個案類別收案權限，請聯繫該個案類別管理者申請權限
@@ -65,6 +77,15 @@ export class Form2AuthService {
   }
 
   constructor(private http: CmuhHttpService) { }
+
+  /**
+   * 驗證是否為測試表單，是(return true)則直接放行填寫
+   * @param tmplNo
+   * @returns
+   */
+  private verifyTest(tmplNo: number): boolean {
+    return tmplNo < 0 ? true : false;
+  }
 
   public getUserWhitelistAuth(params: FormWhitelistAuthReq): Observable<AuthlistSubjectInfo> {
     const url = `/webapi/form2Kernel/form2Auth/getUserWhitelistAuth`;
