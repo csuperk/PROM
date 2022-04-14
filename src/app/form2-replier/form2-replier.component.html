@@ -61,11 +61,11 @@
   <div style="height: 100%; overflow: auto">
     <formio
       #formIo
-      [viewOnly]="true"
       [form]="tmplInfo.formTmpl"
       [refresh]="triggerRefresh"
       [submission]="submitData"
       (change)="onChange($event)"
+      [readOnly]="formReadOnly"
     ></formio>
   </div>
 </div>

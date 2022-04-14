@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CmuhHttpService } from '@cmuh/http';
-import { FormWhitelistAuthReq, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
+import { FormWhitelistAuthReq, FormTmplInfo, FormReplyReq, FormReplyInfo } from '@cmuh-viewmodel/form2-kernel';
 import { AuthlistSubjectInfo } from '@cmuh-viewmodel/whitelist-module'
 
 import '@cmuh/extensions';
@@ -23,7 +23,10 @@ export class Form2AuthService {
    * @param checkType
    * @returns
    */
-  public async checkWhitelistAuth(tmplInfo: FormTmplInfo, params: FormWhitelistAuthReq, checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
+  public async checkWhitelistAuth(
+    tmplInfo: FormTmplInfo,
+    params: FormWhitelistAuthReq,
+    checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
 
     // 測試表單，不用驗證白名單
     if (this.verifyTest(tmplInfo.tmplNo)) {
@@ -76,6 +79,45 @@ export class Form2AuthService {
     }
   }
 
+  /**
+   * 確認
+   * @param tmplInfo
+   * @param subjectType
+   * @param subject
+   * @returns
+   */
+  public async checkLimitOnceReply(tmplInfo: FormTmplInfo, subjectType: number, subject: string): Promise<boolean> {
+    /**
+     * 1. 確認replyRule是 10, 11 不是就回傳true
+     * 2. subject 找 是否replye過
+     */
+    if (tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11) {
+      /*
+      branchNo, 固定?
+      tmplNo, 代入
+      tranStatus1, 固定?
+      tranStatus2, 固定?
+      subjectType, 固定?
+      subject, 代入
+      startTime 預設是 2018-12-31,
+      endTime 預設是 2999-12-31,
+      */
+      let params: FormReplyReq = {
+        branchNo: 1,
+        tmplNo: tmplInfo.tmplNo,
+        tranStatus1: 10,
+        tranStatus2: 60,
+        subjectType: subjectType,
+        subject: subject
+      };
+      let replyList = await this.getForm2PeriodReplyList(params).toPromise();
+      // < 0 代表沒有填寫紀錄
+      return replyList.length == 0;
+    } else {
+      return true;
+    }
+  }
+
   constructor(private http: CmuhHttpService) { }
 
   /**
@@ -91,4 +133,10 @@ export class Form2AuthService {
     const url = `/webapi/form2Kernel/form2Auth/getUserWhitelistAuth`;
     return this.http.put<AuthlistSubjectInfo>(`${url}`, params);
   }
+
+  private getForm2PeriodReplyList(params: FormReplyReq): Observable<FormReplyInfo[]> {
+    const url = `/webapi/form2Kernel/form2Reply/getForm2PeriodReplyList`
+    return this.http.put<FormReplyInfo[]>(`${url}`, params);
+  }
+
 }

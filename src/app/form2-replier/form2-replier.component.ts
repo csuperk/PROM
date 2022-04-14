@@ -13,10 +13,11 @@ import { PatientInfoService } from '@cmuh/patient-info';
 import { BannerService } from '@cmuh/core';
 import '@cmuh/extensions';
 
-import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
+import { FormReplyInfo, FormTmplInfo, FormWhitelistAuthReq } from '@cmuh-viewmodel/form2-kernel';
+import { FormioComponent } from '@formio/angular';
 
 import { Form2ReplierService } from './form2-replier.service';
-import { FormioComponent } from '@formio/angular';
+import { Form2AuthService } from '../form2-auth/form2-auth.service';
 
 @Component({
   selector: 'form2-replier',
@@ -98,6 +99,7 @@ export class Form2ReplierComponent implements OnInit {
 
   constructor(
     public f2RSvc: Form2ReplierService,
+    public form2AuthSvc: Form2AuthService,
     private messageService: MessageService,
     private pSvc: PatientInfoService,
     private route: ActivatedRoute
@@ -309,8 +311,22 @@ export class Form2ReplierComponent implements OnInit {
         await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
       )[0];
       this.displayProgress = false;
-      this.formIo.readOnly = false;
+      // this.formIo.readOnly = false;
       return;
+    }
+    // 驗證白名單
+    let params: FormWhitelistAuthReq = {
+      branchNo: 1,
+      subjectType: this.tmplInfo.formType,
+      subject: this.tmplInfo.tmplNo.toString(),
+      userCode: this.f2RSvc.userInfoService.userId,
+      departNo: this.f2RSvc.userInfoService.responsibility,
+    };
+
+    // 沒有填寫權限的話
+    if (!(await this.form2AuthSvc.checkWhitelistAuth(this.tmplInfo, params, 'w'))) {
+      this.showToastMsg(404, '白名單權限', '您沒有填寫權限，開啟唯讀。');
+      this.formIo.readOnly = true;
     }
     // 驗證繳交後可否異動
     await this.authTest(replyInfo);
@@ -328,16 +344,18 @@ export class Form2ReplierComponent implements OnInit {
 
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
+      // 繳交後不可異動
       if (tranStatus > 20) {
         this.formIo.readOnly = true;
       } else {
-        this.formIo.readOnly = false;
+        // this.formIo.readOnly = false;
       }
     } else {
       if (tranStatus > 30) {
+
         this.formIo.readOnly = true;
       } else {
-        this.formIo.readOnly = false;
+        // this.formIo.readOnly = false;
       }
     }
     this.displayProgress = false;
