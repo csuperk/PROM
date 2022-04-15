@@ -256,7 +256,7 @@ export class Form2ReplierComponent implements OnInit {
    * 3. 將剛剛被份的 tempReplyDesc 塞回去 submitData
    * @param subject
    */
-  public copyReplier(subject: string) {
+  public async copyReplier(subject: string) {
 
     const tempReplyDesc = Object.assign({}, this.submitData);
 
@@ -265,7 +265,7 @@ export class Form2ReplierComponent implements OnInit {
     this.replyInfo.subjectType = 10;
     this.replyInfo.subject = subject;
     this.initDataVariable();
-    this.getReplyRecord(this.replyInfo);
+    await this.getReplyRecord(this.replyInfo);
 
     this.submitData = tempReplyDesc;
   }
