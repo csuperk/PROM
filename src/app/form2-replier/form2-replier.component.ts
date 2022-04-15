@@ -101,7 +101,7 @@ export class Form2ReplierComponent implements OnInit {
     public f2RSvc: Form2ReplierService,
     public form2AuthSvc: Form2AuthService,
     private messageService: MessageService,
-    private pSvc: PatientInfoService,
+    public pSvc: PatientInfoService,
     private route: ActivatedRoute
   ) { }
 
@@ -223,6 +223,7 @@ export class Form2ReplierComponent implements OnInit {
    * @param tranStatus
    */
   public setReplyData(tranStatus: number = 20) {
+
     this.getSubmitData();
     let loginUser =
       this.f2RSvc.userInfoService === null
@@ -244,6 +245,29 @@ export class Form2ReplierComponent implements OnInit {
     this.formReplyInfo.subject = this.replyInfo.subject;
 
     // this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
+  }
+
+  /**
+   * 複製回覆
+   * 1. 先保留目前填答結果 tempReplyDesc
+   * 2. 模擬新建填答
+   *   2-1. replyInfo 初始化 (replyNo設為undefined, subject 設為新的 subject)
+   *   2-2. 執行 initDataVariable 跟 getReplyRecord 來進行初始化
+   * 3. 將剛剛被份的 tempReplyDesc 塞回去 submitData
+   * @param subject
+   */
+  public copyReplier(subject: string) {
+
+    const tempReplyDesc = Object.assign({}, this.submitData);
+
+    this.replyInfo.tmplNo = this.replyInfo.tmplNo;
+    this.replyInfo.replyNo = undefined;
+    this.replyInfo.subjectType = 10;
+    this.replyInfo.subject = subject;
+    this.initDataVariable();
+    this.getReplyRecord(this.replyInfo);
+
+    this.submitData = tempReplyDesc;
   }
 
   /**
