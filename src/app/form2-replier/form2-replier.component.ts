@@ -136,7 +136,7 @@ export class Form2ReplierComponent implements OnInit {
    */
   public onTempReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
-    if(this.formIo.readOnly){
+    if (this.formIo.readOnly) {
       this.showToastMsg(500, '表單規則繳交後無法異動，表單無法暫存或繳交');
       return;
     }
@@ -150,7 +150,7 @@ export class Form2ReplierComponent implements OnInit {
    */
   public onSaveReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
-    if(this.formIo.readOnly){
+    if (this.formIo.readOnly) {
       this.showToastMsg(500, '表單規則繳交後無法異動，表單無法暫存或繳交');
       return;
     }
@@ -372,12 +372,10 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest(replyInfo) {
     // 驗證繳交後可否異動
     let tranStatus = replyInfo.tranStatus;
-    console.log('replyInfo',replyInfo)
 
     this.tmplInfo = (
       await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
     )[0];
-    console.log('tmplInfo',this.tmplInfo)
 
     let replyRule = this.tmplInfo.replyRule;
     if (replyRule == 10 || replyRule == 20) {
