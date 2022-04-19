@@ -26,7 +26,14 @@ export class AppComponent implements OnInit {
     tranStatus: 30,
     tranUserName: '楊名棟',
   };
-  constructor() {}
+
+  public newReplyInfo = {
+    tmplNo: 20100,
+    replyNo: undefined,
+    subjectType: 10,
+    subject: 'A123456789',
+  }
+  constructor() { }
 
   ngOnInit() {
     if (isDevMode()) {

@@ -2,7 +2,7 @@ import { Injectable, isDevMode } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CmuhHttpService } from '@cmuh/http';
-import { FormReplyInfo, FormReplyReq, FormTmplInfo, FormTmplReq } from '@cmuh-viewmodel/form2-kernel';
+import { FormReplyInfo, FormReplyReq, FormTmplInfo, FormTmplReq, PatientInfo } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
 
@@ -38,6 +38,17 @@ export class Form2ReplierService {
     const url = `/webapi/form2Kernel/form2Customized/getEmpNoAuth/`;
     return this.http.get<FormTmplInfo>(`${url}/${empNo}`);
   }
+
+  /**
+   * 透過身份證號(idNo)取得病人資訊(非陣列)
+   * @param idNo
+   * @returns
+   */
+  public getPatientByIdNo(idNo: string): Observable<PatientInfo> {
+    const url = `/webapi/form2Kernel/form2Customized/getPatientByIdNo`;
+    return this.http.get<PatientInfo>(`${url}/${idNo}`);
+  }
+
   /**
    * 取得表單資訊
    * @param tmplNo

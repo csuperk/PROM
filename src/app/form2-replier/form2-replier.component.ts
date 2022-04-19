@@ -346,10 +346,13 @@ export class Form2ReplierComponent implements OnInit {
       await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
     )[0];
 
+    // 初始化 submitData
     // 新增的 reply 會沒有 replyNo
     if (this.replyInfo.replyNo == undefined) {
       this.replyInfo.replyNo = this.getReplyNo(this.replyInfo.tmplNo);
       this.displayProgress = false;
+      // 新增的情況會預帶資料
+      this.autoCompleteSubmitData();
       return;
     }
     // 驗證白名單
@@ -372,6 +375,53 @@ export class Form2ReplierComponent implements OnInit {
     // 取回之前的 填答結果 replyInfo
     this.getFormReplyInfo(10);
   }
+
+  /*****預帶資料*****/
+
+  /**
+   * 自動預帶資料
+   */
+  private async autoCompleteSubmitData() {
+
+    // 只有新增需要自動帶資料
+    this.f2RSvc.getPatientByIdNo(this.replyInfo.subject).subscribe(
+      async (res) => {
+
+        // 初始化submitData
+        this.initSubmitData();
+
+        // 塞入submitData
+        this.setSubmitData(res);
+      }
+    );
+  }
+
+  /**
+   * 將 dataArray的內容塞入submitData之中
+   * @param dataArray
+   */
+  private setSubmitData(dataArray: Object) {
+
+    for (let key of Object.keys(this.submitData.data)) {
+      this.submitData.data[key] = dataArray[key] || '';
+    }
+  }
+
+  /**
+   * 初始化 submitData, 把 key塞好
+   */
+  private initSubmitData() {
+
+    this.submitData = { data: {} };
+
+    let formTmpl: any = this.tmplInfo.formTmpl;
+    let components = formTmpl.components;
+    for (let component of components) {
+      this.submitData.data[component.key] = '';
+    }
+  }
+
+  /*****預帶資料*****/
 
   /**
    * 驗證繳交後能否異動
