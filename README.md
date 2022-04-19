@@ -9,13 +9,7 @@
             <th>Description(描述)</th>
         </tr>
     </thead>
-    <tbody>
-        <tr>
-            <td>tmplNo</td>
-            <td>Number</td>
-            <td>null</td>
-            <td>傳入表單樣板流水號</td>
-        </tr>
+    <tbody>        
         <tr>
             <td>showTag</td>
             <td>Boolean</td>
@@ -33,6 +27,18 @@
             <td>Boolean</td>
             <td>true</td>
             <td>是否要顯示功能列按鈕，e.g. 暫存、繳交...等按鈕</td>
+        </tr>
+        <tr>
+            <td>formReadOnly</td>
+            <td>Boolean</td>
+            <td>false</td>
+            <td>formio是否唯獨(true代表唯獨)</td>
+        </tr>
+        <tr>
+            <td>setType</td>
+            <td>string<'setFormReply2' | 'addFormReply2Info'></td>
+            <td>""</td>
+            <td>存檔(暫存, 繳交)的類型setFormReply2是針對某個replyNo去異動, addFormReply2Info是正式表單新增時sp會自動增加replyNo</td>
         </tr>
     </tbody>
 </table>
