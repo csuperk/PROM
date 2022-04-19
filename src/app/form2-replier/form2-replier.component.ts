@@ -116,7 +116,7 @@ export class Form2ReplierComponent implements OnInit {
     this.initDataVariable();
     this.displayProgress = true;
     this.initInfo();
-    this.getReplyRecord(this.replyInfo);
+    this.getReplyRecord();
   }
 
   /**
@@ -276,7 +276,7 @@ export class Form2ReplierComponent implements OnInit {
     this.replyInfo.subjectType = 10;
     this.replyInfo.subject = subject;
     this.initDataVariable();
-    await this.getReplyRecord(this.replyInfo);
+    await this.getReplyRecord();
 
     this.submitData = tempReplyDesc;
   }
@@ -339,14 +339,17 @@ export class Form2ReplierComponent implements OnInit {
    * 清單點擊事件
    * @param replyInfo
    */
-  public async getReplyRecord(replyInfo: FormReplyInfo) {
+  public async getReplyRecord() {
+
+    // 先塞好 表單的資訊 tmplInfo (例如表單樣子, replyRule...等)
+    this.tmplInfo = (
+      await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
+    )[0];
+
+    // 新增的 reply 會沒有 replyNo
     if (this.replyInfo.replyNo == undefined) {
       this.replyInfo.replyNo = this.getReplyNo(this.replyInfo.tmplNo);
-      this.tmplInfo = (
-        await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
-      )[0];
       this.displayProgress = false;
-      // this.formIo.readOnly = false;
       return;
     }
     // 驗證白名單
@@ -364,20 +367,24 @@ export class Form2ReplierComponent implements OnInit {
       this.formIo.readOnly = true;
     }
     // 驗證繳交後可否異動
-    await this.authTest(replyInfo);
+    await this.authTest();
 
-    this.getFormReplyInfo(replyInfo.replyNo, 10);
+    // 取回之前的 填答結果 replyInfo
+    this.getFormReplyInfo(10);
   }
 
-  private async authTest(replyInfo) {
-    // 驗證繳交後可否異動
-    let tranStatus = replyInfo.tranStatus;
+  /**
+   * 驗證繳交後能否異動
+   * 不可異動會變為唯獨模式
+   */
+  private async authTest() {
 
-    this.tmplInfo = (
-      await this.f2RSvc.getFormTmplInfo(replyInfo.tmplNo).toPromise()
-    )[0];
+    // 代表是異動的, tranStatus是這筆回覆的狀態
+    let tranStatus = this.replyInfo.tranStatus;
 
+    // 填答規範 10 跟 20 代表 回覆後不可異動
     let replyRule = this.tmplInfo.replyRule;
+
     if (replyRule == 10 || replyRule == 20) {
       // 繳交後不可異動
       if (tranStatus > 20) {
@@ -396,7 +403,9 @@ export class Form2ReplierComponent implements OnInit {
    * 最重要的是取得 FormReply.ReplyDesc
    * @param replyNo
    */
-  public getFormReplyInfo(replyNo: number, eventFrom: number) {
+  public getFormReplyInfo(eventFrom: number) {
+
+    let replyNo = this.replyInfo.replyNo;
     enum eventFromType {
       tableList = 10,
       button = 20,
