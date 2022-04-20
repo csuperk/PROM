@@ -73,24 +73,24 @@
     </thead>
     <tbody>
         <tr>
-            <th>view</th>
-            <th>form2-reply-list</th>
-            <th>https://gitserver.cmuh.org.tw/cmuh.modules.view/form2-reply-list.git</th>
+            <td>view</td>
+            <td>form2-reply-list</td>
+            <td>https://gitserver.cmuh.org.tw/cmuh.modules.view/form2-reply-list.git</td>
         </tr>
         <tr>
-            <th>webapp</th>
-            <th>form2-backend</th>
-            <th>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-backend.git</th>
+            <td>webapp</td>
+            <td>form2-backend</td>
+            <td>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-backend.git</td>
         </tr>
         <tr>
-            <th>webapp</th>
-            <th>form2-replier</th>
-            <th>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-replier.git</th>
+            <td>webapp</td>
+            <td>form2-replier</td>
+            <td>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-replier.git</td>
         </tr>
         <tr>
-            <th>webapp</th>
-            <th>form2-replier-public</th>
-            <th>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-replier-public.git</th>            
+            <td>webapp</td>
+            <td>form2-replier-public</td>
+            <td>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-replier-public.git</td>
         </tr>        
     </tbody>
 </table>
