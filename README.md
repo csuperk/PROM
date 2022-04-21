@@ -78,6 +78,11 @@
             <td>https://gitserver.cmuh.org.tw/cmuh.modules.view/form2-reply-list.git</td>
         </tr>
         <tr>
+            <td>view</td>
+            <td>form2-reply-list-subject</td>
+            <td>https://gitserver.cmuh.org.tw/cmuh.modules.view/form2-reply-list-subject.git</td>
+        </tr>
+        <tr>
             <td>webapp</td>
             <td>form2-backend</td>
             <td>https://gitserver.cmuh.org.tw/cmuh.webapp/form2-backend.git</td>

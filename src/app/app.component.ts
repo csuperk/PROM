@@ -29,23 +29,38 @@ export class AppComponent implements OnInit {
 
   public newReplyInfo = {
     tmplNo: 20100,
-    replyNo: undefined,
+    replyNo: 2,
     subjectType: 10,
     subject: 'A123456789',
   }
+
+  public editReplyInfo = {
+    branchNo: 1,
+    replyNo: 1112652080,
+    tmplNo: 20100,
+    subjectType: 10,
+    subject: 'A123456789',
+    tranUser: 33878,
+    tranTime: new Date('2022-04-12T09:56:14.257'),
+    tranStatus: 20,
+    systemUser: 33878,
+    systemTime: new Date('2022-04-12T09:56:14.367'),
+    subjectName: '郭彥志'
+  }
+
   constructor() { }
 
   ngOnInit() {
     if (isDevMode()) {
       localStorage.setItem(
         'token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBMzM1NzMiLCJpYXQiOjE2MDk3NDM0ODksImV4cCI6MTYwOTc0NDY4OX0._r14v5zVcpdKmb65nTWTD3HQuOEyYqWcBElaINDTMAI'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBMzQ5NDQiLCJpYXQiOjE2NTA0NDAzMDgsImV4cCI6MTY1MDQ0MTUwOH0.rEamS9TY1KS00XZvY3ouT8_XpQEXqPk5JS7xSsfyAmI'
       );
       console.log('local先帶入預設登入人員資訊...');
       // const userInfo = localStorage.getItem('userInfo') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMzNTczLCJ1c2VySWQiOiJBMzM1NzMiLCJ1c2VyTmFtZSI6IuacseS4luixqiIsImJpcnRoZGF5IjoiMTk5My0wOS0yNiIsInNleCI6IjEiLCJlTWFpbCI6ImpvaG5jeTgyOTI2QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImlhdCI6MTU2MjU2ODg2MCwiZXhwIjoxNTYyNTcwMDYwfQ.EjnTxY-6zqUvvK0TAbDhu4_x9jCTkw1UG2znxZixBqM';
       const userInfo =
         localStorage.getItem('userInfo') ||
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMzNTczLCJ1c2VySWQiOiJBMzM1NzMiLCJ1c2VyTmFtZSI6IuacseS4luixqiIsImJpcnRoZGF5IjoiMTk5My0wOS0yNiIsInNleCI6IjEiLCJlTWFpbCI6ImpvaG5jeTgyOTI2QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsInJlc3BvbnNpYmlsaXR5IjoiMUE4RiIsImlhdCI6MTYwOTc0MzQ4OSwiZXhwIjoxNjA5NzQ0Njg5fQ.77hOxeLS9u5RwoYSKhb6LGbczgD25-rahRJH_Yklydg';
+        '';
       localStorage.setItem('userInfo', userInfo);
     }
   }
