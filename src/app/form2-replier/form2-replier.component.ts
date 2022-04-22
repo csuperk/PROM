@@ -189,7 +189,7 @@ export class Form2ReplierComponent implements OnInit {
     switch (this.setType) {
       case 'setFormReply2':
         this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
-          (res) => {
+          (res: number) => {
             this.showToastMsg(200, '儲存成功');
 
             // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
@@ -216,6 +216,10 @@ export class Form2ReplierComponent implements OnInit {
             resultInfo.data = this.formReplyInfo;
             resultInfo.apiResult = true;
             this.result.emit(resultInfo);
+            // 要將新增的 replyNo 重新塞回去
+            this.replyInfo.replyNo = res;
+            // 之後setType改變, 因為接下來就是UPDATE了
+            this.setType = 'setFormReply2';
           },
           (err) => {
             this.showToastMsg(500, '儲存失敗');
@@ -387,38 +391,10 @@ export class Form2ReplierComponent implements OnInit {
     this.f2RSvc.getPatientByIdNo(this.replyInfo.subject).subscribe(
       async (res) => {
 
-        // 初始化submitData
-        this.initSubmitData();
-
-        // 塞入submitData
-        this.setSubmitData(res);
+        // 塞值到 submitData
+        this.submitData.data = res
       }
     );
-  }
-
-  /**
-   * 將 dataArray的內容塞入submitData之中
-   * @param dataArray
-   */
-  private setSubmitData(dataArray: Object) {
-
-    for (let key of Object.keys(this.submitData.data)) {
-      this.submitData.data[key] = dataArray[key] || '';
-    }
-  }
-
-  /**
-   * 初始化 submitData, 把 key塞好
-   */
-  private initSubmitData() {
-
-    this.submitData = { data: {} };
-
-    let formTmpl: any = this.tmplInfo.formTmpl;
-    let components = formTmpl.components;
-    for (let component of components) {
-      this.submitData.data[component.key] = '';
-    }
   }
 
   /*****預帶資料*****/

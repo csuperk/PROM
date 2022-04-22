@@ -84,9 +84,9 @@ export class Form2ReplierService {
     return this.http.put<number>(`${url}`, params);
   }
 
-  public addFormReply2Info(params: FormReplyInfo): Observable<boolean> {
+  public addFormReply2Info(params: FormReplyInfo): Observable<number> {
     const url = `/webapi/form2Kernel/form2Reply/addFormReply2Info`;
-    return this.http.put<boolean>(`${url}`, params);
+    return this.http.put<number>(`${url}`, params);
   }
 
 }
