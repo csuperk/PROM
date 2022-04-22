@@ -392,7 +392,7 @@ export class Form2ReplierComponent implements OnInit {
       async (res) => {
 
         // 塞值到 submitData
-        this.submitData.data = res
+        this.submitData = { data: res };
       }
     );
   }
