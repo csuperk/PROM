@@ -58,20 +58,16 @@ export class Form2AuthService {
       switch (checkType) {
 
         case 'r':
-          Math.floor((authValue % 10) / 1) === 1;
-          return true;
+          return Math.floor((authValue % 10) / 1) === 1;
 
         case 'w':
-          Math.floor((authValue % 100) / 10) === 1;
-          return true;
+          return Math.floor((authValue % 100) / 10) === 1;
 
         case 'd':
-          Math.floor((authValue % 1000) / 100) === 1;
-          return true;
+          return Math.floor((authValue % 1000) / 100) === 1;
 
         case 'p':
-          Math.floor((authValue % 10000) / 1000) === 1;
-          return true;
+          return Math.floor((authValue % 10000) / 1000) === 1;
 
         default:
           return false;
