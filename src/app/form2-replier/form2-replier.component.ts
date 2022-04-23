@@ -273,7 +273,7 @@ export class Form2ReplierComponent implements OnInit {
    */
   public async copyReplier(subject: string) {
 
-    const tempReplyDesc = Object.assign({}, this.submitData);
+    const tempReplyDesc = Object.assign({}, this.submitData.data);
 
     this.replyInfo.tmplNo = this.replyInfo.tmplNo;
     this.replyInfo.replyNo = undefined;
@@ -282,7 +282,11 @@ export class Form2ReplierComponent implements OnInit {
     this.initDataVariable();
     await this.getReplyRecord();
 
-    this.submitData = tempReplyDesc;
+    this.setType = this.replyInfo.tmplNo > 0 ?
+      'addFormReply2Info' :
+      'setFormReply2';
+
+    this.submitData = { data: tempReplyDesc };
   }
 
   /**
@@ -356,7 +360,7 @@ export class Form2ReplierComponent implements OnInit {
       this.replyInfo.replyNo = this.getReplyNo(this.replyInfo.tmplNo);
       this.displayProgress = false;
       // 新增的情況會預帶資料
-      this.autoCompleteSubmitData();
+      await this.autoCompleteSubmitData();
       return;
     }
     // 驗證白名單
@@ -388,13 +392,8 @@ export class Form2ReplierComponent implements OnInit {
   private async autoCompleteSubmitData() {
 
     // 只有新增需要自動帶資料
-    this.f2RSvc.getPatientByIdNo(this.replyInfo.subject).subscribe(
-      async (res) => {
-
-        // 塞值到 submitData
-        this.submitData = { data: res };
-      }
-    );
+    let data = await this.f2RSvc.getPatientByIdNo(this.replyInfo.subject).toPromise();
+    this.submitData = { data: data };
   }
 
   /*****預帶資料*****/
