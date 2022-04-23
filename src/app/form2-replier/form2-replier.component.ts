@@ -363,20 +363,7 @@ export class Form2ReplierComponent implements OnInit {
       await this.autoCompleteSubmitData();
       return;
     }
-    // 驗證白名單
-    let params: FormWhitelistAuthReq = {
-      branchNo: 1,
-      subjectType: this.tmplInfo.formType,
-      subject: this.tmplInfo.tmplNo.toString(),
-      userCode: this.f2RSvc.userInfoService.userId,
-      departNo: this.f2RSvc.userInfoService.responsibility,
-    };
 
-    // 沒有填寫權限的話
-    if (!(await this.form2AuthSvc.checkWhitelistAuth(this.tmplInfo, params, 'w'))) {
-      this.showToastMsg(404, '白名單權限', '您沒有填寫權限，開啟唯讀。');
-      this.formIo.readOnly = true;
-    }
     // 驗證繳交後可否異動
     await this.authTest();
 
@@ -413,10 +400,12 @@ export class Form2ReplierComponent implements OnInit {
     if (replyRule == 10 || replyRule == 20) {
       // 繳交後不可異動
       if (tranStatus > 20) {
+        console.log('tranStatus 繳交不可異動');
         this.formIo.readOnly = true;
       }
     } else {
       if (tranStatus > 30) {
+        console.log('tranStatus>30');
         this.formIo.readOnly = true;
       }
     }
