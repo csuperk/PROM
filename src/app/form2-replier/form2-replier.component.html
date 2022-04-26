@@ -34,7 +34,9 @@
         icon="pi pi-info-circle"
         value="表單資訊:{{ tmplInfo.tmplNo | formType }}  {{
           tmplInfo.tmplNo
-        }}  {{ tmplInfo.formName }}  {{ formReplyInfo.replyUserName }}"
+        }}  {{ tmplInfo.formName }}   {{
+          formReplyInfo == undefined ? '' : formReplyInfo.replyUserName
+        }}"
         severity="info"
       ></p-tag>
       <!-- <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag> -->
