@@ -258,8 +258,6 @@ export class Form2ReplierComponent implements OnInit {
     this.formReplyInfo.replyNo = this.replyInfo.replyNo;
     this.formReplyInfo.subjectType = this.replyInfo.subjectType;
     this.formReplyInfo.subject = this.replyInfo.subject;
-
-    // this.formReplyInfo.replyRule = this.tmplInfo.replyRule;
   }
 
   /**
@@ -286,7 +284,12 @@ export class Form2ReplierComponent implements OnInit {
       'addFormReply2Info' :
       'setFormReply2';
 
+    // 將表單的唯讀改為可編輯
+    this.formIo.readOnly = false;
+
+    // 重新賦值才能刷新頁面
     this.submitData = { data: tempReplyDesc };
+    this.tmplInfo = JSON.parse(JSON.stringify(this.tmplInfo));
   }
 
   /**
@@ -400,12 +403,10 @@ export class Form2ReplierComponent implements OnInit {
     if (replyRule == 10 || replyRule == 20) {
       // 繳交後不可異動
       if (tranStatus > 20) {
-        console.log('tranStatus 繳交不可異動');
         this.formIo.readOnly = true;
       }
     } else {
       if (tranStatus > 30) {
-        console.log('tranStatus>30');
         this.formIo.readOnly = true;
       }
     }
