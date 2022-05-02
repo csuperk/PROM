@@ -56,6 +56,9 @@ export class Form2ReplierComponent implements OnInit {
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
 
+  @Output()
+  public flagChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   // 顯示處理進度
   public displayProgress = false;
 
@@ -166,6 +169,8 @@ export class Form2ReplierComponent implements OnInit {
   public onChange(event) {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
+    let changetFlag: boolean = this.formIo.readOnly ? false : true;
+    this.flagChange.emit(changetFlag);
   }
 
   /**
@@ -198,6 +203,7 @@ export class Form2ReplierComponent implements OnInit {
             resultInfo.data = this.formReplyInfo;
             resultInfo.apiResult = true;
             this.result.emit(resultInfo);
+            this.flagChange.emit(false);
           },
           (err) => {
             this.showToastMsg(500, '儲存失敗');
