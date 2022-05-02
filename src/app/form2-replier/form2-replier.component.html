@@ -3,17 +3,9 @@
     <p-toolbar>
       <div class="p-toolbar-group-left toolbar1">
         <ng-container *ngFor="let btn of toolBarButtons">
-          <button
-            pButton
-            style="margin-left: 10px"
-            icon="{{ btn.icon }}"
-            type="button"
-            label="{{ btn.title }}"
-            class="{{ btn.class }}"
-            [hidden]="btn.displayNone"
-            [disabled]="btn.disable"
-            (click)="btn.onClick()"
-          ></button>
+          <button pButton style="margin-left: 10px" icon="{{ btn.icon }}" type="button" label="{{ btn.title }}"
+            class="{{ btn.class }}" [hidden]="btn.displayNone" [disabled]="btn.disable"
+            (click)="btn.onClick()"></button>
         </ng-container>
       </div>
     </p-toolbar>
@@ -30,57 +22,36 @@
         <p-tag icon="pi pi-info-circle" value="{{ tmplInfo.tmplNo | formType }}" severity="success"></p-tag>
       </ng-container> -->
 
-      <p-tag
-        icon="pi pi-info-circle"
-        value="表單資訊:{{ tmplInfo.tmplNo | formType }}  {{
+      <p-tag icon="pi pi-info-circle" value="表單資訊:{{ tmplInfo.tmplNo | formType }}  {{
           tmplInfo.tmplNo
         }}  {{ tmplInfo.formName }}   {{
           formReplyInfo == undefined ? '' : formReplyInfo.replyUserName
-        }}"
-        severity="info"
-      ></p-tag>
+        }}" severity="info"></p-tag>
       <!-- <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag> -->
-      <ng-container
-        *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11"
-      >
-        <p-tag
-          icon="pi pi-exclamation-triangle"
-          value="限填一份"
-          severity="warning"
-        ></p-tag>
+      <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
+        <p-tag icon="pi pi-exclamation-triangle" value="限填一份" severity="warning"></p-tag>
       </ng-container>
-      <ng-container
-        *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20"
-      >
-        <p-tag
-          icon="pi pi-exclamation-triangle"
-          value="繳交後不可異動"
-          severity="warning"
-        ></p-tag>
+      <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
+        <p-tag icon="pi pi-exclamation-triangle" value="繳交後不可異動" severity="warning"></p-tag>
       </ng-container>
     </div>
   </ng-container>
   <div style="height: 100%; overflow: auto">
-    <formio
-      #formIo
-      [form]="tmplInfo.formTmpl"
-      [refresh]="triggerRefresh"
-      [submission]="submitData"
-      (change)="onChange($event)"
-      [readOnly]="formReadOnly"
-    ></formio>
+    <formio #formIo [form]="tmplInfo.formTmpl" [refresh]="triggerRefresh" [submission]="submitData"
+      (change)="onChange($event)" [readOnly]="formReadOnly"></formio>
   </div>
 </div>
+<!-- 預帶資料 -->
+<p-dialog [header]="displayDialog[0].title" [(visible)]="displayDialog[0].visible"
+  [style]="{ width: '30vw', height: '60vh' }"
+  [contentStyle]="{ 'max-height': '55vh', 'font-size': '1', height: '100%' }">
+  <form2-pre-load subject="A123456789" (preData)="exportPreData($event)"></form2-pre-load>
+</p-dialog>
 
 <p-toast key="generalFormReplyMessage" position="bottom-right"></p-toast>
 
 <!-- 放棄填寫確認 -->
-<p-toast
-  position="center"
-  key="confirmMessage"
-  (onClose)="onReject()"
-  [baseZIndex]="5000"
->
+<p-toast position="center" key="confirmMessage" (onClose)="onReject()" [baseZIndex]="5000">
   <ng-template let-message pTemplate="message">
     <div class="p-flex p-flex-column" style="flex: 1">
       <div class="p-text-center">
@@ -90,22 +61,10 @@
       </div>
       <div class="p-grid p-fluid">
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onConfirm()"
-            label="確定"
-            class="p-button-danger"
-          ></button>
+          <button type="button" pButton (click)="onConfirm()" label="確定" class="p-button-danger"></button>
         </div>
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onReject()"
-            label="取消"
-            class="p-button-secondary"
-          ></button>
+          <button type="button" pButton (click)="onReject()" label="取消" class="p-button-secondary"></button>
         </div>
       </div>
     </div>
@@ -113,12 +72,7 @@
 </p-toast>
 
 <!-- 撤回確認 -->
-<p-toast
-  position="center"
-  key="confirmWithdrawMessage"
-  (onClose)="onReject()"
-  [baseZIndex]="5000"
->
+<p-toast position="center" key="confirmWithdrawMessage" (onClose)="onReject()" [baseZIndex]="5000">
   <ng-template let-message pTemplate="message">
     <div class="p-flex p-flex-column" style="flex: 1">
       <div class="p-text-center">
@@ -128,22 +82,10 @@
       </div>
       <div class="p-grid p-fluid">
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onConfirmWithdraw()"
-            label="確定"
-            class="p-button-danger"
-          ></button>
+          <button type="button" pButton (click)="onConfirmWithdraw()" label="確定" class="p-button-danger"></button>
         </div>
         <div class="p-col-6">
-          <button
-            type="button"
-            pButton
-            (click)="onReject()"
-            label="取消"
-            class="p-button-secondary"
-          ></button>
+          <button type="button" pButton (click)="onReject()" label="取消" class="p-button-secondary"></button>
         </div>
       </div>
     </div>
@@ -152,17 +94,10 @@
 
 <!-- 讀取資料的處理動畫 -->
 <p-blockUI [blocked]="displayProgress"></p-blockUI>
-<p-progressSpinner
-  *ngIf="displayProgress"
-  [style]="{
+<p-progressSpinner *ngIf="displayProgress" [style]="{
     width: '50px',
     height: '50px',
     position: 'fixed',
     left: '50%',
     top: '50%'
-  }"
-  styleClass="custom-spinner"
-  strokeWidth="8"
-  fill="#EEEEEE"
-  animationDuration=".5s"
-></p-progressSpinner>
+  }" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

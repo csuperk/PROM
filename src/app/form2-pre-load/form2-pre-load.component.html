@@ -1,0 +1,13 @@
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <p-dropdown [options]="preLoadOpts" [(ngModel)]="preLoad" optionLabel="name"
+      (onChange)="choosePreLoad($event.value)"></p-dropdown>
+  </div>
+  <button pButton type="button" label="匯入到表單" style="margin-left: 10px" (click)="exportToForm()"></button>
+</p-toolbar>
+
+<ng-template>
+  <div style="height: 380px; overflow: auto">
+    <pre> {{ returnPreInfo | json }} </pre>
+  </div>
+</ng-template>
