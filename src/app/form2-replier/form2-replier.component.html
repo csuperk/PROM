@@ -27,10 +27,10 @@
         }}  {{ tmplInfo.formName }}   {{
           formReplyInfo == undefined ? '' : formReplyInfo.replyUserName
         }}" severity="info"></p-tag>
-      <p-tag icon="pi pi-info-circle" value="回覆者資訊: {{ formReplyInfo.subject }} {{ formReplyInfo.subjectName }}"
+      <p-tag icon="pi pi-info-circle" value="回覆者資訊: {{ replyInfo.subject }} {{ formReplyInfo.subjectName }}"
         severity="success"></p-tag>
       <p-tag icon="pi pi-info-circle"
-        value="回覆編號: {{ formReplyInfo.replyNo }} {{ formReplyInfo.tranStatus | formTeplyTranStatus }}" severity="success">
+        value="回覆編號: {{ replyInfo.replyNo }} {{ formReplyInfo.tranStatus | formTeplyTranStatus }}" severity="success">
       </p-tag>
       <!-- <p-tag icon="pi pi-info-circle" value="表單名稱: {{ tmplInfo.formName }}" severity="info"></p-tag> -->
       <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 11">
