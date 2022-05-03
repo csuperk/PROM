@@ -7,9 +7,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { ToolbarModule } from 'primeng/toolbar';
 
 import { Form2PreLoadComponent } from './form2-pre-load.component';
+import { Form2PreLoadDirective } from './form2-pre-load.directive';
 
 @NgModule({
-  declarations: [Form2PreLoadComponent],
+  declarations: [Form2PreLoadComponent, Form2PreLoadDirective],
   imports: [
     CommonModule,
     FormsModule,

@@ -6,8 +6,11 @@
   <button pButton type="button" label="匯入到表單" style="margin-left: 10px" (click)="exportToForm()"></button>
 </p-toolbar>
 
-<ng-template>
+<ng-template appForm2PreLoad>
   <div style="height: 380px; overflow: auto">
     <pre> {{ returnPreInfo | json }} </pre>
   </div>
 </ng-template>
+
+<ng-template appForm2PreLoad> examInfo </ng-template>
+<div *ngTemplateOutlet="displayPage"></div>

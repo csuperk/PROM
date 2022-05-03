@@ -45,7 +45,7 @@
 <p-dialog [header]="displayDialog[0].title" [(visible)]="displayDialog[0].visible"
   [style]="{ width: '30vw', height: '60vh' }"
   [contentStyle]="{ 'max-height': '55vh', 'font-size': '1', height: '100%' }">
-  <form2-pre-load subject="A123456789" (preData)="exportPreData($event)"></form2-pre-load>
+  <form2-pre-load [subject]="replyInfo.subject" (preData)="exportPreData($event)"></form2-pre-load>
 </p-dialog>
 
 <p-toast key="generalFormReplyMessage" position="bottom-right"></p-toast>

@@ -1,8 +1,9 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter, } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter, TemplateRef, QueryList, ViewChildren } from '@angular/core';
 
 import { PatientInfo } from '@cmuh-viewmodel/form2-kernel';
 
 import { Form2PreLoadService } from './form2-pre-load.service';
+import { Form2PreLoadDirective } from './form2-pre-load.directive';
 
 @Component({
   selector: 'form2-pre-load',
@@ -10,6 +11,10 @@ import { Form2PreLoadService } from './form2-pre-load.service';
   styleUrls: ['./form2-pre-load.component.scss']
 })
 export class Form2PreLoadComponent implements OnInit, OnChanges {
+
+  @ViewChildren(Form2PreLoadDirective)
+  carouselPages: QueryList<Form2PreLoadDirective>;
+  displayPage: TemplateRef<any>
 
   @Input()
   subject: string = "";
@@ -51,6 +56,7 @@ export class Form2PreLoadComponent implements OnInit, OnChanges {
       default:
         break;
     }
+    this.displayPage = this.carouselPages['_results'][value.code].templateRef;
   }
 
   /**
