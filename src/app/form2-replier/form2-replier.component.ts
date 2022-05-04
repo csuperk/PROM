@@ -81,14 +81,14 @@ export class Form2ReplierComponent implements OnInit {
       displayNone: false,
       onClick: (event) => this.onSaveReplyClick(),
     },
-    {
-      title: '表單預帶資料選單',
-      class: 'p-button-help',
-      icon: 'pi pi-info',
-      disable: false,
-      displayNone: false,
-      onClick: (event) => this.onDisplayPreLoadDialog(),
-    },
+    // {
+    //   title: '表單預帶資料選單',
+    //   class: 'p-button-help',
+    //   icon: 'pi pi-info',
+    //   disable: false,
+    //   displayNone: false,
+    //   onClick: (event) => this.onDisplayPreLoadDialog(),
+    // },
   ];
 
   /*操控formIo的相關變數*/
@@ -483,7 +483,7 @@ export class Form2ReplierComponent implements OnInit {
         //     data: res.replyDesc,
         //   },
         // });
-        
+
         // 驗證繳交後可否異動
         this.authTest();
 
