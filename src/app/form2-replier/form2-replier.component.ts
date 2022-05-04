@@ -74,7 +74,7 @@ export class Form2ReplierComponent implements OnInit {
       onClick: (event) => this.onTempReplyClick(),
     },
     {
-      title: '繳交',
+      title: '確認',
       class: 'p-button-success',
       icon: 'pi pi-send',
       disable: false,
