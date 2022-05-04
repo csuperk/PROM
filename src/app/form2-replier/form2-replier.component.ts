@@ -416,11 +416,8 @@ export class Form2ReplierComponent implements OnInit {
       return;
     }
 
-    // 驗證繳交後可否異動
-    await this.authTest();
-
     // 取回之前的 填答結果 replyInfo
-    this.getFormReplyInfo(10);
+    this.getFormReplyInfo();
   }
 
   /*****預帶資料*****/
@@ -444,7 +441,7 @@ export class Form2ReplierComponent implements OnInit {
   private async authTest() {
 
     // 代表是異動的, tranStatus是這筆回覆的狀態
-    let tranStatus = this.replyInfo.tranStatus;
+    let tranStatus = this.formReplyInfo.tranStatus;
 
     // 填答規範 10 跟 20 代表 回覆後不可異動
     let replyRule = this.tmplInfo.replyRule;
@@ -467,7 +464,7 @@ export class Form2ReplierComponent implements OnInit {
    * 最重要的是取得 FormReply.ReplyDesc
    * @param replyNo
    */
-  public getFormReplyInfo(eventFrom: number) {
+  public getFormReplyInfo() {
 
     let replyNo = this.replyInfo.replyNo;
     enum eventFromType {
@@ -486,10 +483,14 @@ export class Form2ReplierComponent implements OnInit {
         //     data: res.replyDesc,
         //   },
         // });
+        
+        // 驗證繳交後可否異動
+        this.authTest();
 
         this.submitData = {
           data: res[0].replyDesc,
         };
+        this.tmplInfo = JSON.parse(JSON.stringify(this.tmplInfo));
       },
       (err) => {
         this.showToastMsg(500, '回覆資料取得錯誤');
