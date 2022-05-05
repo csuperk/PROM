@@ -156,7 +156,7 @@ export class Form2ReplierComponent implements OnInit {
   public onTempReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
     if (this.formIo.readOnly) {
-      this.showToastMsg(500, '表單規則繳交後無法異動，表單無法暫存或繳交');
+      this.showToastMsg(500, '違反表單規則無法異動', '表單繳交後無法異動或非本人不可異動。');
       return;
     }
     this.displayProgress = true;
@@ -170,7 +170,7 @@ export class Form2ReplierComponent implements OnInit {
   public onSaveReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
     if (this.formIo.readOnly) {
-      this.showToastMsg(500, '表單規則繳交後無法異動，表單無法暫存或繳交');
+      this.showToastMsg(500, '違反表單規則無法異動', '表單繳交後無法異動或非本人不可異動。');
       return;
     }
     this.displayProgress = true;
