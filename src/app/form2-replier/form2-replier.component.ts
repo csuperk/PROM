@@ -13,7 +13,11 @@ import { PatientInfoService } from '@cmuh/patient-info';
 import { BannerService } from '@cmuh/core';
 import '@cmuh/extensions';
 
-import { FormReplyInfo, FormTmplInfo, FormWhitelistAuthReq } from '@cmuh-viewmodel/form2-kernel';
+import {
+  FormReplyInfo,
+  FormTmplInfo,
+  FormWhitelistAuthReq,
+} from '@cmuh-viewmodel/form2-kernel';
 import { FormioComponent } from '@formio/angular';
 
 import { Form2ReplierService } from './form2-replier.service';
@@ -51,7 +55,7 @@ export class Form2ReplierComponent implements OnInit {
    * @memberof Form2ReplierComponent
    */
   @Input()
-  public setType: '' | 'setFormReply2' | 'addFormReply2Info' = "";
+  public setType: '' | 'setFormReply2' | 'addFormReply2Info' = '';
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -122,7 +126,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -156,7 +160,11 @@ export class Form2ReplierComponent implements OnInit {
   public onTempReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
     if (this.formIo.readOnly) {
-      this.showToastMsg(500, '違反表單規則無法異動', '表單繳交後無法異動或非本人不可異動。');
+      this.showToastMsg(
+        500,
+        '違反表單規則無法異動',
+        '表單繳交後無法異動或非本人不可異動。'
+      );
       return;
     }
     this.displayProgress = true;
@@ -170,7 +178,11 @@ export class Form2ReplierComponent implements OnInit {
   public onSaveReplyClick() {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
     if (this.formIo.readOnly) {
-      this.showToastMsg(500, '違反表單規則無法異動', '表單繳交後無法異動或非本人不可異動。');
+      this.showToastMsg(
+        500,
+        '違反表單規則無法異動',
+        '表單繳交後無法異動或非本人不可異動。'
+      );
       return;
     }
     this.displayProgress = true;
@@ -201,7 +213,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param preData
    */
   public exportPreData(preData: Array<any>) {
-
     let preDataKey = Object.keys(preData);
     this.getSubmitData();
     let submitData = JSON.parse(JSON.stringify(this.submitData.data || []));
@@ -228,7 +239,6 @@ export class Form2ReplierComponent implements OnInit {
    * 儲存回覆內容到DB
    */
   public setFormReply() {
-
     let resultInfo = {
       data: this.formReplyInfo,
       apiResult: false,
@@ -264,11 +274,12 @@ export class Form2ReplierComponent implements OnInit {
             this.displayProgress = false;
             resultInfo.data = this.formReplyInfo;
             resultInfo.apiResult = true;
-            this.result.emit(resultInfo);
             // 要將新增的 replyNo 重新塞回去
             this.replyInfo.replyNo = res;
+            resultInfo.data.replyNo = res;
             // 之後setType改變, 因為接下來就是UPDATE了
             this.setType = 'setFormReply2';
+            this.result.emit(resultInfo);
           },
           (err) => {
             this.showToastMsg(500, '儲存失敗');
@@ -287,7 +298,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param tranStatus
    */
   public setReplyData(tranStatus: number = 20) {
-
     this.getSubmitData();
     let loginUser =
       this.f2RSvc.userInfoService === null
@@ -319,7 +329,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param subject
    */
   public async copyReplier(subject: string) {
-
     const tempReplyDesc = Object.assign({}, this.submitData.data);
 
     this.replyInfo.tmplNo = this.replyInfo.tmplNo;
@@ -329,9 +338,8 @@ export class Form2ReplierComponent implements OnInit {
     this.initDataVariable();
     await this.getReplyRecord();
 
-    this.setType = this.replyInfo.tmplNo > 0 ?
-      'addFormReply2Info' :
-      'setFormReply2';
+    this.setType =
+      this.replyInfo.tmplNo > 0 ? 'addFormReply2Info' : 'setFormReply2';
 
     // 將表單的唯讀改為可編輯
     this.formIo.readOnly = false;
@@ -400,7 +408,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyInfo
    */
   public async getReplyRecord() {
-
     // 先塞好 表單的資訊 tmplInfo (例如表單樣子, replyRule...等)
     this.tmplInfo = (
       await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
@@ -426,9 +433,10 @@ export class Form2ReplierComponent implements OnInit {
    * 自動預帶資料
    */
   private async autoCompleteSubmitData() {
-
     // 只有新增需要自動帶資料
-    let data = await this.f2RSvc.getPatientByIdNo(this.replyInfo.subject).toPromise();
+    let data = await this.f2RSvc
+      .getPatientByIdNo(this.replyInfo.subject)
+      .toPromise();
     this.submitData = { data: data };
   }
 
@@ -439,7 +447,6 @@ export class Form2ReplierComponent implements OnInit {
    * 不可異動會變為唯獨模式
    */
   private async authTest() {
-
     // 代表是異動的, tranStatus是這筆回覆的狀態
     let tranStatus = this.formReplyInfo.tranStatus;
 
@@ -465,7 +472,6 @@ export class Form2ReplierComponent implements OnInit {
    * @param replyNo
    */
   public getFormReplyInfo() {
-
     let replyNo = this.replyInfo.replyNo;
     enum eventFromType {
       tableList = 10,
