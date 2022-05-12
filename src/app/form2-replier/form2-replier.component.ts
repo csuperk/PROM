@@ -175,9 +175,9 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 繳交回覆內容
    */
-  public onSaveReplyClick() {
+  public onSaveReplyClick(isStructure = false) {
     // 表單規則繳交後不可異動的表單不能繳交或暫存
-    if (this.formIo.readOnly) {
+    if (this.formIo.readOnly && isStructure !== true) {
       this.showToastMsg(
         500,
         '違反表單規則無法異動',
