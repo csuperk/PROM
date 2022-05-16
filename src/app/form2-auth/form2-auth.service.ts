@@ -3,16 +3,20 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CmuhHttpService } from '@cmuh/http';
-import { FormWhitelistAuthReq, FormTmplInfo, FormReplyReq, FormReplyInfo } from '@cmuh-viewmodel/form2-kernel';
-import { AuthlistSubjectInfo } from '@cmuh-viewmodel/whitelist-module'
+import {
+  FormWhitelistAuthReq,
+  FormTmplInfo,
+  FormReplyReq,
+  FormReplyInfo,
+} from '@cmuh-viewmodel/form2-kernel';
+import { AuthlistSubjectInfo } from '@cmuh-viewmodel/whitelist-module';
 
 import '@cmuh/extensions';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class Form2AuthService {
-
   /**
    * 檢查白名單包括
    * 讀取
@@ -26,8 +30,8 @@ export class Form2AuthService {
   public async checkWhitelistAuth(
     tmplInfo: FormTmplInfo,
     params: FormWhitelistAuthReq,
-    checkType: ("r" | "w" | "d" | "p")): Promise<boolean> {
-
+    checkType: 'r' | 'w' | 'd' | 'p'
+  ): Promise<boolean> {
     // 測試表單，不用驗證白名單
     if (this.verifyTest(tmplInfo.tmplNo)) {
       return true;
@@ -56,7 +60,6 @@ export class Form2AuthService {
     } else {
       let authValue = auth.accessType;
       switch (checkType) {
-
         case 'r':
           return Math.floor((authValue % 10) / 1) === 1;
 
@@ -82,7 +85,11 @@ export class Form2AuthService {
    * @param subject
    * @returns
    */
-  public async checkLimitOnceReply(tmplInfo: FormTmplInfo, subjectType: number, subject: string): Promise<boolean> {
+  public async checkLimitOnceReply(
+    tmplInfo: FormTmplInfo,
+    subjectType: number,
+    subject: string
+  ): Promise<boolean> {
     /**
      * 1. 確認replyRule是 10, 11 不是就回傳true
      * 2. subject 找 是否replye過
@@ -99,12 +106,12 @@ export class Form2AuthService {
       endTime 預設是 2999-12-31,
       */
       let params: FormReplyReq = {
-        branchNo: 1,
+        branchNo: tmplInfo.branchNo,
         tmplNo: tmplInfo.tmplNo,
         tranStatus1: 10,
         tranStatus2: 60,
         subjectType: subjectType,
-        subject: subject
+        subject: subject,
       };
       let replyList = await this.getForm2PeriodReplyList(params).toPromise();
       // < 0 代表沒有填寫紀錄
@@ -114,7 +121,7 @@ export class Form2AuthService {
     }
   }
 
-  constructor(private http: CmuhHttpService) { }
+  constructor(private http: CmuhHttpService) {}
 
   /**
    * 驗證是否為測試表單，是(return true)則直接放行填寫
@@ -125,14 +132,17 @@ export class Form2AuthService {
     return tmplNo < 0 ? true : false;
   }
 
-  public getUserWhitelistAuth(params: FormWhitelistAuthReq): Observable<AuthlistSubjectInfo> {
+  public getUserWhitelistAuth(
+    params: FormWhitelistAuthReq
+  ): Observable<AuthlistSubjectInfo> {
     const url = `/webapi/form2Kernel/form2Auth/getUserWhitelistAuth`;
     return this.http.put<AuthlistSubjectInfo>(`${url}`, params);
   }
 
-  private getForm2PeriodReplyList(params: FormReplyReq): Observable<FormReplyInfo[]> {
-    const url = `/webapi/form2Kernel/form2Reply/getForm2PeriodReplyList`
+  private getForm2PeriodReplyList(
+    params: FormReplyReq
+  ): Observable<FormReplyInfo[]> {
+    const url = `/webapi/form2Kernel/form2Reply/getForm2PeriodReplyList`;
     return this.http.put<FormReplyInfo[]>(`${url}`, params);
   }
-
 }

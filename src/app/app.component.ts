@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
       // const userInfo = localStorage.getItem('userInfo') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMzNTczLCJ1c2VySWQiOiJBMzM1NzMiLCJ1c2VyTmFtZSI6IuacseS4luixqiIsImJpcnRoZGF5IjoiMTk5My0wOS0yNiIsInNleCI6IjEiLCJlTWFpbCI6ImpvaG5jeTgyOTI2QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImlhdCI6MTU2MjU2ODg2MCwiZXhwIjoxNTYyNTcwMDYwfQ.EjnTxY-6zqUvvK0TAbDhu4_x9jCTkw1UG2znxZixBqM';
       const userInfo =
         localStorage.getItem('userInfo') ||
-        '';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjM0OTQ0LCJ1c2VySWQiOiJBMzQ5NDQiLCJ1c2VyTmFtZSI6IuWNk-abiemcnCIsImJpcnRoZGF5IjoiMTk4Ny0wMi0xOSIsInNleCI6IjIiLCJlTWFpbCI6ImZyb3N0ZGF3bjE5QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImJyYW5jaE5vIjoxLCJyZXNwb25zaWJpbGl0eSI6IjFBOEMiLCJpYXQiOjE2NTI2NjgwNzIsImV4cCI6MTY1MjY2OTI3Mn0.QX22rj64g5rhIM87GnG80EV_TDjTzv3qa8gKnuqXyVU';
       localStorage.setItem('userInfo', userInfo);
     }
   }

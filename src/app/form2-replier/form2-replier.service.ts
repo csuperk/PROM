@@ -2,7 +2,13 @@ import { Injectable, isDevMode } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CmuhHttpService } from '@cmuh/http';
-import { FormReplyInfo, FormReplyReq, FormTmplInfo, FormTmplReq, PatientInfo } from '@cmuh-viewmodel/form2-kernel';
+import {
+  FormReplyInfo,
+  FormReplyReq,
+  FormTmplInfo,
+  FormTmplReq,
+  PatientInfo,
+} from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
 
@@ -10,7 +16,6 @@ import '@cmuh/extensions';
   providedIn: 'root',
 })
 export class Form2ReplierService {
-
   public userInfoService = null;
   public tmplNo;
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
@@ -57,7 +62,12 @@ export class Form2ReplierService {
   public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo[]> {
     // const url = `/webapi/formMaster/getFormTmplInfo`;
     const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
-    let params: FormTmplReq = { branchNo: 1, tmplNo: tmplNo, tranStatus1: 0, tranStatus2: 80 };
+    let params: FormTmplReq = {
+      branchNo: this.userInfoService.branchNo,
+      tmplNo: tmplNo,
+      tranStatus1: 0,
+      tranStatus2: 80,
+    };
     return this.http.put<FormTmplInfo[]>(`${url}`, params);
   }
 
@@ -69,7 +79,10 @@ export class Form2ReplierService {
   public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo> {
     // const url = `/webapi/formMaster/getFormReplyInfo`;
     const url = `/webapi/form2Kernel/form2Reply/getForm2ReplyTmpl`;
-    let params: FormReplyReq = { branchNo: 1, replyNo: replyNo };
+    let params: FormReplyReq = {
+      branchNo: this.userInfoService.branchNo,
+      replyNo: replyNo,
+    };
     return this.http.put<FormReplyInfo>(`${url}`, params);
   }
 
@@ -88,5 +101,4 @@ export class Form2ReplierService {
     const url = `/webapi/form2Kernel/form2Reply/addFormReply2Info`;
     return this.http.put<number>(`${url}`, params);
   }
-
 }
