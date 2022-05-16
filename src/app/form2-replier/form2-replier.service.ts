@@ -60,7 +60,6 @@ export class Form2ReplierService {
    * @returns
    */
   public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo[]> {
-    // const url = `/webapi/formMaster/getFormTmplInfo`;
     const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
     let params: FormTmplReq = {
       branchNo: this.userInfoService.branchNo,
@@ -77,7 +76,6 @@ export class Form2ReplierService {
    * @returns
    */
   public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo> {
-    // const url = `/webapi/formMaster/getFormReplyInfo`;
     const url = `/webapi/form2Kernel/form2Reply/getForm2ReplyTmpl`;
     let params: FormReplyReq = {
       branchNo: this.userInfoService.branchNo,
@@ -92,12 +90,13 @@ export class Form2ReplierService {
    * @returns
    */
   public setFormReply(params: FormReplyInfo): Observable<number> {
-    // const url = `/webapi/formMaster/setFormReply`;
+    params.branchNo = this.userInfoService.branchNo;
     const url = `/webapi/form2Kernel/form2Reply/setFormReply2`;
     return this.http.put<number>(`${url}`, params);
   }
 
   public addFormReply2Info(params: FormReplyInfo): Observable<number> {
+    params.branchNo = this.userInfoService.branchNo;
     const url = `/webapi/form2Kernel/form2Reply/addFormReply2Info`;
     return this.http.put<number>(`${url}`, params);
   }
