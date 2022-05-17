@@ -155,6 +155,7 @@ export class Form2ReplierComponent implements OnInit {
       return;
     }
     if (this.f2RSvc.userInfoService == null) {
+      this.f2RSvc.branchNo = this.branchNo;
       setTimeout(() => {
         this.initInfo();
       }, 1000);

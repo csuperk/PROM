@@ -25,7 +25,7 @@ export class Form2ReplierService {
 
   private setUserInfoService() {
     let token = localStorage.getItem('userInfo');
-    if (!token) {
+    if (!token && this.branchNo === 0) {
       setTimeout(() => {
         this.setUserInfoService();
       }, 1000);
