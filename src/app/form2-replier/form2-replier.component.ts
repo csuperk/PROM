@@ -63,6 +63,10 @@ export class Form2ReplierComponent implements OnInit {
   @Output()
   public flagChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  // 給民眾填答用
+  @Input()
+  public branchNo = 0;
+
   // 顯示處理進度
   public displayProgress = false;
 
@@ -146,6 +150,10 @@ export class Form2ReplierComponent implements OnInit {
    * 因需要等待api先取回emp的idNo，所以增加此method
    */
   public async initInfo() {
+    if (this.branchNo !== 0) {
+      this.f2RSvc.branchNo = this.branchNo;
+      return;
+    }
     if (this.f2RSvc.userInfoService == null) {
       setTimeout(() => {
         this.initInfo();

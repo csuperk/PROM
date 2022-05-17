@@ -18,6 +18,7 @@ import '@cmuh/extensions';
 export class Form2ReplierService {
   public userInfoService = null;
   public tmplNo;
+  public branchNo;
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
     this.setUserInfoService();
   }
@@ -61,8 +62,13 @@ export class Form2ReplierService {
    */
   public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo[]> {
     const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
+
     let params: FormTmplReq = {
-      branchNo: this.userInfoService.branchNo,
+      branchNo: branchNo,
       tmplNo: tmplNo,
       tranStatus1: 0,
       tranStatus2: 80,
@@ -77,8 +83,12 @@ export class Form2ReplierService {
    */
   public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo> {
     const url = `/webapi/form2Kernel/form2Reply/getForm2ReplyTmpl`;
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
     let params: FormReplyReq = {
-      branchNo: this.userInfoService.branchNo,
+      branchNo: branchNo,
       replyNo: replyNo,
     };
     return this.http.put<FormReplyInfo>(`${url}`, params);
@@ -90,13 +100,21 @@ export class Form2ReplierService {
    * @returns
    */
   public setFormReply(params: FormReplyInfo): Observable<number> {
-    params.branchNo = this.userInfoService.branchNo;
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
+    params.branchNo = branchNo;
     const url = `/webapi/form2Kernel/form2Reply/setFormReply2`;
     return this.http.put<number>(`${url}`, params);
   }
 
   public addFormReply2Info(params: FormReplyInfo): Observable<number> {
-    params.branchNo = this.userInfoService.branchNo;
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
+    params.branchNo = branchNo;
     const url = `/webapi/form2Kernel/form2Reply/addFormReply2Info`;
     return this.http.put<number>(`${url}`, params);
   }
