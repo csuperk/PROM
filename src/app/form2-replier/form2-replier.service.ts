@@ -81,7 +81,7 @@ export class Form2ReplierService {
    * @param tmplNo
    * @returns
    */
-  public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo> {
+  public getFormReplyInfo(replyNo: number): Observable<FormReplyInfo[]> {
     const url = `/webapi/form2Kernel/form2Reply/getForm2ReplyTmpl`;
     let branchNo =
       this.userInfoService === null
@@ -91,7 +91,7 @@ export class Form2ReplierService {
       branchNo: branchNo,
       replyNo: replyNo,
     };
-    return this.http.put<FormReplyInfo>(`${url}`, params);
+    return this.http.put<FormReplyInfo[]>(`${url}`, params);
   }
 
   /**

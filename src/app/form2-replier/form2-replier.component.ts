@@ -130,7 +130,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -178,7 +178,7 @@ export class Form2ReplierComponent implements OnInit {
     }
     this.displayProgress = true;
     this.setReplyData(20);
-    this.setFormReply();
+    this.setFormReply(this.formReplyInfo);
   }
 
   /**
@@ -196,7 +196,7 @@ export class Form2ReplierComponent implements OnInit {
     }
     this.displayProgress = true;
     this.setReplyData(30);
-    this.setFormReply();
+    this.setFormReply(this.formReplyInfo);
   }
 
   /**
@@ -247,22 +247,22 @@ export class Form2ReplierComponent implements OnInit {
   /**
    * 儲存回覆內容到DB
    */
-  public setFormReply() {
+  public setFormReply(replyData: FormReplyInfo) {
     let resultInfo = {
-      data: this.formReplyInfo,
+      data: replyData,
       apiResult: false,
       tmpl: this.tmplInfo,
     };
     switch (this.setType) {
       case 'setFormReply2':
-        this.f2RSvc.setFormReply(this.formReplyInfo).subscribe(
+        this.f2RSvc.setFormReply(replyData).subscribe(
           (res: number) => {
             this.showToastMsg(200, '儲存成功');
 
             // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
             this.displayProgress = false;
 
-            resultInfo.data = this.formReplyInfo;
+            resultInfo.data = replyData;
             resultInfo.apiResult = true;
             this.result.emit(resultInfo);
             this.flagChange.emit(false);
@@ -270,18 +270,18 @@ export class Form2ReplierComponent implements OnInit {
           (err) => {
             this.showToastMsg(500, '儲存失敗');
             this.displayProgress = false;
-            resultInfo.data = this.formReplyInfo;
+            resultInfo.data = replyData;
             resultInfo.apiResult = false;
             this.result.emit(resultInfo);
           }
         );
         break;
       case 'addFormReply2Info':
-        this.f2RSvc.addFormReply2Info(this.formReplyInfo).subscribe(
+        this.f2RSvc.addFormReply2Info(replyData).subscribe(
           (res) => {
             this.showToastMsg(200, '儲存成功');
             this.displayProgress = false;
-            resultInfo.data = this.formReplyInfo;
+            resultInfo.data = replyData;
             resultInfo.apiResult = true;
             // 要將新增的 replyNo 重新塞回去
             this.replyInfo.replyNo = res;
@@ -293,7 +293,7 @@ export class Form2ReplierComponent implements OnInit {
           (err) => {
             this.showToastMsg(500, '儲存失敗');
             this.displayProgress = false;
-            resultInfo.data = this.formReplyInfo;
+            resultInfo.data = replyData;
             resultInfo.apiResult = false;
             this.result.emit(resultInfo);
           }
@@ -303,7 +303,16 @@ export class Form2ReplierComponent implements OnInit {
   }
 
   /**
+   * 塞值 formReplyInfo
+   * @param formReplyData
+   */
+  private setFormReplyInfo(formReplyData: FormReplyInfo) {
+    this.formReplyInfo = formReplyData;
+  }
+
+  /**
    * 設定回覆的內容資料 (預備要存檔用的)
+   * setFormReplyInfo
    * @param tranStatus
    */
   public setReplyData(tranStatus: number = 20) {
@@ -314,18 +323,20 @@ export class Form2ReplierComponent implements OnInit {
         : this.f2RSvc.userInfoService.userNo;
 
     this.formReplyInfo.tmplNo = this.tmplInfo.tmplNo;
+    this.formReplyInfo.subjectType = this.replyInfo.subjectType;
     this.formReplyInfo.subject =
       this.pSvc.patientInfo === undefined
         ? this.formReplyInfo.subject
         : this.pSvc.patientInfo.idNo;
     this.formReplyInfo.replyDesc = this.submitData.data;
+    this.formReplyInfo.replyNo = this.replyInfo.replyNo;
     this.formReplyInfo.tranUser = loginUser;
     this.formReplyInfo.tranTime = new Date();
     this.formReplyInfo.tranStatus = tranStatus;
     this.formReplyInfo.systemUser = loginUser;
-    this.formReplyInfo.replyNo = this.replyInfo.replyNo;
-    this.formReplyInfo.subjectType = this.replyInfo.subjectType;
     this.formReplyInfo.subject = this.replyInfo.subject;
+    // 如果是新增, formReplyInfo會沒有owner, 則要用登入人員; 如果是異動的 owner存在則會用 owner
+    this.formReplyInfo.owner = this.formReplyInfo.owner == undefined ? loginUser : this.formReplyInfo.owner;
   }
 
   /**
@@ -409,7 +420,7 @@ export class Form2ReplierComponent implements OnInit {
 
     // FormReply.ReplyStatus = 40: 撤銷回覆
     this.setReplyData(40);
-    this.setFormReply();
+    this.setFormReply(this.formReplyInfo);
   }
 
   /**
@@ -489,8 +500,8 @@ export class Form2ReplierComponent implements OnInit {
 
     // 確認要有患者資訊 pSvc.patientInfo
     this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
-      (res) => {
-        this.formReplyInfo = res[0];
+      (res: FormReplyInfo[]) => {
+        this.setFormReplyInfo(res[0]);
         // formIo官方寫法，將取回來的填寫值塞回form Rander中
         // this.triggerRefresh.emit({
         //   form: this.tmplInfo.formTmpl,
