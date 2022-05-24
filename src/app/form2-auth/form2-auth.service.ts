@@ -30,7 +30,7 @@ export class Form2AuthService {
   public async checkWhitelistAuth(
     tmplInfo: FormTmplInfo,
     params: FormWhitelistAuthReq,
-    checkType: 'r' | 'w' | 'd' | 'p'
+    checkType: 'r' | 'w' | 'd' | 'p' | 'cowork'
   ): Promise<boolean> {
     // 測試表單，不用驗證白名單
     if (this.verifyTest(tmplInfo.tmplNo)) {
@@ -72,6 +72,9 @@ export class Form2AuthService {
         case 'p':
           return Math.floor((authValue % 10000) / 1000) === 1;
 
+        case 'cowork':
+          // 此處api沒有統一, 但是如果是沒權限 會直接回傳 msg: false 就會在前面被擋掉 先偷吃步這樣寫
+          return true;
         default:
           return false;
       }
@@ -121,7 +124,7 @@ export class Form2AuthService {
     }
   }
 
-  constructor(private http: CmuhHttpService) {}
+  constructor(private http: CmuhHttpService) { }
 
   /**
    * 驗證是否為測試表單，是(return true)則直接放行填寫
