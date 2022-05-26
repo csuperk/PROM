@@ -199,7 +199,7 @@ export class Form2ReplierComponent implements OnInit {
 
     // 是否有必填欄位未填
     if (this.enableSave) {
-      this.showToastMsg(500, '必填欄位未填');
+      this.showToastMsg(500, '存檔失敗','必填欄位未填寫');
       return;
     }
     this.displayProgress = true;
