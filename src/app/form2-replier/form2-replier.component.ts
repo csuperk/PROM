@@ -67,6 +67,8 @@ export class Form2ReplierComponent implements OnInit {
   @Input()
   public branchNo = 0;
 
+  // 判斷是否有必填欄位未填
+  public enableSave = false;
   // 顯示處理進度
   public displayProgress = false;
 
@@ -194,7 +196,14 @@ export class Form2ReplierComponent implements OnInit {
       );
       return;
     }
+
+    // 是否有必填欄位未填
+    if (this.enableSave) {
+      this.showToastMsg(500, '必填欄位未填');
+      return;
+    }
     this.displayProgress = true;
+
     this.setReplyData(30);
     this.setFormReply(this.formReplyInfo);
   }
@@ -214,10 +223,8 @@ export class Form2ReplierComponent implements OnInit {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
 
-    // 判斷確認按紐是否可按
-    this.toolBarButtons[1].disable = !(event.isValid !== undefined
-      ? event.isValid
-      : false);
+    // 判斷是否有必填欄位未填
+    this.enableSave = !(event.isValid !== undefined ? event.isValid : false);
     let changetFlag: boolean = this.formIo.readOnly ? false : true;
     this.flagChange.emit(changetFlag);
   }
