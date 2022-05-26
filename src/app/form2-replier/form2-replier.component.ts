@@ -130,7 +130,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -213,6 +213,11 @@ export class Form2ReplierComponent implements OnInit {
   public onChange(event) {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
+
+    // 判斷確認按紐是否可按
+    this.toolBarButtons[1].disable = !(event.isValid !== undefined
+      ? event.isValid
+      : false);
     let changetFlag: boolean = this.formIo.readOnly ? false : true;
     this.flagChange.emit(changetFlag);
   }
@@ -336,7 +341,10 @@ export class Form2ReplierComponent implements OnInit {
     this.formReplyInfo.systemUser = loginUser;
     this.formReplyInfo.subject = this.replyInfo.subject;
     // 如果是新增, formReplyInfo會沒有owner, 則要用登入人員; 如果是異動的 owner存在則會用 owner
-    this.formReplyInfo.owner = this.formReplyInfo.owner == undefined ? loginUser : this.formReplyInfo.owner;
+    this.formReplyInfo.owner =
+      this.formReplyInfo.owner == undefined
+        ? loginUser
+        : this.formReplyInfo.owner;
   }
 
   /**

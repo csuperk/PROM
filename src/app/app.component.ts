@@ -36,11 +36,12 @@ export class AppComponent implements OnInit {
 
   public editReplyInfo = {
     branchNo: 1,
-    replyNo: 1112652080,
-    tmplNo: 20100,
+    replyNo: 1938368,
+    tmplNo: -394581201,
     subjectType: 10,
-    subject: 'A123456789',
+    subject: 'B200721624',
     tranUser: 33878,
+    owner:34944,
     tranTime: new Date('2022-04-12T09:56:14.257'),
     tranStatus: 20,
     systemUser: 33878,
