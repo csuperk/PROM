@@ -224,7 +224,7 @@ export class Form2ReplierComponent implements OnInit {
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
 
     // 判斷是否有必填欄位未填
-    this.enableSave = !(event.isValid !== undefined ? event.isValid : false);
+    this.enableSave = !(event.isValid !== undefined ? event.isValid : !this.enableSave);
     let changetFlag: boolean = this.formIo.readOnly ? false : true;
     this.flagChange.emit(changetFlag);
   }
