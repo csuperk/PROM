@@ -37,11 +37,6 @@ export class Form2AuthService {
       return true;
     }
 
-    // 如果是權責人員，不需經過白名單驗證
-    if (tmplInfo.respUser == Number(params.userCode.slice(1))) {
-      return true;
-    }
-
     /**
      * 讀取 1 Math.floor((authValue % 10) / 1) === 1
      * 填寫 10 Math.floor((authValue % 100) / 10) === 1
