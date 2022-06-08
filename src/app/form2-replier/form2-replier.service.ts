@@ -118,4 +118,14 @@ export class Form2ReplierService {
     const url = `/webapi/form2Kernel/form2Reply/addFormReply2Info`;
     return this.http.put<number>(`${url}`, params);
   }
+
+  public setCaseEventReplyByTran(params: FormReplyInfo): Observable<boolean> {
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
+    params.branchNo = branchNo;
+    const url = `/caseProjectKernel/caseProjectInfo/setCaseMgtAndDefinByTran`;
+    return this.http.put<boolean>(`${url}`, params);
+  }
 }

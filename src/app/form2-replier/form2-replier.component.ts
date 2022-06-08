@@ -51,11 +51,11 @@ export class Form2ReplierComponent implements OnInit {
    * 存檔(暫存, 繳交)的類型
    * setFormReply2是針對某個replyNo去異動, 或是 qrCode新增時, 會用 getReplyNo 產生replyNo
    * addFormReply2Info是正式表單新增時, 不用帶replyNo, sp會自動增加replyNo
-   * @type {('' | 'setFormReply2' | 'addFormReply2Info')}
+   * @type {('' | 'setFormReply2' | 'addFormReply2Info' | 'setCaseEventReplyByTran')}
    * @memberof Form2ReplierComponent
    */
   @Input()
-  public setType: '' | 'setFormReply2' | 'addFormReply2Info' = '';
+  public setType: '' | 'setFormReply2' | 'addFormReply2Info' | 'setCaseEventReplyByTran' = '';
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -301,6 +301,26 @@ export class Form2ReplierComponent implements OnInit {
             // 之後setType改變, 因為接下來就是UPDATE了
             this.setType = 'setFormReply2';
             this.result.emit(resultInfo);
+          },
+          (err) => {
+            this.showToastMsg(500, '儲存失敗');
+            this.displayProgress = false;
+            resultInfo.data = replyData;
+            resultInfo.apiResult = false;
+            this.result.emit(resultInfo);
+          }
+        );
+        break;
+      case 'setCaseEventReplyByTran':
+        this.f2RSvc.setCaseEventReplyByTran(replyData).subscribe(
+          (res) => {
+            this.showToastMsg(200, '儲存成功');
+            this.displayProgress = false;
+
+            resultInfo.data = replyData;
+            resultInfo.apiResult = true;
+            this.result.emit(resultInfo);
+            this.flagChange.emit(false);
           },
           (err) => {
             this.showToastMsg(500, '儲存失敗');
