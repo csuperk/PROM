@@ -372,6 +372,12 @@ export class Form2ReplierComponent implements OnInit {
       this.formReplyInfo.owner == undefined
         ? loginUser
         : this.formReplyInfo.owner;
+    // 個案表單暫存用 2022/06/09
+    this.formReplyInfo.caseProjNo = this.replyInfo.caseProjNo;
+    this.formReplyInfo.caseNo = this.replyInfo.caseNo;
+    this.formReplyInfo.scheduledTime = this.replyInfo.scheduledTime;
+    this.formReplyInfo.scheduledExecutor = this.replyInfo.scheduledExecutor;
+    this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
   }
 
   /**

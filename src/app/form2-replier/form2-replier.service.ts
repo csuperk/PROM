@@ -125,7 +125,7 @@ export class Form2ReplierService {
         ? this.branchNo
         : this.userInfoService.branchNo;
     params.branchNo = branchNo;
-    const url = `/caseProjectKernel/caseProjectInfo/setCaseMgtAndDefinByTran`;
+    const url = `/webapi/caseProjectKernel/caseProjectInfo/setCaseEventReplyByTran`;
     return this.http.put<boolean>(`${url}`, params);
   }
 }
