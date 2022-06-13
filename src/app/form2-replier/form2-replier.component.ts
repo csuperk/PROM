@@ -378,6 +378,10 @@ export class Form2ReplierComponent implements OnInit {
     this.formReplyInfo.scheduledTime = this.replyInfo.scheduledTime;
     this.formReplyInfo.scheduledExecutor = this.replyInfo.scheduledExecutor;
     this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
+    this.formReplyInfo.owner =
+      this.replyInfo.owner == undefined
+        ? loginUser
+        : this.replyInfo.owner;
   }
 
   /**
