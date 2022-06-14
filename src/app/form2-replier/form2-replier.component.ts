@@ -55,7 +55,11 @@ export class Form2ReplierComponent implements OnInit {
    * @memberof Form2ReplierComponent
    */
   @Input()
-  public setType: '' | 'setFormReply2' | 'addFormReply2Info' | 'setCaseEventReplyByTran' = '';
+  public setType:
+    | ''
+    | 'setFormReply2'
+    | 'addFormReply2Info'
+    | 'setCaseEventReplyByTran' = '';
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -198,12 +202,12 @@ export class Form2ReplierComponent implements OnInit {
     }
 
     // 是否有必填欄位未填
-    if (this.enableSave) {
-      this.showToastMsg(500, '存檔失敗','必填欄位未填寫');
+    if (!this.submitData.data['_isValid']) {
+      this.showToastMsg(500, '存檔失敗', '必填欄位未填寫');
       return;
     }
-    this.displayProgress = true;
 
+    this.displayProgress = true;
     this.setReplyData(30);
     this.setFormReply(this.formReplyInfo);
   }
@@ -223,8 +227,14 @@ export class Form2ReplierComponent implements OnInit {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
 
+    // 當內容有異動時，判斷是否有必填欄位未填
+    if (event.isModified === true) {
+      console.log(event.isValid);
+      this.submitData.data['_isValid'] = event.isValid;
+    }
+
     // 判斷是否有必填欄位未填
-    this.enableSave = !(event.isValid !== undefined ? event.isValid : !this.enableSave);
+    // this.enableSave = !(event.isValid !== undefined ? event.isValid : !this.enableSave);
     let changetFlag: boolean = this.formIo.readOnly ? false : true;
     this.flagChange.emit(changetFlag);
   }
@@ -379,9 +389,7 @@ export class Form2ReplierComponent implements OnInit {
     this.formReplyInfo.scheduledExecutor = this.replyInfo.scheduledExecutor;
     this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
     this.formReplyInfo.owner =
-      this.replyInfo.owner == undefined
-        ? loginUser
-        : this.replyInfo.owner;
+      this.replyInfo.owner == undefined ? loginUser : this.replyInfo.owner;
   }
 
   /**
@@ -502,6 +510,8 @@ export class Form2ReplierComponent implements OnInit {
     let data = await this.f2RSvc
       .getPatientByIdNo(this.replyInfo.subject)
       .toPromise();
+    // 預設判斷必填為false
+    data['_isValid'] = false;
     this.submitData = { data: data };
   }
 
