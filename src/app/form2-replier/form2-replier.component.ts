@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Output,
   ViewChild,
+  OnChanges,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -28,7 +29,7 @@ import { Form2AuthService } from '../form2-auth/form2-auth.service';
   templateUrl: './form2-replier.component.html',
   styleUrls: ['./form2-replier.component.scss'],
 })
-export class Form2ReplierComponent implements OnInit {
+export class Form2ReplierComponent implements OnInit, OnChanges {
   @ViewChild('formIo') formIo: any;
 
   /**表單資訊顯示控制 */
@@ -59,7 +60,8 @@ export class Form2ReplierComponent implements OnInit {
     | ''
     | 'setFormReply2'
     | 'addFormReply2Info'
-    | 'setCaseEventReplyByTran' = '';
+    | 'setCaseEventReplyByTran'
+    | 'addCaseEventReplyByTran' = '';
 
   /**暫存、繳交後結果 */
   @Output() result = new EventEmitter<any>();
@@ -136,7 +138,7 @@ export class Form2ReplierComponent implements OnInit {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -151,6 +153,7 @@ export class Form2ReplierComponent implements OnInit {
     this.initInfo();
     this.getReplyRecord();
   }
+
 
   /**
    * 因需要等待api先取回emp的idNo，所以增加此method
@@ -201,6 +204,8 @@ export class Form2ReplierComponent implements OnInit {
       return;
     }
 
+
+    // 豪-改失敗的話，判斷改回if(this.enableSave)
     // 是否有必填欄位未填
     if (!this.submitData.data['_isValid']) {
       this.showToastMsg(500, '存檔失敗', '必填欄位未填寫');
@@ -227,12 +232,19 @@ export class Form2ReplierComponent implements OnInit {
     // 將資料暫存到tmpldata
     this.tempSubmitData = event.data ? event.data : this.tempSubmitData;
 
+    // 豪-失敗的話刪除此段if↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     // 當內容有異動時，判斷是否有必填欄位未填
     if (event.isModified === true) {
       console.log(event.isValid);
       this.submitData.data['_isValid'] = event.isValid;
     }
+    // 豪-失敗的話刪除此段if↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
+
+    // 豪-失敗的話此段取消註解↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    // 判斷是否有必填欄位未填
+    // this.enableSave = !(event.isValid !== undefined ? event.isValid : !this.enableSave);
+    // 豪-失敗的話此段取消註解↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     let changetFlag: boolean = this.formIo.readOnly ? false : true;
     this.flagChange.emit(changetFlag);
   }
@@ -339,6 +351,28 @@ export class Form2ReplierComponent implements OnInit {
           }
         );
         break;
+      case 'addCaseEventReplyByTran':
+        this.f2RSvc.addCaseEventReplyByTran(replyData).subscribe(
+          (res) => {
+            this.showToastMsg(200, '儲存成功');
+            this.displayProgress = false;
+
+            resultInfo.data = replyData;
+            resultInfo.apiResult = true;
+
+            this.setType = 'setCaseEventReplyByTran';
+
+            this.result.emit(resultInfo);
+            this.flagChange.emit(false);
+          },
+          (err) => {
+            this.showToastMsg(500, '儲存失敗');
+            this.displayProgress = false;
+            resultInfo.data = replyData;
+            resultInfo.apiResult = false;
+            this.result.emit(resultInfo);
+          }
+        );
     }
   }
 
@@ -508,6 +542,7 @@ export class Form2ReplierComponent implements OnInit {
     let data = await this.f2RSvc
       .getPatientByIdNo(this.replyInfo.subject)
       .toPromise();
+    // 豪-改失敗的話，移除data['_isValid'] = false;
     // 預設判斷必填為false
     data['_isValid'] = false;
     this.submitData = { data: data };

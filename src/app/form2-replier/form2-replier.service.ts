@@ -128,4 +128,15 @@ export class Form2ReplierService {
     const url = `/webapi/caseProjectKernel/caseProjectInfo/setCaseEventReplyByTran`;
     return this.http.put<boolean>(`${url}`, params);
   }
+
+  public addCaseEventReplyByTran(params: FormReplyInfo): Observable<number> {
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo
+    params.branchNo = branchNo;
+    const url = `/webapi/caseProjectKernel/caseProjectInfo/addCaseEventReplyByTran`;
+    return this.http.put(`${url}`, params)
+
+  }
 }
