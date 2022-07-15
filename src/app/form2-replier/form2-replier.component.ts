@@ -183,10 +183,18 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         '表單繳交後無法異動或非本人不可異動。'
       );
       return;
+    } else if (this.replyInfo.tranStatus === undefined || this.replyInfo.tranStatus <= 20){ // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
+      this.displayProgress = true;
+      this.setReplyData(20);
+      this.setFormReply(this.formReplyInfo);
+    } else {
+      // 已經繳交的表單不能在按暫存更改檔案，無關表單是否可以異動。2022/7/15
+      this.showToastMsg(
+        500,
+        '',
+        '表單已繳交無法暫存。'
+      );
     }
-    this.displayProgress = true;
-    this.setReplyData(20);
-    this.setFormReply(this.formReplyInfo);
   }
 
   /**
