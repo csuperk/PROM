@@ -342,7 +342,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         );
         break;
       case 'addCaseEventReplyByTran':
-        this.f2RSvc.addCaseEventReplyByTran(replyData).subscribe(
+        this.f2RSvc.addCaseEventReplyByTran([replyData]).subscribe(
           (res) => {
             this.showToastMsg(200, '儲存成功');
             this.displayProgress = false;
