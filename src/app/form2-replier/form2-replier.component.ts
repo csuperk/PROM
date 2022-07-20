@@ -138,7 +138,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -183,7 +183,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         '表單繳交後無法異動或非本人不可異動。'
       );
       return;
-    } else if (this.replyInfo.tranStatus === undefined || this.replyInfo.tranStatus <= 20){ // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
+    } else if (this.replyInfo.tranStatus === undefined || this.replyInfo.tranStatus <= 20) { // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
       this.displayProgress = true;
       this.setReplyData(20);
       this.setFormReply(this.formReplyInfo);
@@ -438,6 +438,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.replyInfo.replyNo = undefined;
     this.replyInfo.subjectType = 10;
     this.replyInfo.subject = subject;
+    this.replyInfo.scheduledExecutor = [];
+    this.replyInfo.remindOperInfo = [];
     this.initDataVariable();
     await this.getReplyRecord();
 
@@ -512,6 +514,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    */
   public async getReplyRecord() {
     // 先塞好 表單的資訊 tmplInfo (例如表單樣子, replyRule...等)
+    console.log('getReplyRecord/replyInfo.tmplNo', this.replyInfo.tmplNo);
     this.tmplInfo = (
       await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
     )[0];
@@ -519,6 +522,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     // 初始化 submitData
     // 新增的 reply 會沒有 replyNo
     if (this.replyInfo.replyNo == undefined) {
+      console.log('getReplyRecord/新增');
       this.replyInfo.replyNo = this.getReplyNo(this.replyInfo.tmplNo);
       this.displayProgress = false;
       // 新增的情況會預帶資料
@@ -584,6 +588,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     }
 
     // 確認要有患者資訊 pSvc.patientInfo
+    console.log('getFormReplyInfo/replyNo', replyNo);
     this.f2RSvc.getFormReplyInfo(replyNo).subscribe(
       (res: FormReplyInfo[]) => {
         this.setFormReplyInfo(res[0]);
@@ -594,6 +599,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         //     data: res.replyDesc,
         //   },
         // });
+
+        console.log('getFormReplyInfo/res', res);
 
         // 驗證繳交後可否異動
         this.authTest();
