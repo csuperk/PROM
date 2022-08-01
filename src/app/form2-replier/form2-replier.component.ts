@@ -434,12 +434,19 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   public async copyReplier(subject: string) {
     const tempReplyDesc = Object.assign({}, this.submitData.data);
 
+    this.replyInfo.branchNo = this.f2RSvc.userInfoService.branchNo;
     this.replyInfo.tmplNo = this.replyInfo.tmplNo;
     this.replyInfo.replyNo = undefined;
+    this.replyInfo.owner = undefined; // 新建的會是 undefined, 存檔時 form2-replier會帶入loginUser
+    this.replyInfo.tranStatus = undefined;
+
     this.replyInfo.subjectType = 10;
     this.replyInfo.subject = subject;
-    this.replyInfo.scheduledExecutor = [];
-    this.replyInfo.remindOperInfo = [];
+
+    // CaseEventReply
+    this.replyInfo.scheduledTime = new Date(); // 預定執行時間
+    this.replyInfo.scheduledExecutor = []; // 預定執行人員(複數)
+    this.replyInfo.remindOperInfo = []; //提醒事件關聯設定資訊
     this.initDataVariable();
     await this.getReplyRecord();
 
