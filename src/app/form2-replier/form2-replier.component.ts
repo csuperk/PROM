@@ -179,8 +179,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     if (this.formIo.readOnly) {
       this.showToastMsg(
         500,
-        '違反表單規則無法異動',
-        '表單繳交後無法異動或非本人不可異動。'
+        '違反表單規則無法異動。請檢視是否有以下狀況導致無法異動。',
+        `1. 表單繳交後無法異動\n 2. 非本人不可異動\n 3. 個案已[結案且停止追蹤]或[死亡]`
       );
       return;
     } else if (this.replyInfo.tranStatus === undefined || this.replyInfo.tranStatus <= 20) { // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
@@ -205,8 +205,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     if (this.formIo.readOnly) {
       this.showToastMsg(
         500,
-        '違反表單規則無法異動',
-        '表單繳交後無法異動或非本人不可異動。'
+        '違反表單規則無法異動。請檢視是否有以下狀況導致無法異動。',
+        `1. 表單繳交後無法異動\n 2. 非本人不可異動\n 3. 個案已[結案且停止追蹤]或[死亡]`
       );
       return;
     }
