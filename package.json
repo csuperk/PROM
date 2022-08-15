@@ -18,7 +18,7 @@
     "@cmuh/message-popup": "git+https://gitserver.cmuh.org.tw/cmuh.modules/message-popup.git#ng11",
     "@cmuh/extensions": "git+https://gitserver.cmuh.org.tw/cmuh.modules/extensions.git",
     "@angular/elements": "^11.2.10",
-    "@formio/angular": "~5.1.0",
+    "@formio/angular": "~5.2.0",
     "formiojs": "^4.13.0",
     "ng-qrcode": "^4.2.0"
   },
