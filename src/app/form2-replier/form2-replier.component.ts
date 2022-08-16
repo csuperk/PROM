@@ -138,7 +138,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -183,17 +183,17 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         `1. 表單繳交後無法異動\n 2. 非本人不可異動\n 3. 個案已[結案且停止追蹤]或[死亡]`
       );
       return;
-    } else if (this.replyInfo.tranStatus === undefined || this.replyInfo.tranStatus <= 20) { // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
+    } else if (
+      this.replyInfo.tranStatus === undefined ||
+      this.replyInfo.tranStatus <= 20
+    ) {
+      // 如果tranStatus是undefine代表是新建表單、<=20代表表單狀態是暫存可以繼續暫存 2022/7/15
       this.displayProgress = true;
       this.setReplyData(20);
       this.setFormReply(this.formReplyInfo);
     } else {
       // 已經繳交的表單不能在按暫存更改檔案，無關表單是否可以異動。2022/7/15
-      this.showToastMsg(
-        500,
-        '',
-        '表單已繳交無法暫存。'
-      );
+      this.showToastMsg(500, '', '表單已繳交無法暫存。');
     }
   }
 
@@ -264,6 +264,33 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.submitData = { data: submitData };
     // 關掉彈窗
     this.displayDialog[0].visible = false;
+  }
+
+  /**
+   * 回傳預帶資料
+   * @param preloadData
+   */
+  public setPreData(preloadData: any) {
+    this.getSubmitData();
+    // 取得submitData object的key
+    let submitDataKeys = Object.keys(this.submitData.data);
+    // 取得preLoadDataKeys object的key
+    let preLoadDataKeys = Object.keys(preloadData);
+    // 取得submitDataKeys及preLoadDataKeys的交集
+    let arrayIntersection = submitDataKeys.filter((e) => {
+      return preLoadDataKeys.indexOf(e) > -1;
+    });
+
+    // 將預帶資料的值塞入到submitData中
+    arrayIntersection.forEach((e) => {
+      this.submitData.data[e] = preloadData[e];
+    });
+    // 暫存submitData
+    let tempData = this.submitData;
+    // 需要重新賦址，formIo畫面才會重新刷新
+    this.submitData = JSON.parse(JSON.stringify(tempData));
+
+    this.displayProgress = false;
   }
 
   /**
