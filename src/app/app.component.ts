@@ -32,24 +32,24 @@ export class AppComponent implements OnInit {
     replyNo: 2,
     subjectType: 10,
     subject: 'A123456789',
-  }
+  };
 
   public editReplyInfo = {
     branchNo: 1,
-    replyNo: 1938368,
-    tmplNo: -394581201,
+    replyNo: -1087511303,
+    tmplNo: -1621400951,
     subjectType: 10,
-    subject: 'B200721624',
-    tranUser: 33878,
-    owner:34944,
-    tranTime: new Date('2022-04-12T09:56:14.257'),
+    subject: 'B222378038',
+    tranUser: 34944,
+    owner: 34944,
+    tranTime: new Date('2022-08-26 07:47:50.237'),
     tranStatus: 20,
     systemUser: 33878,
-    systemTime: new Date('2022-04-12T09:56:14.367'),
-    subjectName: '郭彥志'
-  }
+    systemTime: new Date('2022-08-26 07:47:50.630'),
+    subjectName: '卓曉霜',
+  };
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     if (isDevMode()) {

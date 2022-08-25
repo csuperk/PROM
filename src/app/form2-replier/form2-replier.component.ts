@@ -13,6 +13,7 @@ import { MessageService } from 'primeng/api';
 import { PatientInfoService } from '@cmuh/patient-info';
 import { BannerService } from '@cmuh/core';
 import '@cmuh/extensions';
+import { eachComponent } from 'formiojs/utils/formUtils.js';
 
 import {
   FormReplyInfo,
@@ -131,6 +132,9 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       visible: false,
     },
   ];
+
+  // 儲存模板所有的api name
+  private componentKeys = [];
 
   constructor(
     public f2RSvc: Form2ReplierService,
@@ -272,12 +276,10 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    */
   public setPreData(preloadData: any) {
     this.getSubmitData();
-    // 取得submitData object的key
-    let submitDataKeys = Object.keys(this.submitData.data);
     // 取得preLoadDataKeys object的key
     let preLoadDataKeys = Object.keys(preloadData);
     // 取得submitDataKeys及preLoadDataKeys的交集
-    let arrayIntersection = submitDataKeys.filter((e) => {
+    let arrayIntersection = this.componentKeys.filter((e) => {
       return preLoadDataKeys.indexOf(e) > -1;
     });
 
@@ -552,6 +554,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
     )[0];
 
+    this.getComponentKeys(this.tmplInfo.formTmpl);
+
     // 初始化 submitData
     // 新增的 reply 會沒有 replyNo
     if (this.replyInfo.replyNo == undefined) {
@@ -713,5 +717,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     result = (Math.floor(Math.random() * 2147483648) + 1) * -1;
 
     return result;
+  }
+
+  // 取得formtemplate components的key
+  private getComponentKeys(formTemplate: any) {
+    eachComponent(formTemplate.components, (x) => {
+      this.componentKeys.push(x.key);
+    });
   }
 }
