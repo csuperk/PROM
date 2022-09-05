@@ -596,9 +596,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     let tranStatus = this.formReplyInfo.tranStatus;
 
     // 填答規範 10 跟 20 代表 回覆後不可異動
-    let replyRule = this.tmplInfo.replyRule;
+    // let replyRule = this.tmplInfo.replyRule;
 
-    if (replyRule == 10 || replyRule == 20) {
+    let formAttr = this.tmplInfo.tmplAttrs.find(x => x.ruleType === 30);
+
+    if(formAttr.isValid){ //回覆後是否可異動規則判斷
+    // if (replyRule == 10 || replyRule == 20) { // 暫時保留舊規則判斷方式 2022/9/5
       // 繳交後不可異動
       if (tranStatus > 20) {
         this.formIo.readOnly = true;
