@@ -142,7 +142,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -293,6 +293,19 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.submitData = JSON.parse(JSON.stringify(tempData));
 
     this.displayProgress = false;
+  }
+
+  public outputReplyDesc() {
+    this.displayProgress = true;
+    let resultInfo = {
+      isValid: this.submitData.data['_isValid'],
+      submitData: {},
+    };
+
+    this.getSubmitData();
+    resultInfo.submitData = this.submitData.data;
+    this.displayProgress = false;
+    return resultInfo;
   }
 
   /**
@@ -600,8 +613,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
     let formAttr = this.tmplInfo.tmplAttrs.find(x => x.ruleType === 30);
 
-    if(formAttr.isValid){ //回覆後是否可異動規則判斷
-    // if (replyRule == 10 || replyRule == 20) { // 暫時保留舊規則判斷方式 2022/9/5
+    if (formAttr.isValid) { //回覆後是否可異動規則判斷
+      // if (replyRule == 10 || replyRule == 20) { // 暫時保留舊規則判斷方式 2022/9/5
       // 繳交後不可異動
       if (tranStatus > 20) {
         this.formIo.readOnly = true;
