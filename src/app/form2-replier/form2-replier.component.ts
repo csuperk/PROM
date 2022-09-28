@@ -613,7 +613,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
     let formAttr = this.tmplInfo.tmplAttrs.find(x => x.ruleType === 30);
 
-    if (formAttr.isValid) { //回覆後是否可異動規則判斷
+    if (!formAttr.isValid) { //回覆後是否可異動規則判斷
       // if (replyRule == 10 || replyRule == 20) { // 暫時保留舊規則判斷方式 2022/9/5
       // 繳交後不可異動
       if (tranStatus > 20) {
