@@ -142,7 +142,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -319,6 +319,33 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   /**
    * 儲存回覆內容到DB
    */
+  public setFormReplyAttachedFiles(replyData: FormReplyInfo) {
+    let resultInfo = {
+      data: this.formReplyInfo,
+      initReplay: this.formReplyInfo,
+    };
+
+    this.f2RSvc.setFormReply(replyData).subscribe(
+      (res: number) => {
+        this.showToastMsg(200, '存檔成功');
+
+        // 有問題 在 onConfirm裡面有呼叫 tabChange, 就會去 getFormReplyList了
+        this.displayProgress = false;
+
+        resultInfo.data = replyData;
+        this.result.emit(resultInfo);
+      },
+      (err) => {
+        this.showToastMsg(500, '存檔失敗');
+        this.displayProgress = false;
+        resultInfo.data = replyData;
+      }
+    );
+  }
+
+  /**
+   * 儲存回覆內容到DB
+   */
   public setFormReply(replyData: FormReplyInfo) {
     let resultInfo = {
       data: replyData,
@@ -422,6 +449,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    */
   private setFormReplyInfo(formReplyData: FormReplyInfo) {
     this.formReplyInfo = formReplyData;
+    let resultInfo = {
+      data: this.formReplyInfo,
+      initReplay: this.formReplyInfo,
+    };
+
+    this.result.emit(resultInfo);
   }
 
   /**
@@ -611,9 +644,10 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     // 填答規範 10 跟 20 代表 回覆後不可異動
     // let replyRule = this.tmplInfo.replyRule;
 
-    let formAttr = this.tmplInfo.tmplAttrs.find(x => x.ruleType === 30);
+    let formAttr = this.tmplInfo.tmplAttrs.find((x) => x.ruleType === 30);
 
-    if (!formAttr.isValid) { //回覆後是否可異動規則判斷
+    if (!formAttr.isValid) {
+      //回覆後是否可異動規則判斷
       // if (replyRule == 10 || replyRule == 20) { // 暫時保留舊規則判斷方式 2022/9/5
       // 繳交後不可異動
       if (tranStatus > 20) {
