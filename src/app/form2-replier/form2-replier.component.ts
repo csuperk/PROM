@@ -142,7 +142,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -628,8 +628,17 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       .toPromise();
     // 預設判斷必填為false
     data['_isValid'] = false;
-    this.submitData = { data: data };
+
+    let dataKeys = Object.keys(data);
+    let newData = {};
+    dataKeys.forEach(x => {
+      newData[`_${x}`] = data[x];
+    });
+
+    this.submitData = { data: newData };
   }
+
+
 
   /*****預帶資料*****/
 
