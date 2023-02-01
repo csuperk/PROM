@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { isDevMode, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -26,7 +26,7 @@ import { QrCodeModule } from 'ng-qrcode';
 // formio
 import { FormioModule, Templates } from '@formio/angular';
 import { Formio } from 'formiojs';
-(Formio as any).cdn.setBaseUrl('/web/cdn/formio')
+(Formio as any).cdn.setBaseUrl( isDevMode()? 'http://his-alpha.cmuh.org.tw/web/cdn/formio':'/web/cdn/formio')
 Templates.framework = 'bootstrap3';
 
 import { Form2PreLoadModule } from '../form2-pre-load/form2-pre-load.module';
