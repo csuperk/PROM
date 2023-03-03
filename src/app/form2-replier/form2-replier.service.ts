@@ -11,6 +11,7 @@ import {
 } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
+import { eachComponent } from 'formiojs/utils/formUtils.js';
 
 @Injectable({
   providedIn: 'root',
@@ -130,9 +131,42 @@ export class Form2ReplierService {
   }
 
   public addCaseEventReplyByTran(params: FormReplyInfo[]): Observable<number> {
-
     const url = `/webapi/caseProjectKernel/caseProjectInfo/addCaseEventReplyByTran`;
-    return this.http.put(`${url}`, params)
-
+    return this.http.put(`${url}`, params);
   }
+
+  //**************內部函式*********************************** */
+  /**
+   * 判斷必填是否未填
+   * @param formTemplate
+   * @param formReply
+   * @returns
+   */
+  public checkIsValid(
+    formTemplate: any,
+    formReply: any
+  ): { result: boolean; message: string } {
+    let result = { result: true, message: '' };
+    let needValidateArray = [];
+
+    eachComponent(formTemplate['components'], (x: any) => {
+      if (x.validate && x.validate.required === true) {
+        needValidateArray.push([x.key, x.label]);
+      }
+    });
+
+    needValidateArray.forEach((x) => {
+      if (formReply[x[0]].length <= 0) {
+        result.message += `${x[1]}，`;
+      }
+    });
+    if (result.message.length > 0) {
+      result.result = false;
+      result.message = result.message.slice(0, -1);
+      result.message += ` 的必填欄位未填`;
+    }
+
+    return result;
+  }
+  //****************************************************** */
 }

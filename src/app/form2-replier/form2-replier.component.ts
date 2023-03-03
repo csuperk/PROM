@@ -11,16 +11,11 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
 
 import { PatientInfoService } from '@cmuh/patient-info';
-import { BannerService } from '@cmuh/core';
+
 import '@cmuh/extensions';
 import { eachComponent } from 'formiojs/utils/formUtils.js';
 
-import {
-  FormReplyInfo,
-  FormTmplInfo,
-  FormWhitelistAuthReq,
-} from '@cmuh-viewmodel/form2-kernel';
-import { FormioComponent } from '@formio/angular';
+import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 
 import { Form2ReplierService } from './form2-replier.service';
 import { Form2AuthService } from '../form2-auth/form2-auth.service';
@@ -142,7 +137,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -205,6 +200,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    * 繳交回覆內容
    */
   public onSaveReplyClick(isStructure = false) {
+    // 取得判斷必填驗證
+    let isValidCheck = this.f2RSvc.checkIsValid(
+      this.tmplInfo.formTmpl,
+      this.submitData.data
+    );
+
     // 表單規則繳交後不可異動的表單不能繳交或暫存
     if (this.formIo.readOnly) {
       this.showToastMsg(
@@ -216,11 +217,10 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     }
 
     // 是否有必填欄位未填
-    if (!this.submitData.data['_isValid']) {
-      this.showToastMsg(500, '存檔失敗', '必填欄位未填寫');
+    if (isValidCheck.result === false) {
+      this.showToastMsg(500, '存檔失敗', isValidCheck.message);
       return;
     }
-
     this.displayProgress = true;
     this.setReplyData(30);
     this.setFormReply(this.formReplyInfo);
@@ -631,14 +631,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
     let dataKeys = Object.keys(data);
     let newData = {};
-    dataKeys.forEach(x => {
+    dataKeys.forEach((x) => {
       newData[`_${x}`] = data[x];
     });
 
     this.submitData = { data: newData };
   }
-
-
 
   /*****預帶資料*****/
 
