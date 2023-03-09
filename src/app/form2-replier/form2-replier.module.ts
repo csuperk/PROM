@@ -30,7 +30,7 @@ import { Formio } from 'formiojs';
 (Formio as any).cdn.setBaseUrl(
   environment.production
     ? '/web/cdn/formio'
-    : 'http://his-alpha.cmuh.org.tw/web/cdn/formio'
+    : 'https://his-alpha.cmuh.org.tw/web/cdn/formio'
 );
 Templates.framework = 'bootstrap3';
 
