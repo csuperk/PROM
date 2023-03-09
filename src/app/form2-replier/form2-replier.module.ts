@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 import { Form2ReplierComponent } from './form2-replier.component';
 
@@ -26,7 +27,7 @@ import { QrCodeModule } from 'ng-qrcode';
 // formio
 import { FormioModule, Templates } from '@formio/angular';
 import { Formio } from 'formiojs';
-(Formio as any).cdn.setBaseUrl('/web/cdn/formio');
+(Formio as any).cdn.setBaseUrl(environment.production?'/web/cdn/formio':'http://his-alpha.cmuh.org.tw/web/cdn/formio');
 Templates.framework = 'bootstrap3';
 
 import { Form2PreLoadModule } from '../form2-pre-load/form2-pre-load.module';
