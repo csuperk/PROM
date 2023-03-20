@@ -157,7 +157,7 @@ export class Form2ReplierService {
 
     needValidateArray.forEach((x) => {
       // 預先判斷是否有這個key
-      if (formReply[x[0]]) {
+      if (formReply.hasOwnProperty(x[0])) {
         if (formReply[x[0]].length <= 0) {
           result.message += `${x[1]}，`;
         }

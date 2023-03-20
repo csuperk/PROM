@@ -19,7 +19,7 @@
     "@cmuh/extensions": "git+https://gitserver.cmuh.org.tw/cmuh.modules/extensions.git",
     "@angular/elements": "^11.2.10",
     "@formio/angular": "~5.2.0",
-    "formiojs": "^4.13.0",
+    "formiojs": "^4.13.11",
     "ng-qrcode": "^4.2.0"
   },
   "devDependencies": {
