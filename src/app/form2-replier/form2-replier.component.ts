@@ -19,6 +19,7 @@ import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 
 import { Form2ReplierService } from './form2-replier.service';
 import { Form2AuthService } from '../form2-auth/form2-auth.service';
+import { ReplyEecodeService } from '@cmuh-view/encode-decode-view/src/app/reply-encode-decode/reply-encode.service';
 
 @Component({
   selector: 'form2-replier',
@@ -136,7 +137,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     public form2AuthSvc: Form2AuthService,
     private messageService: MessageService,
     public pSvc: PatientInfoService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private replyEecodeService: ReplyEecodeService
   ) {}
 
   ngOnInit(): void {
@@ -199,7 +201,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   /**
    * 繳交回覆內容
    */
-  public onSaveReplyClick(isStructure = false) {
+  public onSaveReplyClick(isStructure = false, btnApi = '', mappingInfo?) {
     // 取得判斷必填驗證
     let isValidCheck = this.f2RSvc.checkIsValid(
       this.tmplInfo.formTmpl,
@@ -223,6 +225,16 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     }
     this.displayProgress = true;
     this.setReplyData(30);
+    // 如果有要使用外部api
+    if (btnApi.length > 0) {
+      mappingInfo.apiUrl = btnApi;
+      let enCodeData = this.replyEecodeService.main(
+        this.tmplInfo.formTmpl,
+        this.formReplyInfo.replyDesc
+      );
+      this.setFormReply(this.formReplyInfo, enCodeData, mappingInfo);
+      return;
+    }
     this.setFormReply(this.formReplyInfo);
   }
 
@@ -346,7 +358,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   /**
    * 儲存回覆內容到DB
    */
-  public setFormReply(replyData: FormReplyInfo) {
+  public setFormReply(replyData: FormReplyInfo, edCodeData = [], mappingInfo?) {
     let resultInfo = {
       data: replyData,
       apiResult: false,
@@ -363,6 +375,13 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
             resultInfo.data = replyData;
             resultInfo.apiResult = true;
+
+            // 如果要回存到外部其他系統的api
+            if (edCodeData.length > 0) {
+              mappingInfo.replyNo = res;
+              this.setDataWithExtApi(edCodeData, mappingInfo);
+            }
+
             this.result.emit(resultInfo);
             this.flagChange.emit(false);
           },
@@ -387,6 +406,11 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
             resultInfo.data.replyNo = res;
             // 之後setType改變, 因為接下來就是UPDATE了
             this.setType = 'setFormReply2';
+            // 如果要回存到外部其他系統的api
+            if (edCodeData.length > 0) {
+              mappingInfo.replyNo = res;
+              this.setDataWithExtApi(edCodeData, mappingInfo);
+            }
             this.result.emit(resultInfo);
           },
           (err) => {
@@ -441,6 +465,25 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
           }
         );
     }
+  }
+
+  /**
+   * 回存外部api用的function
+   * @param enCodeData
+   * @param mappingData
+   */
+  private setDataWithExtApi(enCodeData, mappingData) {
+    // 回存mapping檔
+    this.f2RSvc.setFormReplyMap(mappingData).subscribe(
+      (res) => {
+        console.log('mapping存檔成功');
+      },
+      (err) => {
+        console.log('mapping存檔失敗');
+      }
+    );
+
+    // 回存外部api
   }
 
   /**

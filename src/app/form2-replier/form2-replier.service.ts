@@ -8,6 +8,7 @@ import {
   FormTmplInfo,
   FormTmplReq,
   PatientInfo,
+  FormTeplyMapTempInfo
 } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
@@ -132,6 +133,16 @@ export class Form2ReplierService {
 
   public addCaseEventReplyByTran(params: FormReplyInfo[]): Observable<number> {
     const url = `/webapi/caseProjectKernel/caseProjectInfo/addCaseEventReplyByTran`;
+    return this.http.put(`${url}`, params);
+  }
+
+  /**
+   * 回存mapping檔
+   * @param params
+   * @returns
+   */
+  public setFormReplyMap(params: FormTeplyMapTempInfo): Observable<number> {
+    const url = `/webapi/form2Kernel/form2Reply/setFormReplyMap`;
     return this.http.put(`${url}`, params);
   }
 
