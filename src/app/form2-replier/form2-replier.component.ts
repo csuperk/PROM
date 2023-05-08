@@ -132,6 +132,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   // 儲存模板所有的api name
   private componentKeys = [];
 
+  private replyItemForFilterList = [];
+
   constructor(
     public f2RSvc: Form2ReplierService,
     public form2AuthSvc: Form2AuthService,
@@ -139,7 +141,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     public pSvc: PatientInfoService,
     private route: ActivatedRoute,
     private replyEecodeService: ReplyEecodeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initInfo();
@@ -538,6 +540,37 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
     this.formReplyInfo.owner =
       this.replyInfo.owner == undefined ? loginUser : this.replyInfo.owner;
+    this.formReplyInfo.moreInfo = this.setReplyItemForFilter();
+  }
+
+  private setReplyItemForFilter() {
+    let result: Record<string, any> = {};
+    this.replyItemForFilterList.forEach((item) => {
+      let keys = (<string>item.field).split(".");
+      let replyItem = this.setReplyItem(keys, this.formReplyInfo.replyDesc, JSON.parse(JSON.stringify(result)));
+      result[keys[0]] = replyItem;
+    });
+    return result;
+  }
+
+  private setReplyItem(keys: Array<any>, reply, result: Record<string, any>) {
+    let tempRecord: Record<string, any> = {};
+    if (keys.length == 1) {
+      return reply[keys[0]] == undefined ? '' : reply[keys[0]];
+    } else {
+      let newKeys = keys.slice(1);
+      let newReply = reply[keys[0]];
+      if (result[keys[0]] == undefined) {
+
+        tempRecord[keys[1]] = this.setReplyItem(newKeys, newReply, {});
+      } else {
+        // 原本的 result 包含了 keys[0]
+        // 所以必須先保留原本的內容
+        tempRecord = { ...result[keys[0]] };
+        tempRecord[keys[1]] = this.setReplyItem(newKeys, newReply, result[keys[0]]);
+      }
+      return tempRecord;
+    }
   }
 
   /**
@@ -642,6 +675,9 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.tmplInfo = (
       await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
     )[0];
+
+    // 因應 filter 特別挑出的 replyItem 的清單
+    this.replyItemForFilterList = this.tmplInfo.moreInfo;
 
     this.getComponentKeys(this.tmplInfo.formTmpl);
 
