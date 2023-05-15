@@ -8,7 +8,7 @@ import {
   FormTmplInfo,
   FormTmplReq,
   PatientInfo,
-  FormTeplyMapTempInfo
+  FormTeplyMapTempInfo,
 } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
@@ -172,6 +172,25 @@ export class Form2ReplierService {
         if (formReply[x[0]].length <= 0) {
           result.message += `${x[1]}，`;
         }
+
+        // 預設判斷不通過
+        let checkOtherComponentResult = false;
+        // 需額外處理的必填判斷
+        switch (x[1]) {
+          case 'Select Boxes':
+            checkOtherComponentResult = this.doCheckSelectBoxes(
+              formReply[x[0]]
+            );
+
+            break;
+
+          default:
+            checkOtherComponentResult = true;
+            break;
+        }
+        if (checkOtherComponentResult === false) {
+          result.message += `${x[1]}，`;
+        }
       }
     });
     if (result.message.length > 0) {
@@ -179,6 +198,23 @@ export class Form2ReplierService {
       result.message = result.message.slice(0, -1);
       result.message += ` 的必填欄位未填`;
     }
+
+    return result;
+  }
+
+  /**
+   * 判斷select boxes必填
+   * @param selectBoxesReply
+   * @returns
+   */
+  private doCheckSelectBoxes(selectBoxesReply): boolean {
+    let result = false;
+    const selectObjectKeys = Object.keys(selectBoxesReply);
+    selectObjectKeys.forEach((x) => {
+      if (selectBoxesReply[x] === true) {
+        result = true;
+      }
+    });
 
     return result;
   }
