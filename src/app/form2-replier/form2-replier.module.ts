@@ -27,11 +27,7 @@ import { QrCodeModule } from 'ng-qrcode';
 // formio
 import { FormioModule, Templates } from '@formio/angular';
 import { Formio } from 'formiojs';
-(Formio as any).cdn.setBaseUrl(
-  environment.production
-    ? '/web/cdn/formio'
-    : 'https://his-alpha.cmuh.org.tw/web/cdn/formio'
-);
+(Formio as any).cdn.setBaseUrl('/web/cdn/formio');
 Templates.framework = 'bootstrap3';
 
 import { Form2PreLoadModule } from '../form2-pre-load/form2-pre-load.module';
