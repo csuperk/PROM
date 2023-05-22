@@ -162,7 +162,7 @@ export class Form2ReplierService {
 
     eachComponent(formTemplate['components'], (x: any) => {
       if (x.validate && x.validate.required === true) {
-        needValidateArray.push([x.key, x.label]);
+        needValidateArray.push([x.key, x.label, x.type]);
       }
     });
 
@@ -176,8 +176,8 @@ export class Form2ReplierService {
         // 預設判斷不通過
         let checkOtherComponentResult = false;
         // 需額外處理的必填判斷
-        switch (x[1]) {
-          case 'Select Boxes':
+        switch (x[2]) {
+          case 'selectboxes':
             checkOtherComponentResult = this.doCheckSelectBoxes(
               formReply[x[0]]
             );
