@@ -559,7 +559,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       return reply[keys[0]] == undefined ? '' : reply[keys[0]];
     } else {
       let newKeys = keys.slice(1);
-      let newReply = reply[keys[0]];
+      let newReply = reply[keys[0]] == undefined ? {} : reply[keys[0]];
       if (result[keys[0]] == undefined) {
 
         tempRecord[keys[1]] = this.setReplyItem(newKeys, newReply, {});
