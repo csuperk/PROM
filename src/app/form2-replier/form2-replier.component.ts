@@ -540,7 +540,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
     this.formReplyInfo.owner =
       this.replyInfo.owner == undefined ? loginUser : this.replyInfo.owner;
-    this.formReplyInfo.moreInfo = this.setReplyItemForFilter();
+    this.formReplyInfo.moreInfo['replyFilterField'] = this.setReplyItemForFilter();
   }
 
   private setReplyItemForFilter() {
@@ -677,7 +677,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     )[0];
 
     // 因應 filter 特別挑出的 replyItem 的清單
-    this.replyItemForFilterList = this.tmplInfo.moreInfo;
+    this.replyItemForFilterList = this.tmplInfo.moreInfo.replyFilterField;
 
     this.getComponentKeys(this.tmplInfo.formTmpl);
 
