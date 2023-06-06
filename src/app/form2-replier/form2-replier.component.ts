@@ -793,7 +793,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.tempSubmitData = {};
     this.submitData = {};
     this.formReplyInfo = new FormReplyInfo();
-    this.formReplyInfo.moreInfo = this.replyInfo.moreInfo;
+    this.formReplyInfo.moreInfo = this.replyInfo.moreInfo || {};
     this.tmplInfo = new FormTmplInfo();
   }
   /**
