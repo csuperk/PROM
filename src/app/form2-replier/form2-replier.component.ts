@@ -677,7 +677,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     )[0];
 
     // 因應 filter 特別挑出的 replyItem 的清單
-    this.replyItemForFilterList = this.tmplInfo.moreInfo.replyFilterField;
+    this.replyItemForFilterList = this.tmplInfo.moreInfo.replyFilterField || [];
 
     this.getComponentKeys(this.tmplInfo.formTmpl);
 
