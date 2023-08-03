@@ -69,6 +69,11 @@ export class Form2ReplierService {
         ? this.branchNo
         : this.userInfoService.branchNo;
 
+    // 20230803硬加
+    if (this.userInfoService.branchNo === 24) {
+      branchNo = 1;
+    }
+
     let params: FormTmplReq = {
       branchNo: branchNo,
       tmplNo: tmplNo,
@@ -89,10 +94,16 @@ export class Form2ReplierService {
       this.userInfoService === null
         ? this.branchNo
         : this.userInfoService.branchNo;
+
+    // 20230803硬加
+    if (this.userInfoService.branchNo === 24) {
+      branchNo = 1;
+    }
     let params: FormReplyReq = {
       branchNo: branchNo,
       replyNo: replyNo,
     };
+
     return this.http.put<FormReplyInfo[]>(`${url}`, params);
   }
 
