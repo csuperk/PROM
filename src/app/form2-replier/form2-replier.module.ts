@@ -30,8 +30,6 @@ import { Formio } from 'formiojs';
 (Formio as any).cdn.setBaseUrl('/web/cdn/formio');
 Templates.framework = 'bootstrap3';
 
-import { Form2PreLoadModule } from '../form2-pre-load/form2-pre-load.module';
-
 //自定義pipe
 import { FormTypePipe } from '../pipe/form-type.pipe';
 import { FormReplyRulePipe } from '../pipe/form-reply-rule.pipe';
@@ -70,7 +68,6 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     // formIo
     FormioModule,
 
-    Form2PreLoadModule,
   ],
   exports: [Form2ReplierComponent],
 })

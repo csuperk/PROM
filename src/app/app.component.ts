@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
   };
 
   public newReplyInfo = {
-    tmplNo: 20100,
-    replyNo: 2,
+    tmplNo: -2126664499,
+
     subjectType: 10,
     subject: 'A123456789',
   };

@@ -94,14 +94,6 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       displayNone: false,
       onClick: (event) => this.onSaveReplyClick(),
     },
-    // {
-    //   title: '表單預帶資料選單',
-    //   class: 'p-button-help',
-    //   icon: 'pi pi-info',
-    //   disable: false,
-    //   displayNone: false,
-    //   onClick: (event) => this.onDisplayPreLoadDialog(),
-    // },
   ];
 
   /*操控formIo的相關變數*/
@@ -121,13 +113,6 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
-  // 顯示 dialog
-  public displayDialog = [
-    {
-      title: '表單預帶資料',
-      visible: false,
-    },
-  ];
 
   // 儲存模板所有的api name
   private componentKeys = [];
@@ -241,13 +226,6 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   }
 
   /**
-   * 顯示預帶資料 dialog
-   */
-  public onDisplayPreLoadDialog() {
-    this.displayDialog[0].visible = true;
-  }
-
-  /**
    * 當formIo有異動的時候
    * @param event
    */
@@ -266,26 +244,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   }
 
   /**
-   * 接收 form2-pre-load 回傳的預帶資料
-   * @param preData
-   */
-  public exportPreData(preData: Array<any>) {
-    let preDataKey = Object.keys(preData);
-    this.getSubmitData();
-    let submitData = JSON.parse(JSON.stringify(this.submitData.data || []));
-
-    for (const iterator of preDataKey) {
-      if (submitData[`${iterator}`] !== undefined) {
-        submitData[`${iterator}`] = preData[`${iterator}`];
-      }
-    }
-    this.submitData = { data: submitData };
-    // 關掉彈窗
-    this.displayDialog[0].visible = false;
-  }
-
-  /**
    * 回傳預帶資料
+   * 給父元件用 ViewChild 來使用
    * @param preloadData
    */
   public setPreData(preloadData: any) {
@@ -309,6 +269,10 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.displayProgress = false;
   }
 
+  /**
+   * 給父元件用 ViewChild 來使用
+   * @returns
+   */
   public outputReplyDesc() {
     this.displayProgress = true;
     let resultInfo = {
