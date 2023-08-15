@@ -34,6 +34,7 @@ export class Form2ReplierService {
       return;
     }
     this.userInfoService = this.jwtHelper.decodeAuthorized(token);
+    this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
   }
 
   /**
@@ -69,11 +70,6 @@ export class Form2ReplierService {
         ? this.branchNo
         : this.userInfoService.branchNo;
 
-    // 20230803硬加
-    if (this.userInfoService.branchNo === 24) {
-      branchNo = 1;
-    }
-
     let params: FormTmplReq = {
       branchNo: branchNo,
       tmplNo: tmplNo,
@@ -95,10 +91,6 @@ export class Form2ReplierService {
         ? this.branchNo
         : this.userInfoService.branchNo;
 
-    // 20230803硬加
-    if (this.userInfoService.branchNo === 24) {
-      branchNo = 1;
-    }
     let params: FormReplyReq = {
       branchNo: branchNo,
       replyNo: replyNo,
@@ -143,6 +135,11 @@ export class Form2ReplierService {
   }
 
   public addCaseEventReplyByTran(params: FormReplyInfo[]): Observable<number> {
+    let branchNo =
+      this.userInfoService === null
+        ? this.branchNo
+        : this.userInfoService.branchNo;
+    params[0].branchNo = branchNo;
     const url = `/webapi/caseProjectKernel/caseProjectInfo/addCaseEventReplyByTran`;
     return this.http.put(`${url}`, params);
   }
