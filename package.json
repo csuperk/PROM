@@ -20,7 +20,7 @@
     "@cmuh-view/encode-decode-view": "git+https://gitserver.cmuh.org.tw/A34323/encode-decode",
     "@angular/elements": "^11.2.10",
     "@formio/angular": "~5.2.0",
-    "formiojs": "^4.13.11",
+    "formiojs": "4.14.14",
     "ng-qrcode": "^4.2.0"
   },
   "devDependencies": {
