@@ -112,3 +112,16 @@
 .qr-url-size {
   font-size: 12px;
 }
+
+
+.customBlock{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(128, 128, 128, 0.5);
+}
