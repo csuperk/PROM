@@ -12,29 +12,24 @@ import {
 } from '@cmuh-viewmodel/form2-kernel';
 import { JwtHelper } from '@cmuh/jwt';
 import '@cmuh/extensions';
+import { UserInfoService, UserInfo } from '@cmuh/user-info';
 import { eachComponent } from 'formiojs/utils/formUtils.js';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Form2ReplierService {
-  public userInfoService = null;
+  public userInfoService: UserInfo = null;
   public tmplNo;
   public branchNo;
-  constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper) {
+  constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper, private userInfoSvc: UserInfoService) {
     this.setUserInfoService();
   }
 
   private setUserInfoService() {
-    let token = localStorage.getItem('userInfo');
-    if (!token) {
-      setTimeout(() => {
-        this.setUserInfoService();
-      }, 1000);
-      return;
-    }
-    this.userInfoService = this.jwtHelper.decodeAuthorized(token);
-    this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
+
+    this.userInfoService = this.userInfoSvc.userInfo
+    this.userInfoService.branchNo = this.userInfoService.branchNo !== '24' ? this.userInfoService.branchNo : '1';
   }
 
   /**
