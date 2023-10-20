@@ -29,7 +29,7 @@ export class Form2ReplierService {
   private setUserInfoService() {
 
     this.userInfoService = this.userInfoSvc.userInfo
-    this.userInfoService.branchNo = this.userInfoService.branchNo !== '24' ? this.userInfoService.branchNo : '1';
+    this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
   }
 
   /**
