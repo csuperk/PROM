@@ -39,6 +39,7 @@
       <ng-container *ngIf="tmplInfo.replyRule == 10 || tmplInfo.replyRule == 20">
         <p-tag icon="pi pi-exclamation-triangle" value="繳交後不可異動" severity="warning"></p-tag>
       </ng-container>
+      <app-download-link></app-download-link>
     </div>
   </ng-container>
   <div style="height: 100%; overflow: auto">
@@ -102,7 +103,6 @@
   }" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
 
 
-  <div id="loading" class="customBlock" style="display: none;">
-    <span style="font-size: 80px;color: red;">產生同意書中...請稍後</span>
+<div id="loading" class="customBlock" style="display: none;">
+  <span style="font-size: 80px;color: red;">產生同意書中...請稍後</span>
   <div>
-

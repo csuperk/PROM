@@ -1,6 +1,6 @@
 {
   "/WebApi": {
-    "target": "http://his.cmuh.org.tw",
+    "target": "https://his.cmuh.org.tw",
     "changeOrigin": true,
     "secure": false
   },

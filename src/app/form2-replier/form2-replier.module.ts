@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 
 import { Form2ReplierComponent } from './form2-replier.component';
 
+import { DownloadLinkModule } from '@cmuh-view/file-uploader';
 // primeng
 import { BlockUIModule } from 'primeng/blockui';
 import { ButtonModule } from 'primeng/button';
@@ -46,6 +47,7 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
     CommonModule,
     FormsModule,
 
+    DownloadLinkModule,
     // primeng
     BlockUIModule,
     ButtonModule,
@@ -71,4 +73,4 @@ import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
   ],
   exports: [Form2ReplierComponent],
 })
-export class Form2ReplierModule {}
+export class Form2ReplierModule { }

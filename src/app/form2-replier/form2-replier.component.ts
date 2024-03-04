@@ -20,6 +20,7 @@ import { FormReplyInfo, FormTmplInfo } from '@cmuh-viewmodel/form2-kernel';
 import { Form2ReplierService } from './form2-replier.service';
 import { Form2AuthService } from '../form2-auth/form2-auth.service';
 import { ReplyEecodeService } from '@cmuh-view/encode-decode-view/src/app/reply-encode-decode/reply-encode.service';
+import { FileUploaderService } from '@cmuh-view/file-uploader';
 
 @Component({
   selector: 'form2-replier',
@@ -125,7 +126,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private messageService: MessageService,
     public pSvc: PatientInfoService,
     private route: ActivatedRoute,
-    private replyEecodeService: ReplyEecodeService
+    private replyEecodeService: ReplyEecodeService,
+    public fileUploaderSvc: FileUploaderService
   ) { }
 
   ngOnInit(): void {
@@ -742,6 +744,9 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
           data: res[0].replyDesc,
         };
         this.tmplInfo = JSON.parse(JSON.stringify(this.tmplInfo));
+
+        // 塞值附加檔案
+        this.fileUploaderSvc.resetFileUploader(res[0].attachedFiles);
       },
       (err) => {
         this.showToastMsg(500, '回覆資料取得錯誤');
