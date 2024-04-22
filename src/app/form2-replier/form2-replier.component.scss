@@ -92,7 +92,6 @@
   transition: box-shadow 0.15s;
 }
 
-
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
   text-align: left;
   padding: 0.3rem;
@@ -113,8 +112,7 @@
   font-size: 12px;
 }
 
-
-.customBlock{
+.customBlock {
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -124,4 +122,14 @@
   justify-content: center;
   align-items: center;
   background-color: rgba(128, 128, 128, 0.5);
+}
+
+
+:host ::ng-deep input[type="radio"]:checked {
+  border: 1px solid #353333;
+  background-color: #353333;
+  border-radius: 8px;
+  height: 15px;
+  width: 15px;
+  -webkit-appearance: none;
 }
