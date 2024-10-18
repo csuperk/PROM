@@ -114,7 +114,6 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
-
   // 儲存模板所有的api name
   private componentKeys = [];
 
@@ -128,7 +127,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     private route: ActivatedRoute,
     private replyEecodeService: ReplyEecodeService,
     public fileUploaderSvc: FileUploaderService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.initInfo();
@@ -251,6 +250,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    * @param preloadData
    */
   public setPreData(preloadData: any) {
+    // 暫時不處理陣列
+    if (Array.isArray(preloadData)) {
+      console.warn('目前不支援陣列');
+      this.displayProgress = false;
+      return;
+    }
     this.getSubmitData();
     // 取得preLoadDataKeys object的key
     let preLoadDataKeys = Object.keys(preloadData);
@@ -269,6 +274,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.submitData = JSON.parse(JSON.stringify(tempData));
 
     this.displayProgress = false;
+
+    console.log(this.submitData);
   }
 
   /**
@@ -506,14 +513,19 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.formReplyInfo.remindOperInfo = this.replyInfo.remindOperInfo;
     this.formReplyInfo.owner =
       this.replyInfo.owner == undefined ? loginUser : this.replyInfo.owner;
-    this.formReplyInfo.moreInfo['replyFilterField'] = this.setReplyItemForFilter();
+    this.formReplyInfo.moreInfo['replyFilterField'] =
+      this.setReplyItemForFilter();
   }
 
   private setReplyItemForFilter() {
     let result: Record<string, any> = {};
     this.replyItemForFilterList.forEach((item) => {
-      let keys = (<string>item.field).split(".");
-      let replyItem = this.setReplyItem(keys, this.formReplyInfo.replyDesc, JSON.parse(JSON.stringify(result)));
+      let keys = (<string>item.field).split('.');
+      let replyItem = this.setReplyItem(
+        keys,
+        this.formReplyInfo.replyDesc,
+        JSON.parse(JSON.stringify(result))
+      );
       result[keys[0]] = replyItem;
     });
     return result;
@@ -527,13 +539,16 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       let newKeys = keys.slice(1);
       let newReply = reply[keys[0]] == undefined ? {} : reply[keys[0]];
       if (result[keys[0]] == undefined) {
-
         tempRecord[keys[1]] = this.setReplyItem(newKeys, newReply, {});
       } else {
         // 原本的 result 包含了 keys[0]
         // 所以必須先保留原本的內容
         tempRecord = { ...result[keys[0]] };
-        tempRecord[keys[1]] = this.setReplyItem(newKeys, newReply, result[keys[0]]);
+        tempRecord[keys[1]] = this.setReplyItem(
+          newKeys,
+          newReply,
+          result[keys[0]]
+        );
       }
       return tempRecord;
     }
