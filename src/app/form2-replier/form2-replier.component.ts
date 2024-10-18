@@ -250,32 +250,31 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    * @param preloadData
    */
   public setPreData(preloadData: any) {
-    // 暫時不處理陣列
-    if (Array.isArray(preloadData)) {
-      console.warn('目前不支援陣列');
-      this.displayProgress = false;
-      return;
-    }
     this.getSubmitData();
-    // 取得preLoadDataKeys object的key
-    let preLoadDataKeys = Object.keys(preloadData);
-    // 取得submitDataKeys及preLoadDataKeys的交集
-    let arrayIntersection = this.componentKeys.filter((e) => {
-      return preLoadDataKeys.indexOf(e) > -1;
-    });
+    if (!Array.isArray(preloadData)) {
+      // 取得preLoadDataKeys object的key
+      let preLoadDataKeys = Object.keys(preloadData);
+      // 取得submitDataKeys及preLoadDataKeys的交集
+      let arrayIntersection = this.componentKeys.filter((e) => {
+        return preLoadDataKeys.indexOf(e) > -1;
+      });
 
-    // 將預帶資料的值塞入到submitData中
-    arrayIntersection.forEach((e) => {
-      this.submitData.data[e] = preloadData[e];
-    });
+      // 將預帶資料的值塞入到submitData中
+      arrayIntersection.forEach((e) => {
+        this.submitData.data[e] = preloadData[e];
+      });
+    } else {
+      // 暫時不處理陣列
+      console.warn('目前不支援陣列，但我有偷塞到_cmuhPetrichor');
+      this.submitData.data['_cmuhPetrichor'] = preloadData;
+    }
+
     // 暫存submitData
     let tempData = this.submitData;
     // 需要重新賦址，formIo畫面才會重新刷新
     this.submitData = JSON.parse(JSON.stringify(tempData));
 
     this.displayProgress = false;
-
-    console.log(this.submitData);
   }
 
   /**
