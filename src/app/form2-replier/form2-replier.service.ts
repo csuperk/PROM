@@ -50,7 +50,8 @@ export class Form2ReplierService {
    */
   public getPatientByIdNo(idNo: string): Observable<PatientInfo> {
     const url = `/webapi/form2Kernel/form2Customized/getPatientByIdNo`;
-    return this.http.get<PatientInfo>(`${url}/${idNo}`);
+    const params = { idNo: idNo };
+    return this.http.put<PatientInfo>(`${url}`, params);
   }
 
   /**
