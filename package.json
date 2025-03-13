@@ -19,6 +19,7 @@
     "@cmuh/extensions": "git+https://gitserver.cmuh.org.tw/cmuh.modules/extensions.git",
     "@cmuh/user-info": "git+https://gitserver.cmuh.org.tw/cmuh.modules/user-info.git",
     "@cmuh-view/encode-decode-view": "git+https://gitserver.cmuh.org.tw/A34323/encode-decode.git",
+    "@cmuh-view/file-uploader": "git+https://gitserver.cmuh.org.tw/A34323/file-uploader.git",
     "@angular/elements": "^11.2.10",
     "@formio/angular": "~5.2.0",
     "formiojs": "4.14.14",
@@ -27,7 +28,6 @@
   "devDependencies": {
     "@cmuh-viewmodel/form2-kernel": "git+https://gitserver.cmuh.org.tw/cmuh.modules.viewmodel/form2-kernel.git",
     "@cmuh-viewmodel/whitelist-module": "git+https://gitserver.cmuh.org.tw/cmuh.modules.viewmodel/whitelist-module.git",
-    "@cmuh-view/file-uploader": "git+https://gitserver.cmuh.org.tw/A34323/file-uploader.git",
     "@angular/animations": "~11.0.5",
     "@angular/common": "~11.0.5",
     "@angular/cdk": "^11.0.3",
