@@ -59,12 +59,14 @@ export class Form2ReplierService {
    * @param tmplNo
    * @returns
    */
-  public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo[]> {
+  public getFormTmplInfo(tmplNo: number, branchNo?: number): Observable<FormTmplInfo[]> {
     const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
-    let branchNo =
-      this.userInfoService === null
-        ? this.branchNo
-        : this.userInfoService.branchNo;
+    if(!branchNo){
+      branchNo =
+        this.userInfoService === null
+          ? this.branchNo
+          : this.userInfoService.branchNo;
+    }
 
     let params: FormTmplReq = {
       branchNo: branchNo,

@@ -653,7 +653,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   public async getReplyRecord() {
     // 先塞好 表單的資訊 tmplInfo (例如表單樣子, replyRule...等)
     this.tmplInfo = (
-      await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo).toPromise()
+      await this.f2RSvc.getFormTmplInfo(this.replyInfo.tmplNo, this.branchNo).toPromise()
     )[0];
 
     // 因應 filter 特別挑出的 replyItem 的清單
