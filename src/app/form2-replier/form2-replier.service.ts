@@ -28,8 +28,11 @@ export class Form2ReplierService {
 
   private setUserInfoService() {
 
-    this.userInfoService = this.userInfoSvc.userInfo
-    this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
+    const nullObject = JSON.stringify(this.userInfoSvc.userInfo) === JSON.stringify({});
+    this.userInfoService = nullObject ? null : this.userInfoSvc.userInfo;
+    if( this.userInfoService !== null ){ // 如果是民眾填答則userInfoSvc一定會是 null 或是 undefined 或是空物件
+      this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
+    }
   }
 
   /**
@@ -59,14 +62,11 @@ export class Form2ReplierService {
    * @param tmplNo
    * @returns
    */
-  public getFormTmplInfo(tmplNo: number, branchNo?: number): Observable<FormTmplInfo[]> {
+  public getFormTmplInfo(tmplNo: number): Observable<FormTmplInfo[]> {
     const url = `/webapi/form2Kernel/Form2Tmpl/getSpecFormTmpl2`;
-    if(!branchNo){
-      branchNo =
-        this.userInfoService === null
-          ? this.branchNo
-          : this.userInfoService.branchNo;
-    }
+    let branchNo = this.userInfoService === null
+      ? this.branchNo
+      : this.userInfoService.branchNo;
 
     let params: FormTmplReq = {
       branchNo: branchNo,
