@@ -22,8 +22,17 @@ export class Form2ReplierService {
   public userInfoService: UserInfo = null;
   public tmplNo;
   public branchNo;
+  private tokenService0 = null;
+  // 預先取得使用者Token
+  public get tokenService() {
+    return this.tokenService0;
+  }
+  public set tokenService(token: string) {
+    this.tokenService0 = token;
+  }
   constructor(private http: CmuhHttpService, private jwtHelper: JwtHelper, private userInfoSvc: UserInfoService) {
     this.setUserInfoService();
+    this.setTokenService();
   }
 
   private setUserInfoService() {
@@ -33,6 +42,10 @@ export class Form2ReplierService {
     if( this.userInfoService !== null ){ // 如果是民眾填答則userInfoSvc一定會是 null 或是 undefined 或是空物件
       this.userInfoService.branchNo = this.userInfoService.branchNo !== 24 ? this.userInfoService.branchNo : 1;
     }
+  }
+
+  private setTokenService() {
+    this.tokenService = sessionStorage.getItem('token') || localStorage.getItem('token');
   }
 
   /**
