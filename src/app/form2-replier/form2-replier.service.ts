@@ -71,6 +71,18 @@ export class Form2ReplierService {
   }
 
   /**
+   * 透過身份證號(idNo)取得病人資訊(非陣列)
+   * @param idNo
+   * @param branchNo
+   * @param birthdate
+   * @returns
+   */
+  public getPatientByIdNo2(params: any): Observable<PatientInfo> {
+    const url = `/webapi/form2Kernel/form2Customized/getPatientByIdNo2`;
+    return this.http.put<PatientInfo>(`${url}`, params);
+  }
+
+  /**
    * 取得表單資訊
    * @param tmplNo
    * @returns

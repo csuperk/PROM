@@ -682,9 +682,18 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    */
   private async autoCompleteSubmitData() {
     // 只有新增需要自動帶資料
-    let data = await this.f2RSvc
-      .getPatientByIdNo(this.replyInfo.subject)
-      .toPromise();
+    let data;
+    // 如果民眾填答傳進來的資料有birthdate，則呼叫getPatientByIdNo2(額外帶入birthdate跟branchNo) 不要使用getPatientByIdNo
+    if(this.replyInfo['birthdate'] !== undefined || this.replyInfo['birthdate'] !== null) {
+      this.replyInfo['idNo'] = this.replyInfo.subject; // 民眾填答時，subject是身份證號，屬性換成idNo
+      data = await this.f2RSvc
+        .getPatientByIdNo2(this.replyInfo)
+        .toPromise()
+    } else { // 如果不是民眾填答(額外帶入birthdate)，則使用原本的getPatientByIdNo
+      data = await this.f2RSvc
+        .getPatientByIdNo(this.replyInfo.subject)
+        .toPromise();
+    }
     // 預設判斷必填為false
     data['_isValid'] = false;
 
