@@ -684,7 +684,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     // 只有新增需要自動帶資料
     let data;
     // 如果民眾填答傳進來的資料有birthdate，則呼叫getPatientByIdNo2(額外帶入birthdate跟branchNo) 不要使用getPatientByIdNo
-    if(this.replyInfo['birthdate'] !== undefined || this.replyInfo['birthdate'] !== null) {
+    if(this.replyInfo['birthdate'] !== undefined && this.replyInfo['birthdate'] !== null) {
       this.replyInfo['idNo'] = this.replyInfo.subject; // 民眾填答時，subject是身份證號，屬性換成idNo
       data = await this.f2RSvc
         .getPatientByIdNo2(this.replyInfo)
