@@ -1,0 +1,17 @@
+{
+  "/WebApi": {
+    "target": "https://his.cmuh.org.tw",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/webapi": {
+    "target": "https://his-alpha.cmuh.org.tw",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/web": {
+    "target": "https://his-alpha.cmuh.org.tw",
+    "changeOrigin": true,
+    "secure": false
+  }
+}
