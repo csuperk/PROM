@@ -31,18 +31,22 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   @ViewChild('formIo') formIo: any;
 
   /**表單資訊顯示控制 */
+  // smart on fhir 用不到
   @Input()
   public showTag: boolean = true;
 
   /**填答參數 */
+  // smart on fhir 用不到
   @Input()
   public replyInfo: FormReplyInfo;
 
   /**工具列顯示控制 */
+  // smart on fhir 用不到
   @Input()
   public showToolbar: boolean = true;
 
   // formIo是否可以填寫
+  // smart on fhir 用不到
   @Input()
   public formReadOnly = false;
 
@@ -52,6 +56,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    * addFormReply2Info是正式表單新增時, 不用帶replyNo, sp會自動增加replyNo
    * @type {('' | 'setFormReply2' | 'addFormReply2Info' | 'setCaseEventReplyByTran')}
    * @memberof Form2ReplierComponent
+   * smart on fhir 用不到
    */
   @Input()
   public setType:
@@ -68,6 +73,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   public flagChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   // 給民眾填答用
+  // smart on fhir 用不到
   @Input()
   public branchNo = 0;
 
@@ -79,6 +85,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   /**工具列變數 */
   // 工具列左側按鈕
   public toolBarButtons = [
+    // 暫存mart on fhir 用不到
     {
       title: '暫存',
       class: 'p-button-secondary',
