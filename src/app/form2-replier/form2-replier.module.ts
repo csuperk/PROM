@@ -1,76 +1,46 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../environments/environment';
 
 import { Form2ReplierComponent } from './form2-replier.component';
 
-import { DownloadLinkModule } from '@cmuh-view/file-uploader';
 // primeng
-import { BlockUIModule } from 'primeng/blockui';
 import { ButtonModule } from 'primeng/button';
-import { CalendarModule } from 'primeng/calendar';
 import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { TableModule } from 'primeng/table';
-import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-
-// qrCode
-import { QrCodeModule } from 'ng-qrcode';
+import { MessageService } from 'primeng/api';
 
 // formio
-import { FormioModule, Templates } from '@formio/angular';
-import { Formio } from 'formiojs';
-(Formio as any).cdn.setBaseUrl('/web/cdn/formio');
-Templates.framework = 'bootstrap3';
-
-//自定義pipe
-import { FormTypePipe } from '../pipe/form-type.pipe';
-import { FormReplyRulePipe } from '../pipe/form-reply-rule.pipe';
-import { FormTeplyTranStatusPipe } from '../pipe/form-reply-tran-status.pipe';
+import { FormioModule } from '@formio/angular';
 
 @NgModule({
   declarations: [
-    Form2ReplierComponent,
-    FormTypePipe,
-    FormReplyRulePipe,
-    FormTeplyTranStatusPipe,
+    Form2ReplierComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
 
-    DownloadLinkModule,
-    // primeng
-    BlockUIModule,
+    // PrimeNG modules
     ButtonModule,
-    CalendarModule,
     DialogModule,
-    DropdownModule,
-    ProgressBarModule,
     ProgressSpinnerModule,
-    RadioButtonModule,
-    ScrollPanelModule,
-    TableModule,
-    TabViewModule,
     TagModule,
     ToastModule,
     ToolbarModule,
 
-    // qrCode
-    QrCodeModule,
-
-    // formIo
-    FormioModule,
-
+    // FormIO
+    FormioModule
   ],
-  exports: [Form2ReplierComponent],
+  providers: [
+    MessageService
+  ],
+  exports: [
+    Form2ReplierComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class Form2ReplierModule { }

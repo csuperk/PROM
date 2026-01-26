@@ -3,11 +3,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
-import { MessagePopupModule, MessagePopupService } from '@cmuh/message-popup';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Form2ReplierModule } from './form2-replier/form2-replier.module';
+import { FhirService } from './services/fhir.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,12 +15,9 @@ import { Form2ReplierModule } from './form2-replier/form2-replier.module';
     AppRoutingModule,
     Form2ReplierModule,
     BrowserAnimationsModule,
-    HttpClientModule,
-
-    //cmuh
-    MessagePopupModule
+    HttpClientModule
   ],
-  providers: [MessagePopupService],
+  providers: [FhirService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

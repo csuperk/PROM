@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart on FHIR Launch - Form2 Replier</title>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .success {
+            color: #2e7d32;
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .launch-button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .launch-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Smart on FHIR Launch Page</h1>
+        <p>這是 Form2 Replier 的 Smart on FHIR 啟動頁面</p>
+
+        <div id="status" class="loading">
+            <p>⏳ 正在初始化 Smart on FHIR...</p>
+        </div>
+
+        <div id="launch-controls" style="display: none;">
+            <h3>啟動選項</h3>
+            <button class="launch-button" onclick="launchApp()">
+                🚀 啟動 Form2 Replier 應用程式
+            </button>
+            <p><small>點擊按鈕將重新導向到主要的 Angular 應用程式</small></p>
+        </div>
+
+        <div id="patient-info" style="display: none;">
+            <h3>👤 當前病患資訊</h3>
+            <div id="patient-details"></div>
+        </div>
+
+        <div id="medication-info" style="display: none;">
+            <h3>💊 藥物資訊</h3>
+            <div id="medication-details"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Smart on FHIR Launch Page 載入完成');
+
+        // 檢查是否在 FHIR 環境中
+        if (typeof FHIR !== 'undefined' && FHIR.oauth2) {
+            console.log('FHIR Client 已載入，嘗試初始化...');
+
+            // 嘗試使用 Smart on FHIR
+            FHIR.oauth2.ready().then(function(client) {
+                console.log('Smart on FHIR 已就緒:', client);
+                showSuccess('✅ Smart on FHIR 連線成功！');
+
+                // 載入病患資料
+                return client.patient.read();
+            }).then(function(patient) {
+                console.log('病患資料:', patient);
+                displayPatientInfo(patient);
+
+                // 顯示啟動控制項
+                document.getElementById('launch-controls').style.display = 'block';
+
+                return client.request("/MedicationRequest?patient=" + client.patient.id, {
+                    resolveReferences: ["medicationReference"],
+                    graph: true
+                });
+            }).then(function(medications) {
+                console.log('藥物資料:', medications);
+                displayMedicationInfo(medications);
+            }).catch(function(error) {
+                console.error('Smart on FHIR 錯誤:', error);
+                showError('❌ Smart on FHIR 初始化失敗: ' + error.message);
+                showFallbackOptions();
+            });
+        } else {
+            console.log('不在 Smart on FHIR 環境中');
+            showError('⚠️ 此頁面需要在 Smart on FHIR 環境中運行');
+            showFallbackOptions();
+        }
+
+        function showSuccess(message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'success';
+            statusEl.innerHTML = '<p>' + message + '</p>';
+        }
+
+        function showError(message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = 'error';
+            statusEl.innerHTML = '<p>' + message + '</p>';
+        }
+
+        function showFallbackOptions() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML += `
+                <div style="margin-top: 20px;">
+                    <p><strong>替代選項：</strong></p>
+                    <button class="launch-button" onclick="launchApp()">
+                        🚀 使用模擬資料啟動應用程式
+                    </button>
+                    <p><small>將使用模擬的病患和藥物資料</small></p>
+                </div>
+            `;
+        }
+
+        function displayPatientInfo(patient) {
+            const patientEl = document.getElementById('patient-info');
+            const detailsEl = document.getElementById('patient-details');
+
+            const name = patient.name && patient.name[0] ?
+                (patient.name[0].text || (patient.name[0].given || []).join(' ') + ' ' + (patient.name[0].family || '')) :
+                '未知姓名';
+
+            detailsEl.innerHTML = `
+                <p><strong>姓名:</strong> ${name}</p>
+                <p><strong>性別:</strong> ${patient.gender === 'male' ? '男' : patient.gender === 'female' ? '女' : '未知'}</p>
+                <p><strong>生日:</strong> ${patient.birthDate || '未知'}</p>
+                <p><strong>ID:</strong> ${patient.id}</p>
+                <details style="margin-top: 10px;">
+                    <summary style="cursor: pointer;">查看完整 JSON 資料</summary>
+                    <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">${JSON.stringify(patient, null, 2)}</pre>
+                </details>
+            `;
+
+            patientEl.style.display = 'block';
+        }
+
+        function displayMedicationInfo(medications) {
+            const medEl = document.getElementById('medication-info');
+            const detailsEl = document.getElementById('medication-details');
+
+            if (medications.entry && medications.entry.length > 0) {
+                detailsEl.innerHTML = `
+                    <p>找到 ${medications.entry.length} 項藥物</p>
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer;">查看完整藥物清單</summary>
+                        <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">${JSON.stringify(medications.entry, null, 2)}</pre>
+                    </details>
+                `;
+            } else {
+                detailsEl.innerHTML = '<p>未找到相關藥物資訊</p>';
+            }
+
+            medEl.style.display = 'block';
+        }
+
+        function launchApp() {
+            console.log('啟動主要應用程式...');
+
+            // 儲存當前 session 資訊到 localStorage (如果需要的話)
+            const currentUrl = window.location.href;
+            localStorage.setItem('fhir-launch-url', currentUrl);
+            localStorage.setItem('fhir-launch-time', new Date().toISOString());
+
+            // 導向主要的 Angular 應用程式
+            window.location.href = '/'; // 或者是你的主要應用程式 URL
+        }
+    </script>
+</body>
+</html>

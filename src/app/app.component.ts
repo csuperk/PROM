@@ -1,81 +1,129 @@
-import { Component, isDevMode, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { FhirService, PatientData, MedicationData } from './services/fhir.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  title = 'general-form-reply';
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'Form2 Replier Demo with Smart on FHIR';
 
-  public tmplNo = 20100;
-  public replyInfo = {
-    replyNo: 1,
-    tmplNo: 20100,
-    replyUser: 'A123456789',
-    replyDesc: {
-      fillInDate: '2021-11-01T12:00:00+08:00',
-      ptName: '郭彥志',
-      idNo: 'A123456789',
-      sex: 'female',
-      firstBlock: { Q1: '1', Q2: '3', Q3: '4', Q4: '4', Q5: '4', Q6: '4' },
-    },
-    replyTime: '2022-03-02T09:14:23.220',
-    tranUser: 30666,
-    tranTime: '2022-03-02T09:14:23.220',
-    tranStatus: 30,
-    tranUserName: '楊名棟',
-  };
+  // FHIR 相關資料
+  public patientData: PatientData | null = null;
+  public medicationData: MedicationData | null = null;
+  public fhirError: string | null = null;
+  public fhirLoading: boolean = false;
 
-  public newReplyInfo = {
-    tmplNo: -2126664499,
+  private subscriptions: Subscription[] = [];
 
-    subjectType: 10,
-    subject: 'A123456789',
-  };
+  constructor(private fhirService: FhirService) {}
 
-  public editReplyInfo = {
-    branchNo: 1,
-    replyNo: -90225782,
-    tmplNo: -1621400951,
-    subjectType: 10,
-    subject: 'B222378038',
-    tranUser: 34944,
-    owner: 34944,
-    tranTime: new Date('2022-08-26 07:47:50.237'),
-    tranStatus: 20,
-    systemUser: 33878,
-    systemTime: new Date('2022-08-26 07:47:50.630'),
-    subjectName: '卓曉霜',
-  };
+  ngOnInit(): void {
+    console.log('Form2 Replier Demo with Smart on FHIR 已啟動');
 
-  constructor() {}
+    // 訂閱 FHIR 資料
+    this.subscribeToFhirData();
+  }
 
-  ngOnInit() {
-    if (isDevMode()) {
-      localStorage.setItem(
-        'token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBMzQ5NDQiLCJpYXQiOjE2NTA0NDAzMDgsImV4cCI6MTY1MDQ0MTUwOH0.rEamS9TY1KS00XZvY3ouT8_XpQEXqPk5JS7xSsfyAmI'
-      );
-      console.log('local先帶入預設登入人員資訊...');
-      // const userInfo = localStorage.getItem('userInfo') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMzNTczLCJ1c2VySWQiOiJBMzM1NzMiLCJ1c2VyTmFtZSI6IuacseS4luixqiIsImJpcnRoZGF5IjoiMTk5My0wOS0yNiIsInNleCI6IjEiLCJlTWFpbCI6ImpvaG5jeTgyOTI2QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImlhdCI6MTU2MjU2ODg2MCwiZXhwIjoxNTYyNTcwMDYwfQ.EjnTxY-6zqUvvK0TAbDhu4_x9jCTkw1UG2znxZixBqM';
-       // 34944 讀取/填寫/刪除/列印/管理
-       const userInfo =
-       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjM0OTQ0LCJ1c2VySWQiOiJBMzQ5NDQiLCJ1c2VyTmFtZSI6IuWNk-abiemcnCIsImJpcnRoZGF5IjoiMTk4Ny0wMi0xOSIsInNleCI6IjIiLCJlTWFpbCI6ImZyb3N0ZGF3bjE5QGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImJyYW5jaE5vIjoxLCJyZXNwb25zaWJpbGl0eSI6IjFBOEQiLCJpYXQiOjE2NTQ0ODM0ODAsImV4cCI6MTY1NDQ4NDY4MH0.QbYX9WrGJXurriyDZzJPrr65_8EiHcH59GUlWhJmcRU';
-     // 30165
-     // const userInfo =
-     //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMwMTY1LCJ1c2VySWQiOiJOMzAxNjUiLCJ1c2VyTmFtZSI6IuipueS9qeWNvyIsImJpcnRoZGF5IjoiMTk4OC0xMC0yMyIsInNleCI6IjIiLCJlTWFpbCI6InBlaS1kaW5nMTAyM0Bob3RtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImJyYW5jaE5vIjoxLCJyZXNwb25zaWJpbGl0eSI6IjEwTUwiLCJpYXQiOjE2Njg2NDcyODAsImV4cCI6MTY2ODczMzY4MH0.yZ21HkA1ElQWC6Nrx7-tzl8QUrrTllvUHjb5ovSol5Q';
-     // N11268
-     // const userInfo =
-     //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjExMjY4LCJ1c2VySWQiOiJOMTEyNjgiLCJ1c2VyTmFtZSI6Iuael-aBqeWmgiIsImJpcnRoZGF5IjoiMTk3OC0wNi0xMCIsInNleCI6IjIiLCJlTWFpbCI6Ik4xMTI2OEBtYWlsLmNtdWgub3JnLnR3Iiwib3JnTm8iOiIxMzE3MDUwMDE3IiwiYnJhbmNoTm8iOjEsInJlc3BvbnNpYmlsaXR5IjoiMVcwMCIsImVtcFR5cGUiOiIgIiwiaWF0IjoxNjgyNDg3MDQzLCJleHAiOjE2ODI1NzM0NDN9.CcisA2kkeNDwK-vytnmP6t0E5pzdca4Ynfm3PGzObeg';
-     // A33895
-     // const userInfo =
-     // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTm8iOjMzODk1LCJ1c2VySWQiOiJBMzM4OTUiLCJ1c2VyTmFtZSI6Ium7g-a1qei7kiIsImJpcnRoZGF5IjoiMTk5NC0wNS0yNiIsInNleCI6IjEiLCJlTWFpbCI6ImdvZDUwNjQxQGdtYWlsLmNvbSIsIm9yZ05vIjoiMTMxNzA1MDAxNyIsImJyYW5jaE5vIjoxLCJyZXNwb25zaWJpbGl0eSI6IjFBOEQiLCJlbXBUeXBlIjoiQSIsImlhdCI6MTY5NTg5MDc4NiwiZXhwIjoxNjk1OTc3MTg2fQ.MPrYFbhqsNcy9Qymw9zk5gDN2MGIRVmZ1rApGYraXfw'
-      localStorage.setItem('userInfo', userInfo);
+  ngOnDestroy(): void {
+    // 取消所有訂閱
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  /**
+   * 訂閱 FHIR 服務的資料流
+   */
+  private subscribeToFhirData(): void {
+    // 訂閱病患資料
+    this.subscriptions.push(
+      this.fhirService.patient$.subscribe(patient => {
+        this.patientData = patient;
+        console.log('病患資料更新:', patient);
+      })
+    );
+
+    // 訂閱藥物資料
+    this.subscriptions.push(
+      this.fhirService.medications$.subscribe(medications => {
+        this.medicationData = medications;
+        console.log('藥物資料更新:', medications);
+      })
+    );
+
+    // 訂閱錯誤狀態
+    this.subscriptions.push(
+      this.fhirService.error$.subscribe(error => {
+        this.fhirError = error;
+        if (error) {
+          console.error('FHIR 錯誤:', error);
+        }
+      })
+    );
+
+    // 訂閱載入狀態
+    this.subscriptions.push(
+      this.fhirService.loading$.subscribe(loading => {
+        this.fhirLoading = loading;
+      })
+    );
+  }
+
+  /**
+   * 重新載入 FHIR 資料
+   */
+  public refreshFhirData(): void {
+    this.fhirService.refreshData();
+  }
+
+  /**
+   * 表單提交結果處理
+   * @param event 表單結果事件
+   */
+  onFormResult(event: any): void {
+    console.log('表單提交結果:', event);
+    if (event.apiResult) {
+      console.log('表單提交成功');
+      console.log('提交的數據:', event.data);
+
+      // 可以在這裡將表單資料與病患資料結合
+      if (this.patientData) {
+        console.log('關聯的病患:', this.patientData);
+        // 這裡可以實作將表單資料寫回 FHIR 伺服器的邏輯
+      }
+    } else {
+      console.log('表單提交失敗');
     }
   }
 
-  public showMsg(event) {
-    console.log(event);
+  /**
+   * 表單變更狀態處理
+   * @param changed 是否有變更
+   */
+  onFormChange(changed: boolean): void {
+    console.log('表單變更狀態:', changed ? '有變更' : '無變更');
+  }
+
+  /**
+   * 取得病患顯示名稱
+   */
+  getPatientDisplayName(): string {
+    return this.patientData?.name || '載入中...';
+  }
+
+  /**
+   * 取得病患基本資訊摘要
+   */
+  getPatientSummary(): string {
+    if (!this.patientData) {
+      return '載入中...';
+    }
+
+    const name = this.patientData.name || '未知';
+    const gender = this.patientData.gender === 'male' ? '男' : this.patientData.gender === 'female' ? '女' : '未知';
+    const birthDate = this.patientData.birthDate || '未知';
+
+    return `${name} | ${gender} | 生日: ${birthDate}`;
   }
 }

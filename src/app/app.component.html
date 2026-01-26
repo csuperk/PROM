@@ -1,10 +1,71 @@
-<div style="height: 100vh">
-  <form2-replier
-    [showTag]="true"
-    [replyInfo]="editReplyInfo"
-    [showToolbar]="true"
-    [formReadOnly]="false"
-    [setType]="'setFormReply2'"
-    (result)="showMsg($event)"
-  ></form2-replier>
+<div class="app-container">
+  <header class="app-header">
+    <h1>📋 Form2 Replier Demo with Smart on FHIR</h1>
+    <p>整合 FHIR 病患資料的表單填寫組件展示</p>
+  </header>
+
+  <!-- FHIR 病患資訊區域 -->
+  <section class="fhir-info-section" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
+    <h3>🏥 Smart on FHIR 病患資訊</h3>
+
+    <!-- 載入狀態 -->
+    <div *ngIf="fhirLoading" style="color: #666;">
+      <i class="pi pi-spinner pi-spin"></i> 載入 FHIR 資料中...
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <div *ngIf="fhirError && !fhirLoading" style="color: #d32f2f; margin-bottom: 10px;">
+      <i class="pi pi-exclamation-triangle"></i> {{ fhirError }}
+      <button (click)="refreshFhirData()" style="margin-left: 10px; padding: 5px 10px;">重新載入</button>
+    </div>
+
+    <!-- 病患資料 -->
+    <div *ngIf="patientData && !fhirLoading" class="patient-info">
+      <h4>👤 當前病患</h4>
+      <div style="background: white; padding: 10px; border-radius: 3px; margin-bottom: 10px;">
+        <strong>摘要：</strong> {{ getPatientSummary() }}
+      </div>
+
+      <!-- 詳細病患資料（摺疊式） -->
+      <details style="margin-bottom: 10px;">
+        <summary style="cursor: pointer; font-weight: bold;">🔍 查看完整病患資料</summary>
+        <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">{{ patientData.rawData | json }}</pre>
+      </details>
+
+      <!-- 藥物資料 -->
+      <div *ngIf="medicationData && medicationData.rawData && medicationData.rawData.length > 0">
+        <h4>💊 藥物資訊</h4>
+        <details>
+          <summary style="cursor: pointer; font-weight: bold;">🔍 查看藥物清單 ({{ medicationData.rawData.length }} 項)</summary>
+          <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">{{ medicationData.rawData | json }}</pre>
+        </details>
+      </div>
+
+      <!-- 重新載入按鈕 -->
+      <button
+        (click)="refreshFhirData()"
+        style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer;">
+        🔄 重新載入 FHIR 資料
+      </button>
+    </div>
+
+    <!-- 模擬資料提示 -->
+    <div *ngIf="patientData && patientData.id === 'demo-patient-123'"
+         style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 3px; margin-top: 10px;">
+      <i class="pi pi-info-circle"></i>
+      <strong>注意：</strong> 目前顯示的是模擬資料。在真實的 Smart on FHIR 環境中，此處會顯示實際的病患資料。
+    </div>
+  </section>
+
+  <!-- 表單區域 -->
+  <main class="app-content">
+    <h3>📝 表單填寫</h3>
+    <form2-replier
+      [showTag]="true"
+      [showToolbar]="true"
+      [formReadOnly]="false"
+      (result)="onFormResult($event)"
+      (flagChange)="onFormChange($event)">
+    </form2-replier>
+  </main>
 </div>
