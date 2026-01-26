@@ -1,30 +1,129 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Launch My APP</title>
-        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
-    </head>
-    <body>
-        <script>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart on FHIR Launch - Form2 Replier</title>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .error {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Smart on FHIR Launch</h1>
+        <div id="status" class="loading">
+            <p>⏳ 正在啟動 Form2 Replier...</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('Smart on FHIR Launch 開始');
+        console.log('目前 URL:', window.location.href);
+        console.log('URL 參數:', window.location.search);
+
+        // 檢查必要的 URL 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        const iss = urlParams.get('iss') || urlParams.get('fhirServiceBaseUrl');
+        const launch = urlParams.get('launch');
+
+        console.log('ISS:', iss);
+        console.log('Launch Token:', launch);
+
+        if (!iss) {
+            document.getElementById('status').innerHTML = `
+                <div class="error">
+                    <h2>❌ 設定資訊</h2>
+                    <p>此頁面需要從 Smart on FHIR 沙盒啟動</p>
+                    <h3>📋 沙盒設定資訊:</h3>
+                    <ul>
+                        <li><strong>Launch URL:</strong> <code>https://csuperk.github.io/PROM/launch.html</code></li>
+                        <li><strong>Redirect URI:</strong> <code>https://csuperk.github.io/PROM/</code></li>
+                        <li><strong>App Type:</strong> Public Client</li>
+                        <li><strong>Scopes:</strong> <code>launch openid fhirUser patient/*.read</code></li>
+                    </ul>
+                    <h3>🔧 如何設定政府沙盒:</h3>
+                    <ol>
+                        <li>前往政府 Smart on FHIR 沙盒管理介面</li>
+                        <li>註冊新的應用程式</li>
+                        <li>設定上述的 Launch URL 和 Redirect URI</li>
+                        <li>選擇合適的 Scopes</li>
+                        <li>取得 Client ID</li>
+                    </ol>
+                    <h3>📊 目前收到的參數:</h3>
+                    <pre>${window.location.search || '(無參數)'}</pre>
+                </div>
+            `;
+            return;
+        }
+
+        try {
+            // 進行 Smart on FHIR OAuth2 授權
             FHIR.oauth2.authorize({
+                // 這個 Client ID 需要在沙盒中註冊
+                clientId: "form2-replier-app",
 
-              // The client_id that you should have obtained after registering a client at
-              // the EHR.
-              clientId: "my_web_app",
+                // 請求的權限範圍
+                scope: "launch openid fhirUser patient/*.read",
 
-              // The scopes that you request from the EHR. In this case we want to:
-              // launch            - Get the launch context
-              // openid & fhirUser - Get the current user
-              // patient/*.read    - Read patient data
-              scope: "launch openid fhirUser patient/*.read",
+                // 授權完成後的重導向 URL
+                redirectUri: "https://csuperk.github.io/PROM/",
 
-              // Typically, if your redirectUri points to the root of the current directory
-              // (where the launchUri is), you can omit this option because the default value is
-              // ".". However, some servers do not support directory indexes so "." and "./"
-              // will not automatically map to the "index.html" file in that directory.
-              redirectUri: "index.html"
+                // FHIR 伺服器的 base URL (從沙盒提供)
+                iss: iss,
+
+                // Launch context token (從沙盒提供)
+                launch: launch,
+
+                // 使用 PKCE 提高安全性
+                pkce: true
             });
-        </script>
-    </body>
+        } catch (error) {
+            console.error('Smart Launch 錯誤:', error);
+            document.getElementById('status').innerHTML = `
+                <div class="error">
+                    <h2>❌ 啟動失敗</h2>
+                    <p><strong>錯誤:</strong> ${error.message}</p>
+                    <h3>🔍 偵錯資訊:</h3>
+                    <ul>
+                        <li><strong>ISS:</strong> ${iss}</li>
+                        <li><strong>Launch Token:</strong> ${launch || '(無)'}</li>
+                        <li><strong>Redirect URI:</strong> https://csuperk.github.io/PROM/</li>
+                        <li><strong>Client ID:</strong> form2-replier-app</li>
+                    </ul>
+                    <p>請檢查沙盒設定是否正確。</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
 </html>

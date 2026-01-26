@@ -26,7 +26,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/launch.html",
+              "src/smart-launch.html"
+            ],
             "styles": [
               "src/styles.scss",
               "node_modules/primeicons/primeicons.css",
