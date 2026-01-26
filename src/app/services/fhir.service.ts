@@ -39,8 +39,31 @@ export class FhirService {
   private fhirClient: any;
 
   constructor() {
+    // 檢查是否有來自 Smart Launch 的 context
+    this.checkSmartLaunchContext();
+
     // 載入 FHIR Client 腳本
     this.loadFhirClient();
+  }
+
+  /**
+   * 檢查 Smart Launch context
+   */
+  private checkSmartLaunchContext(): void {
+    try {
+      const contextStr = sessionStorage.getItem('fhir-context');
+      if (contextStr) {
+        const context = JSON.parse(contextStr);
+        console.log('發現 Smart Launch context:', context);
+
+        if (context.launched) {
+          console.log('此應用程式是從 Smart Launch 啟動的');
+          // 可以在這裡設定特殊的行為標記
+        }
+      }
+    } catch (e) {
+      console.warn('讀取 Smart Launch context 失敗:', e);
+    }
   }
 
   /**

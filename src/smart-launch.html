@@ -61,11 +61,16 @@
         </div>
 
         <div id="launch-controls" style="display: none;">
-            <h3>啟動選項</h3>
-            <button class="launch-button" onclick="launchApp()">
-                🚀 啟動 Form2 Replier 應用程式
-            </button>
-            <p><small>點擊按鈕將重新導向到主要的 Angular 應用程式</small></p>
+            <h3>🚀 啟動選項</h3>
+            <div style="margin: 20px 0;">
+                <button class="launch-button" onclick="launchApp()" style="margin-right: 10px;">
+                    📋 前往主應用程式 (Form.io)
+                </button>
+                <button class="launch-button" onclick="stayHere()" style="background: #28a745;">
+                    👁️ 在此頁面查看資料
+                </button>
+            </div>
+            <p><small>• 主應用程式: 完整的 Form.io 表單填寫功能<br>• 此頁面: 快速查看 FHIR 資料</small></p>
         </div>
 
         <div id="patient-info" style="display: none;">
@@ -207,15 +212,29 @@
         }
 
         function launchApp() {
-            console.log('啟動主要應用程式...');
+            console.log('導向主要應用程式...');
 
-            // 儲存當前 session 資訊到 localStorage (如果需要的話)
-            const currentUrl = window.location.href;
-            localStorage.setItem('fhir-launch-url', currentUrl);
-            localStorage.setItem('fhir-launch-time', new Date().toISOString());
+            // 儲存 FHIR 資料到 sessionStorage，供主應用程式使用
+            try {
+                const currentContext = {
+                    launched: true,
+                    timestamp: new Date().toISOString(),
+                    source: 'smart-launch'
+                };
+                sessionStorage.setItem('fhir-context', JSON.stringify(currentContext));
+                console.log('已儲存 FHIR context 到 sessionStorage');
+            } catch (e) {
+                console.warn('無法儲存到 sessionStorage:', e);
+            }
 
             // 導向主要的 Angular 應用程式
-            window.location.href = '/'; // 或者是你的主要應用程式 URL
+            window.location.href = '/PROM/'; // 導向 Angular 應用程式
+        }
+
+        function stayHere() {
+            console.log('用戶選擇留在此頁面');
+            document.getElementById('launch-controls').style.display = 'none';
+            showSuccess('✅ 繼續在此頁面查看 FHIR 資料');
         }
     </script>
 </body>
