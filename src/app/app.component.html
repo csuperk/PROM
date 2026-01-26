@@ -8,6 +8,12 @@
   <section class="fhir-info-section" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
     <h3>🏥 Smart on FHIR 病患資訊</h3>
 
+    <!-- Smart Launch 狀態檢查 -->
+    <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+      <span *ngIf="isSmartLaunch()">🚀 從 Smart on FHIR 沙盒啟動</span>
+      <span *ngIf="!isSmartLaunch()">💻 直接存取模式（使用模擬資料）</span>
+    </div>
+
     <!-- 載入狀態 -->
     <div *ngIf="fhirLoading" style="color: #666;">
       <i class="pi pi-spinner pi-spin"></i> 載入 FHIR 資料中...

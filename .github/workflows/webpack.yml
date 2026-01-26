@@ -35,7 +35,7 @@ jobs:
     - name: Build Angular app
       env:
         NODE_OPTIONS: "--openssl-legacy-provider"
-      run: yarn build -- --base-href="/form2-replier/"
+      run: yarn build -- --base-href="/PROM/"
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

@@ -23,8 +23,53 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     console.log('Form2 Replier Demo with Smart on FHIR 已啟動');
 
+    // 檢查 URL 參數以確定是否為 Smart on FHIR 回調
+    this.checkSmartOnFhirCallback();
+
     // 訂閱 FHIR 資料
     this.subscribeToFhirData();
+  }
+
+  /**
+   * 檢查是否為 Smart Launch 模式
+   */
+  public isSmartLaunch(): boolean {
+    // 檢查 sessionStorage 中是否有 Smart Launch context
+    try {
+      const contextStr = sessionStorage.getItem('fhir-context');
+      if (contextStr) {
+        const context = JSON.parse(contextStr);
+        return context.launched === true;
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // 檢查 URL 參數
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.has('code') && urlParams.has('state');
+  }
+
+  /**
+   * 檢查是否為 Smart on FHIR 回調
+   */
+  private checkSmartOnFhirCallback(): void {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+
+    if (code && state) {
+      console.log('偵測到 Smart on FHIR 回調參數:', { code: code.substring(0, 20) + '...', state });
+      console.log('等待 FHIR Client 處理授權回調...');
+
+      // 清理 URL（移除授權參數）
+      setTimeout(() => {
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }, 2000); // 等待 FHIR Client 處理完成
+    } else {
+      console.log('一般頁面載入（非 Smart on FHIR 回調）');
+    }
   }
 
   ngOnDestroy(): void {
