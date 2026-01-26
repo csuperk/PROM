@@ -82,6 +82,10 @@
     <script>
         console.log('Smart on FHIR Launch Page 載入完成');
 
+        // 檢查 URL 參數
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log('URL 參數:', window.location.search);
+
         // 檢查是否在 FHIR 環境中
         if (typeof FHIR !== 'undefined' && FHIR.oauth2) {
             console.log('FHIR Client 已載入，嘗試初始化...');
@@ -109,12 +113,29 @@
                 displayMedicationInfo(medications);
             }).catch(function(error) {
                 console.error('Smart on FHIR 錯誤:', error);
-                showError('❌ Smart on FHIR 初始化失敗: ' + error.message);
+                if (error.message.includes('No \'state\' parameter found')) {
+                    showError(`
+                        ❌ Smart on FHIR 初始化失敗<br>
+                        <strong>問題:</strong> ${error.message}<br><br>
+                        <strong>解決方案:</strong><br>
+                        • 此頁面不是正確的 Launch URL<br>
+                        • 請使用 <code>launch.html</code> 作為 Launch URL<br>
+                        • 或者從沙盒正確啟動應用程式
+                    `);
+                } else {
+                    showError('❌ Smart on FHIR 初始化失敗: ' + error.message);
+                }
                 showFallbackOptions();
             });
         } else {
             console.log('不在 Smart on FHIR 環境中');
-            showError('⚠️ 此頁面需要在 Smart on FHIR 環境中運行');
+            showError(`
+                ⚠️ 此頁面需要在 Smart on FHIR 環境中運行<br><br>
+                <strong>正確的使用方式:</strong><br>
+                • Launch URL: <code>https://csuperk.github.io/PROM/launch.html</code><br>
+                • Redirect URI: <code>https://csuperk.github.io/PROM/</code><br>
+                • 此頁面用於展示 Smart Launch 功能
+            `);
             showFallbackOptions();
         }
 
@@ -127,6 +148,8 @@
         function showError(message) {
             const statusEl = document.getElementById('status');
             statusEl.className = 'error';
+            statusEl.innerHTML = '<div>' + message + '</div>';
+        }
             statusEl.innerHTML = '<p>' + message + '</p>';
         }
 
