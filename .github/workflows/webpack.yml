@@ -9,23 +9,25 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        
+        cache: 'yarn'
+
     - name: Install dependencies
-      run: npm ci
-      
+      run: yarn install --frozen-lockfile
+
     - name: Build Angular app
-      run: npm run build -- --configuration=production --base-href="/PROM/"
-      
+      env:
+        NODE_OPTIONS: "--openssl-legacy-provider"
+      run: yarn build -- --base-href="/form2-replier/"
+
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
