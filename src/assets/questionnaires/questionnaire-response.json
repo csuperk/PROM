@@ -1,0 +1,173 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "id": "e1879d75-eac2-4677-85d4-e55e5ba1e4aa",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse"
+    ]
+  },
+  "status": "completed",
+  "authored": "2026-01-22T07:34:22.369Z",
+  "questionnaire": "https://thas.mohw.gov.tw/v/r4/fhir/Questionnaire/2c98768c-26a0-4bf5-903e-4f6151ca31b9|1.0.0",
+  "item": [
+    {
+      "linkId": "patient-info",
+      "text": "病患基本資料",
+      "item": [
+        {
+          "answer": [
+            {
+              "valueString": "OOO"
+            }
+          ],
+          "linkId": "patient-name",
+          "text": "姓名"
+        },
+        {
+          "answer": [
+            {
+              "valueInteger": 18
+            }
+          ],
+          "linkId": "patient-age",
+          "text": "年齡"
+        },
+        {
+          "answer": [
+            {
+              "valueDecimal": 70
+            }
+          ],
+          "linkId": "patient-weight",
+          "text": "體重 (kg)"
+        },
+        {
+          "answer": [
+            {
+              "valueDecimal": 170
+            }
+          ],
+          "linkId": "patient-height",
+          "text": "身高 (cm)"
+        }
+      ]
+    },
+    {
+      "linkId": "mood-1",
+      "text": "1. 睡眠困難（譬如難以入睡、易醒或早醒）",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-2",
+      "text": "2. 感覺緊張不安",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-3",
+      "text": "3. 覺得容易苦惱或動怒",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-4",
+      "text": "4. 感覺憂鬱、心情低落",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-5",
+      "text": "5. 覺得比不上別人",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-6",
+      "text": "★ 有自殺的想法",
+      "answer": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "Patient/273fc652-8b48-48ac-b627-10064beffc6f"
+  }
+}

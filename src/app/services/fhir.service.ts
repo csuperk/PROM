@@ -268,4 +268,11 @@ export class FhirService {
   public getCurrentMedications(): MedicationData | null {
     return this.medicationsSubject.value;
   }
+
+  /**
+   * 取得 FHIR Client 實例（供其他服務使用）
+   */
+  public getFhirClient(): any {
+    return this.fhirClient;
+  }
 }

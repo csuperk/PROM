@@ -1,0 +1,38 @@
+
+{
+  "resourceType": "Observation",
+  "id": "8b44ea58-4709-45dc-99d5-07e2e31a604e",
+  "status": "final",
+  "category": [
+    {
+      "coding": [
+        { "system": "http://terminology.hl7.org/CodeSystem/observation-category", "code": "survey", "display": "Survey" }
+      ]
+    }
+  ],
+  "code": {
+    "coding": [
+      { "system": "http://loinc.org", "code": "84773-1", "display": "Total score" }
+    ],
+    "text": "BSRS-5 總分"
+  },
+  "subject": { "reference": "Patient/273fc652-8b48-48ac-b627-10064beffc6f" },
+  "effectiveDateTime": "2026-01-22T07:34:22.369Z",
+  "valueQuantity": {
+    "value": 7,
+    "unit": "score",
+    "system": "http://unitsofmeasure.org",
+    "code": "{score}"
+  },
+  "method": {
+    "text": "Mood Thermometer (BSRS-5) scoring"
+  },
+  "derivedFrom": [
+    { "reference": "QuestionnaireResponse/e1879d75-eac2-4677-85d4-e55e5ba1e4aa" }
+  ],
+  "note": [
+    {
+      "text": "請您仔細回想「在最近一星期中（包含今天）」，這些問題使您感到困擾或苦惱的程度，然後圈選一個您認為最能代表您感覺的答案。\r\n得分與說明,前5題總分\r\n 0-5分：為一般正常範圍，表示身心適應狀況良好。\r\n 6-9分：輕度情緒困擾，建議找家人或朋友談談。\r\n 10-14分：中度情緒困擾，建議尋找紓壓管道或接受心理專業諮詢。\r\n 15分以上：重度情緒困擾，建議諮詢精神科醫師接受進一步評估。\r\n*自殺念頭的想法*\r\n 本題為附加題，若前五題總分小於6分，但本題評分為2分以上(中度程度)時，宜考慮接受精神科專業諮詢。"
+    }
+  ]
+}

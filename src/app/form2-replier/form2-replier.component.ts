@@ -12,8 +12,9 @@ import { MessageService } from 'primeng/api';
 import { eachComponent } from 'formiojs/utils/formUtils.js';
 
 import { FormReplyInfo, FormTmplInfo } from './view-model/index';
-
 import { Form2ReplierService } from './form2-replier.service';
+import { QuestionnaireService, Questionnaire, QuestionnaireResponse, Observation } from '../services/questionnaire.service';
+import { FhirService } from '../services/fhir.service';
 
 @Component({
   selector: 'form2-replier',
@@ -44,6 +45,10 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
   @Output()
   public flagChange: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  /**問卷提交結果事件 */
+  @Output()
+  public onSubmitFormioReply: EventEmitter<any> = new EventEmitter<any>();
 
   // 判斷是否有必填欄位未填
   public enableSave = false;
@@ -77,6 +82,12 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
   // 暫存submitData，防止被清空
   public tempSubmitData;
 
+  // FHIR 問卷相關變數
+  public currentQuestionnaire: Questionnaire | null = null;
+  public questionnaireResponse: QuestionnaireResponse | null = null;
+  public questionnaireObservation: Observation | null = null;
+  public isQuestionnaireMode = false; // 是否為問卷模式
+
   // 最後要儲存到formreply這張資料表的內容
   public formReplyInfo: FormReplyInfo = new FormReplyInfo();
 
@@ -85,13 +96,21 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
   constructor(
     public f2RSvc: Form2ReplierService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private questionnaireService: QuestionnaireService,
+    private fhirService: FhirService
   ) {}
 
   ngOnInit(): void {
     this.initInfo();
     // formIo官方 refresh寫法
     this.triggerRefresh = new EventEmitter();
+
+    // 載入問卷資料
+    this.loadQuestionnaire();
+
+    // 訂閱問卷服務
+    this.subscribeToQuestionnaireService();
   }
 
   ngOnChanges(): void {
@@ -202,7 +221,15 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
     this.displayProgress = true;
     this.setReplyData();
-    this.processFormSubmission();
+
+    // 根據模式選擇處理方式
+    if (this.isQuestionnaireMode && this.currentQuestionnaire) {
+      // 問卷模式：使用 FHIR 問卷處理
+      this.handleQuestionnaireSubmission(this.submitData.data);
+    } else {
+      // 一般模式：使用原有處理
+      this.processFormSubmission();
+    }
   }
 
   /**
@@ -324,6 +351,15 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       this.displayProgress = false;
       this.result.emit(resultInfo);
       this.flagChange.emit(false);
+
+      // 觸發問卷提交事件（一般模式）
+      this.onSubmitFormioReply.emit({
+        success: true,
+        data: {
+          formData: this.submitData.data,
+          mode: 'general'
+        }
+      });
     }, 1000);
   }
 
@@ -392,6 +428,128 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
         this.componentKeys.push(x.key);
       });
     }
+  }
+
+  /**
+   * 載入問卷資料
+   */
+  private async loadQuestionnaire(): Promise<void> {
+    try {
+      // 嘗試載入心情溫度計問卷
+      const questionnaireId = '2c98768c-26a0-4bf5-903e-4f6151ca31b9';
+      await this.questionnaireService.loadQuestionnaire(questionnaireId);
+    } catch (error) {
+      console.error('載入問卷失敗:', error);
+    }
+  }
+
+  /**
+   * 訂閱問卷服務
+   */
+  private subscribeToQuestionnaireService(): void {
+    this.questionnaireService.questionnaire$.subscribe(questionnaire => {
+      this.currentQuestionnaire = questionnaire;
+      if (questionnaire) {
+        console.log('問卷載入完成:', questionnaire.title);
+        this.isQuestionnaireMode = true;
+      }
+    });
+
+    this.questionnaireService.response$.subscribe(response => {
+      this.questionnaireResponse = response;
+    });
+
+    this.questionnaireService.observation$.subscribe(observation => {
+      this.questionnaireObservation = observation;
+    });
+  }
+
+  /**
+   * 處理問卷提交（覆寫原有的提交邏輯）
+   */
+  private async handleQuestionnaireSubmission(formData: any): Promise<void> {
+    if (!this.currentQuestionnaire) {
+      console.warn('沒有載入問卷，使用一般提交流程');
+      return;
+    }
+
+    try {
+      console.log('開始處理問卷提交...');
+
+      // 取得當前病患參考
+      const currentPatient = this.fhirService.getCurrentPatient();
+      let patientReference = '';
+      if (currentPatient?.id) {
+        patientReference = `Patient/${currentPatient.id}`;
+      }
+
+      // 1. 轉換 Form.io 資料為 FHIR QuestionnaireResponse
+      const response = this.questionnaireService.convertFormioToQuestionnaireResponse(
+        formData,
+        this.currentQuestionnaire,
+        patientReference
+      );
+
+      console.log('問卷回答轉換完成:', response);
+
+      // 2. 計算分數並產生 Observation
+      const observation = this.questionnaireService.calculateScore(response);
+      console.log('分數計算完成:', observation);
+
+      // 3. 提交到 FHIR 伺服器
+      const responseSubmitted = await this.questionnaireService.submitQuestionnaireResponse(response);
+      const observationSubmitted = await this.questionnaireService.submitObservation(observation);
+
+      if (responseSubmitted && observationSubmitted) {
+        this.messageService.add({
+          severity: 'success',
+          summary: '提交成功',
+          detail: `問卷已成功提交！總分: ${observation.valueQuantity.value}分`,
+          life: 5000
+        });
+
+        this.showQuestionnaireResult(observation);
+      } else {
+        this.messageService.add({
+          severity: 'warn',
+          summary: '部分提交失敗',
+          detail: '問卷資料已處理，但無法完全提交到伺服器'
+        });
+
+        this.showQuestionnaireResult(observation);
+      }
+
+    } catch (error) {
+      console.error('問卷提交處理失敗:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: '提交失敗',
+        detail: '問卷提交處理過程中發生錯誤'
+      });
+    }
+  }
+
+  /**
+   * 顯示問卷結果
+   */
+  private showQuestionnaireResult(observation: Observation): void {
+    const score = observation.valueQuantity.value;
+    const interpretation = observation.note?.[0]?.text || '';
+
+    // 可以在這裡顯示結果對話框或導向結果頁面
+    console.log(`問卷完成！總分: ${score}分`);
+    console.log(`解釋: ${interpretation}`);
+
+    // 發送完成事件給父組件
+    this.onSubmitFormioReply.emit({
+      success: true,
+      data: {
+        response: this.questionnaireResponse,
+        observation: observation,
+        score: score,
+        interpretation: interpretation
+      }
+    });
   }
 }
 

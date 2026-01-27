@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Form2ReplierModule } from './form2-replier/form2-replier.module';
 import { FhirService } from './services/fhir.service';
+import { QuestionnaireService } from './services/questionnaire.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,7 +18,7 @@ import { FhirService } from './services/fhir.service';
     BrowserAnimationsModule,
     HttpClientModule
   ],
-  providers: [FhirService],
+  providers: [FhirService, QuestionnaireService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
