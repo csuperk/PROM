@@ -376,6 +376,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
    */
   private async processFhirSubmission(formData: any): Promise<void> {
     // 檢查是否有問卷資料
+    console.log('當前問卷資料:', this.currentQuestionnaire)
     if (!this.currentQuestionnaire) {
       console.warn('沒有問卷資料，跳過 FHIR 轉換');
       this.displayProgress = false;
