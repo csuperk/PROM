@@ -484,7 +484,7 @@ export class QuestionnaireService {
     try {
       const client = this.fhirService.getFhirClient();
       if (client) {
-        const result = await client.create(
+        const result = await client.request(
           { url: `QuestionnaireResponse/${response.id}`,
             method:'PUT',
             headers: { "Content-Type": "application/fhir+json" },
@@ -508,7 +508,7 @@ export class QuestionnaireService {
     try {
       const client = this.fhirService.getFhirClient();
       if (client) {
-        const result = await client.create(
+        const result = await client.request(
           { url: `Observation/${observation.id}`,
             method:'PUT',
             headers: { "Content-Type": "application/fhir+json" },
