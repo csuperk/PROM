@@ -222,7 +222,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
     this.setReplyData();
 
     // 始終進行 FHIR 格式轉換和提交
-    this.processSubmissionWithFhir(this.submitData.data);
+    this.processSubmissionWithFhir(this.formReplyInfo.replyDesc);
   }
 
   /**
@@ -339,6 +339,7 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
       this.processFormioSubmission();
 
       // 2. 並行處理 FHIR 格式轉換和提交
+      console.log('ggggggggggggggggggggggg', formData)
       await this.processFhirSubmission(formData);
 
     } catch (error) {
