@@ -218,10 +218,6 @@ export class QuestionnaireService {
     questionnaire: Questionnaire,
     patientReference?: string
   ): QuestionnaireResponse {
-    console.log('=== FHIR 轉換開始 ===');
-    console.log('原始 FormIO 資料:', JSON.stringify(formioData, null, 2));
-    console.log('FormIO 資料類型:', typeof formioData);
-    console.log('FormIO 資料 keys:', Object.keys(formioData || {}));
 
     const response: QuestionnaireResponse = {
       resourceType: 'QuestionnaireResponse',
@@ -240,10 +236,7 @@ export class QuestionnaireService {
       }
     };
 
-    // 處理病患基本資料
-    console.log('=== 處理病患基本資料 ===');
     const patientInfoItems = this.createPatientInfoItems(formioData);
-    console.log('病患基本資料項目數量:', patientInfoItems.length);
     if (patientInfoItems.length > 0) {
       response.item.push({
         linkId: "patient_info",
@@ -253,9 +246,7 @@ export class QuestionnaireService {
     }
 
     // 處理心情問卷項目
-    console.log('=== 處理心情問卷項目 ===');
     const moodItems = this.createMoodItems(formioData);
-    console.log('心情問卷項目數量:', moodItems.length);
     response.item.push(...moodItems);
 
     console.log('=== 最終 FHIR Response ===');
@@ -270,43 +261,38 @@ export class QuestionnaireService {
    * 創建病患基本資料項目
    */
   private createPatientInfoItems(formioData: any): QuestionnaireResponseItem[] {
-    console.log('在 createPatientInfoItems 中檢查資料:');
-    console.log('patient_name:', formioData.patient_name);
-    console.log('patient_age:', formioData.patient_age);
-    console.log('patient_weight:', formioData.patient_weight);
-    console.log('patient_height:', formioData.patient_height);
 
     const items: QuestionnaireResponseItem[] = [];
 
-    if (formioData.patient_name) {
+    if (formioData.patient_info.patient_name) {
       items.push({
         linkId: "patient_name",
         text: "姓名",
-        answer: [{ valueString: formioData.patient_name }]
+        answer: [{ valueString: formioData.patient_info.patient_name }]
       });
     }
 
-    if (formioData.patient_age) {
+    if (formioData.patient_info.patient_age) {
       items.push({
         linkId: "patient_age",
         text: "年齡",
-        answer: [{ valueInteger: parseInt(formioData.patient_age) }]
+        answer: [{ valueInteger: parseInt(formioData.patient_info.patient_age) }]
       });
     }
 
-    if (formioData.patient_weight) {
+    if (formioData.patient_info.patient_weight) {
       items.push({
         linkId: "patient_weight",
         text: "體重 (kg)",
-        answer: [{ valueDecimal: parseFloat(formioData.patient_weight) }]
+        answer: [{ valueDecimal: parseFloat(formioData.patient_info.patient_weight) }]
       });
     }
 
-    if (formioData.patient_height) {
+    if (formioData.patient_info.patient_height) {
       items.push({
         linkId: "patient_height",
         text: "身高 (cm)",
-        answer: [{ valueDecimal: parseFloat(formioData.patient_height) }]
+        answer: [{ valueDecimal: parseFloat(formioData.patient_info.patient_height) }]
       });
     }
 
@@ -327,15 +313,10 @@ export class QuestionnaireService {
       { key: 'mood_6', text: '★ 有自殺的想法' }
     ];
 
-    console.log('在 createMoodItems 中檢查資料:');
-    moodQuestions.forEach(q => {
-      console.log(`${q.key}:`, formioData[q.key]);
-    });
-
     const items: QuestionnaireResponseItem[] = [];
 
     moodQuestions.forEach(question => {
-      const value = formioData[question.key];
+      const value = formioData.survey[question.key];
       if (value !== undefined && value !== null) {
         // 直接使用 FormIO 中的數值，不做轉換
         const numericValue = parseInt(value);
