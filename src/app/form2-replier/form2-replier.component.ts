@@ -403,8 +403,8 @@ export class Form2ReplierComponent implements OnInit, OnChanges {
 
       console.log('Form.io → FHIR QuestionnaireResponse 轉換完成:', response);
 
-      // 2. 計算分數並產生 Observation
-      const observation = this.questionnaireService.calculateScore(response);
+      // 2. 計算分數並產生 Observation（傳遞原始 formData）
+      const observation = this.questionnaireService.calculateScore(response, formData);
       console.log('FHIR Observation 計算完成:', observation);
 
       // 3. 提交到 FHIR 伺服器

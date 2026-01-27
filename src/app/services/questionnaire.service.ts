@@ -312,10 +312,12 @@ export class QuestionnaireService {
     moodQuestions.forEach(question => {
       const value = formioData[question.key];
       if (value !== undefined && value !== null) {
+        // 直接使用 FormIO 中的數值，不做轉換
+        const numericValue = parseInt(value);
         const item: QuestionnaireResponseItem = {
           linkId: question.key,
           text: question.text,
-          answer: [this.createMoodAnswer(value)]
+          answer: [this.createMoodAnswer(numericValue)]
         };
         items.push(item);
       }
@@ -328,11 +330,14 @@ export class QuestionnaireService {
    * 創建心情問卷答案（使用 valueCoding 格式）
    */
   private createMoodAnswer(value: number): any {
+    // 直接使用值作為權重，不做對應轉換
     const answerMappings = {
-      0: { code: "LA6568-5", display: "Not at all", weight: 0 },
-      1: { code: "LA13940-4", display: "A little", weight: 1 },
-      2: { code: "LA28439-0", display: "Rather", weight: 2 },
-      3: { code: "LA15550-9", display: "Much", weight: 3 }
+      0: { code: "LA6568-5", display: "Not at all" },
+      1: { code: "LA13940-4", display: "A little" },
+      2: { code: "LA28439-0", display: "Rather" },
+      3: { code: "LA15550-9", display: "Much" },
+      4: { code: "LA15550-9", display: "Much" }, // 4分也使用 Much
+      5: { code: "LA15550-9", display: "Much" }  // 5分也使用 Much
     };
 
     const mapping = answerMappings[value as keyof typeof answerMappings] || answerMappings[0];
@@ -344,41 +349,44 @@ export class QuestionnaireService {
         display: mapping.display,
         extension: [{
           url: "http://hl7.org/fhir/StructureDefinition/itemWeight",
-          valueDecimal: mapping.weight
+          valueDecimal: value  // 直接使用原始值作為權重
         }]
       }
     };
   }
-
-  /**
-   * 將值轉換為適當的 FHIR 答案格式
-   */
   /**
    * 計算問卷分數並產生 Observation
    */
-  calculateScore(response: QuestionnaireResponse): Observation {
+  calculateScore(response: QuestionnaireResponse, formioData?: any): Observation {
     let totalScore = 0;
     let suicideScore = 0;
 
-    // 計算前5題分數（mood_1 到 mood_5），使用 itemWeight
-    const moodItems = response.item.filter(item =>
-      item.linkId.startsWith('mood_') &&
-      ['mood_1', 'mood_2', 'mood_3', 'mood_4', 'mood_5'].includes(item.linkId)
-    );
+    // 優先使用 FormIO 提供的 total_score，如果沒有則重新計算
+    if (formioData?.total_score !== undefined) {
+      totalScore = parseInt(formioData.total_score);
+      console.log('使用 FormIO 計算的總分:', totalScore);
+    } else {
+      // 計算前5題分數（mood_1 到 mood_5），使用 itemWeight
+      const moodItems = response.item.filter(item =>
+        item.linkId.startsWith('mood_') &&
+        ['mood_1', 'mood_2', 'mood_3', 'mood_4', 'mood_5'].includes(item.linkId)
+      );
 
-    moodItems.forEach(item => {
-      if (item.answer && item.answer[0]?.valueCoding) {
-        const coding = item.answer[0].valueCoding;
-        if (coding.extension) {
-          const weightExt = coding.extension.find(ext =>
-            ext.url === "http://hl7.org/fhir/StructureDefinition/itemWeight"
-          );
-          if (weightExt?.valueDecimal !== undefined) {
-            totalScore += weightExt.valueDecimal;
+      moodItems.forEach(item => {
+        if (item.answer && item.answer[0]?.valueCoding) {
+          const coding = item.answer[0].valueCoding;
+          if (coding.extension) {
+            const weightExt = coding.extension.find(ext =>
+              ext.url === "http://hl7.org/fhir/StructureDefinition/itemWeight"
+            );
+            if (weightExt?.valueDecimal !== undefined) {
+              totalScore += weightExt.valueDecimal;
+            }
           }
         }
-      }
-    });
+      });
+      console.log('重新計算的總分:', totalScore);
+    }
 
     // 檢查自殺意念題目（mood_6）
     const suicideItem = response.item.find(item => item.linkId === 'mood_6');
