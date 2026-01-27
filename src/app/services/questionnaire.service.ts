@@ -218,6 +218,11 @@ export class QuestionnaireService {
     questionnaire: Questionnaire,
     patientReference?: string
   ): QuestionnaireResponse {
+    console.log('=== FHIR 轉換開始 ===');
+    console.log('原始 FormIO 資料:', JSON.stringify(formioData, null, 2));
+    console.log('FormIO 資料類型:', typeof formioData);
+    console.log('FormIO 資料 keys:', Object.keys(formioData || {}));
+
     const response: QuestionnaireResponse = {
       resourceType: 'QuestionnaireResponse',
       id: '699850', // 使用範例中的固定ID
@@ -236,7 +241,9 @@ export class QuestionnaireService {
     };
 
     // 處理病患基本資料
+    console.log('=== 處理病患基本資料 ===');
     const patientInfoItems = this.createPatientInfoItems(formioData);
+    console.log('病患基本資料項目數量:', patientInfoItems.length);
     if (patientInfoItems.length > 0) {
       response.item.push({
         linkId: "patient_info",
@@ -246,8 +253,14 @@ export class QuestionnaireService {
     }
 
     // 處理心情問卷項目
+    console.log('=== 處理心情問卷項目 ===');
     const moodItems = this.createMoodItems(formioData);
+    console.log('心情問卷項目數量:', moodItems.length);
     response.item.push(...moodItems);
+
+    console.log('=== 最終 FHIR Response ===');
+    console.log('最終 response.item 長度:', response.item.length);
+    console.log('最終 response:', JSON.stringify(response, null, 2));
 
     this.responseSubject.next(response);
     return response;
@@ -257,6 +270,12 @@ export class QuestionnaireService {
    * 創建病患基本資料項目
    */
   private createPatientInfoItems(formioData: any): QuestionnaireResponseItem[] {
+    console.log('在 createPatientInfoItems 中檢查資料:');
+    console.log('patient_name:', formioData.patient_name);
+    console.log('patient_age:', formioData.patient_age);
+    console.log('patient_weight:', formioData.patient_weight);
+    console.log('patient_height:', formioData.patient_height);
+
     const items: QuestionnaireResponseItem[] = [];
 
     if (formioData.patient_name) {
@@ -291,6 +310,7 @@ export class QuestionnaireService {
       });
     }
 
+    console.log('病患資料項目建立結果:', items.length, '項');
     return items;
   }
 
@@ -307,6 +327,11 @@ export class QuestionnaireService {
       { key: 'mood_6', text: '★ 有自殺的想法' }
     ];
 
+    console.log('在 createMoodItems 中檢查資料:');
+    moodQuestions.forEach(q => {
+      console.log(`${q.key}:`, formioData[q.key]);
+    });
+
     const items: QuestionnaireResponseItem[] = [];
 
     moodQuestions.forEach(question => {
@@ -314,15 +339,19 @@ export class QuestionnaireService {
       if (value !== undefined && value !== null) {
         // 直接使用 FormIO 中的數值，不做轉換
         const numericValue = parseInt(value);
+        console.log(`處理 ${question.key}: ${value} -> ${numericValue}`);
         const item: QuestionnaireResponseItem = {
           linkId: question.key,
           text: question.text,
           answer: [this.createMoodAnswer(numericValue)]
         };
         items.push(item);
+      } else {
+        console.log(`跳過 ${question.key}: 值為`, value);
       }
     });
 
+    console.log('心情問卷項目建立結果:', items.length, '項');
     return items;
   }
 
