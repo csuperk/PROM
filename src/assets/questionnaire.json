@@ -1,0 +1,486 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "2c98768c-26a0-4bf5-903e-4f6151ca31b9",
+  "url": "https://thas.mohw.gov.tw/v/r4/fhir/Questionnaire/2c98768c-26a0-4bf5-903e-4f6151ca31b9",
+  "version": "1.0.0",
+  "name": "MoodThermometer",
+  "title": "心情溫度計",
+  "status": "active",
+  "subjectType": [
+    "Patient"
+  ],
+  "date": "2026-01-22",
+  "publisher": "CMUH-中國醫藥大學附設醫院",
+  "description": "請您仔細回想「在最近一星期中（包含今天）」，這些問題使您感到困擾或苦惱的程度，然後圈選一個您認為最能代表您感覺的答案。\r\n得分與說明,前5題總分\r\n 0-5分：為一般正常範圍，表示身心適應狀況良好。\r\n 6-9分：輕度情緒困擾，建議找家人或朋友談談。\r\n 10-14分：中度情緒困擾，建議尋找紓壓管道或接受心理專業諮詢。\r\n 15分以上：重度情緒困擾，建議諮詢精神科醫師接受進一步評估。\r\n*自殺念頭的想法*\r\n 本題為附加題，若前五題總分小於6分，但本題評分為2分以上(中度程度)時，宜考慮接受精神科專業諮詢。",
+  "item": [
+    {
+      "linkId": "patient-info",
+      "text": "病患基本資料",
+      "type": "group",
+      "item": [
+        {
+          "linkId": "patient-name",
+          "text": "姓名",
+          "type": "string",
+          "required": true
+        },
+        {
+          "linkId": "patient-age",
+          "text": "年齡",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "linkId": "patient-weight",
+          "text": "體重 (kg)",
+          "type": "decimal",
+          "required": true
+        },
+        {
+          "linkId": "patient-height",
+          "text": "身高 (cm)",
+          "type": "decimal",
+          "required": true
+        }
+      ]
+    },
+    {
+      "linkId": "mood-1",
+      "text": "1. 睡眠困難（譬如難以入睡、易醒或早醒）",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-2",
+      "text": "2. 感覺緊張不安",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-3",
+      "text": "3. 覺得容易苦惱或動怒",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-4",
+      "text": "4. 感覺憂鬱、心情低落",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-5",
+      "text": "5. 覺得比不上別人",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "linkId": "mood-6",
+      "text": "★ 有自殺的想法",
+      "type": "choice",
+      "required": true,
+      "answerOption": [
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA6568-5",
+            "display": "Not at all",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA13940-4",
+            "display": "A little",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 1
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28439-0",
+            "display": "Rather",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 2
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA15550-9",
+            "display": "Much",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 3
+              }
+            ]
+          }
+        },
+        {
+          "valueCoding": {
+            "system": "http://loinc.org",
+            "code": "LA28441-6",
+            "display": "Very strong",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/itemWeight",
+                "valueDecimal": 4
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
