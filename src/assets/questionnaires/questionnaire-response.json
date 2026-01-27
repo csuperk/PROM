@@ -1,6 +1,6 @@
 {
   "resourceType": "QuestionnaireResponse",
-  "id": "e1879d75-eac2-4677-85d4-e55e5ba1e4aa",
+  "id": "699850",
   "meta": {
     "profile": [
       "http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse"
@@ -11,7 +11,7 @@
   "questionnaire": "https://thas.mohw.gov.tw/v/r4/fhir/Questionnaire/2c98768c-26a0-4bf5-903e-4f6151ca31b9|1.0.0",
   "item": [
     {
-      "linkId": "patient-info",
+      "linkId": "patient_info",
       "text": "病患基本資料",
       "item": [
         {
@@ -20,7 +20,7 @@
               "valueString": "OOO"
             }
           ],
-          "linkId": "patient-name",
+          "linkId": "patient_name",
           "text": "姓名"
         },
         {
@@ -29,7 +29,7 @@
               "valueInteger": 18
             }
           ],
-          "linkId": "patient-age",
+          "linkId": "patient_age",
           "text": "年齡"
         },
         {
@@ -38,7 +38,7 @@
               "valueDecimal": 70
             }
           ],
-          "linkId": "patient-weight",
+          "linkId": "patient_weight",
           "text": "體重 (kg)"
         },
         {
@@ -47,13 +47,13 @@
               "valueDecimal": 170
             }
           ],
-          "linkId": "patient-height",
+          "linkId": "patient_height",
           "text": "身高 (cm)"
         }
       ]
     },
     {
-      "linkId": "mood-1",
+      "linkId": "mood_1",
       "text": "1. 睡眠困難（譬如難以入睡、易醒或早醒）",
       "answer": [
         {
@@ -72,7 +72,7 @@
       ]
     },
     {
-      "linkId": "mood-2",
+      "linkId": "mood_2",
       "text": "2. 感覺緊張不安",
       "answer": [
         {
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "linkId": "mood-3",
+      "linkId": "mood_3",
       "text": "3. 覺得容易苦惱或動怒",
       "answer": [
         {
@@ -110,7 +110,7 @@
       ]
     },
     {
-      "linkId": "mood-4",
+      "linkId": "mood_4",
       "text": "4. 感覺憂鬱、心情低落",
       "answer": [
         {
@@ -129,7 +129,7 @@
       ]
     },
     {
-      "linkId": "mood-5",
+      "linkId": "mood_5",
       "text": "5. 覺得比不上別人",
       "answer": [
         {
@@ -148,7 +148,7 @@
       ]
     },
     {
-      "linkId": "mood-6",
+      "linkId": "mood_6",
       "text": "★ 有自殺的想法",
       "answer": [
         {

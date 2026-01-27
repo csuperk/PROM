@@ -34,6 +34,9 @@ export interface AnswerOption {
 export interface QuestionnaireResponse {
   resourceType: 'QuestionnaireResponse';
   id?: string;
+  meta?: {
+    profile?: string[];
+  };
   status: 'completed' | 'in-progress';
   authored: string;
   questionnaire: string;
@@ -56,6 +59,10 @@ export interface Answer {
     system: string;
     code: string;
     display: string;
+    extension?: {
+      url: string;
+      valueDecimal: number;
+    }[];
   };
 }
 
@@ -213,66 +220,139 @@ export class QuestionnaireService {
   ): QuestionnaireResponse {
     const response: QuestionnaireResponse = {
       resourceType: 'QuestionnaireResponse',
+      id: '699850', // 使用範例中的固定ID
+      meta: {
+        profile: [
+          "http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse"
+        ]
+      },
       status: 'completed',
       authored: new Date().toISOString(),
-      questionnaire: questionnaire.url,
-      item: []
+      questionnaire: "https://thas.mohw.gov.tw/v/r4/fhir/Questionnaire/2c98768c-26a0-4bf5-903e-4f6151ca31b9|1.0.0",
+      item: [],
+      subject: {
+        reference: patientReference || "Patient/273fc652-8b48-48ac-b627-10064beffc6f"
+      }
     };
 
-    if (patientReference) {
-      response.subject = { reference: patientReference };
+    // 處理病患基本資料
+    const patientInfoItems = this.createPatientInfoItems(formioData);
+    if (patientInfoItems.length > 0) {
+      response.item.push({
+        linkId: "patient_info",
+        text: "病患基本資料",
+        item: patientInfoItems
+      });
     }
 
-    // 遞迴處理問卷項目
-    response.item = this.processQuestionnaireItems(questionnaire.item, formioData);
+    // 處理心情問卷項目
+    const moodItems = this.createMoodItems(formioData);
+    response.item.push(...moodItems);
 
     this.responseSubject.next(response);
     return response;
   }
 
   /**
-   * 遞迴處理問卷項目
+   * 創建病患基本資料項目
    */
-  private processQuestionnaireItems(items: QuestionnaireItem[], formioData: any): QuestionnaireResponseItem[] {
-    return items.map(item => {
-      const responseItem: QuestionnaireResponseItem = {
-        linkId: item.linkId,
-        text: item.text
-      };
+  private createPatientInfoItems(formioData: any): QuestionnaireResponseItem[] {
+    const items: QuestionnaireResponseItem[] = [];
 
-      // 處理群組項目
-      if (item.item) {
-        responseItem.item = this.processQuestionnaireItems(item.item, formioData);
-      }
-      // 處理有答案的項目
-      else if (formioData[item.linkId] !== undefined) {
-        const value = formioData[item.linkId];
-        responseItem.answer = [this.convertValueToAnswer(value, item.type)];
-      }
+    if (formioData.patient_name) {
+      items.push({
+        linkId: "patient_name",
+        text: "姓名",
+        answer: [{ valueString: formioData.patient_name }]
+      });
+    }
 
-      return responseItem;
+    if (formioData.patient_age) {
+      items.push({
+        linkId: "patient_age",
+        text: "年齡",
+        answer: [{ valueInteger: parseInt(formioData.patient_age) }]
+      });
+    }
+
+    if (formioData.patient_weight) {
+      items.push({
+        linkId: "patient_weight",
+        text: "體重 (kg)",
+        answer: [{ valueDecimal: parseFloat(formioData.patient_weight) }]
+      });
+    }
+
+    if (formioData.patient_height) {
+      items.push({
+        linkId: "patient_height",
+        text: "身高 (cm)",
+        answer: [{ valueDecimal: parseFloat(formioData.patient_height) }]
+      });
+    }
+
+    return items;
+  }
+
+  /**
+   * 創建心情問卷項目
+   */
+  private createMoodItems(formioData: any): QuestionnaireResponseItem[] {
+    const moodQuestions = [
+      { key: 'mood_1', text: '1. 睡眠困難，譬如難以入睡、易醒或早醒' },
+      { key: 'mood_2', text: '2. 感覺緊張或不安' },
+      { key: 'mood_3', text: '3. 容易苦惱或動怒' },
+      { key: 'mood_4', text: '4. 感覺憂鬱、心情低落' },
+      { key: 'mood_5', text: '5. 覺得比不上別人' },
+      { key: 'mood_6', text: '★ 有自殺的想法' }
+    ];
+
+    const items: QuestionnaireResponseItem[] = [];
+
+    moodQuestions.forEach(question => {
+      const value = formioData[question.key];
+      if (value !== undefined && value !== null) {
+        const item: QuestionnaireResponseItem = {
+          linkId: question.key,
+          text: question.text,
+          answer: [this.createMoodAnswer(value)]
+        };
+        items.push(item);
+      }
     });
+
+    return items;
+  }
+
+  /**
+   * 創建心情問卷答案（使用 valueCoding 格式）
+   */
+  private createMoodAnswer(value: number): any {
+    const answerMappings = {
+      0: { code: "LA6568-5", display: "Not at all", weight: 0 },
+      1: { code: "LA13940-4", display: "A little", weight: 1 },
+      2: { code: "LA28439-0", display: "Rather", weight: 2 },
+      3: { code: "LA15550-9", display: "Much", weight: 3 }
+    };
+
+    const mapping = answerMappings[value as keyof typeof answerMappings] || answerMappings[0];
+
+    return {
+      valueCoding: {
+        system: "http://loinc.org",
+        code: mapping.code,
+        display: mapping.display,
+        extension: [{
+          url: "http://hl7.org/fhir/StructureDefinition/itemWeight",
+          valueDecimal: mapping.weight
+        }]
+      }
+    };
   }
 
   /**
    * 將值轉換為適當的 FHIR 答案格式
    */
-  private convertValueToAnswer(value: any, type: string): Answer {
-    switch (type) {
-      case 'string':
-        return { valueString: String(value) };
-      case 'integer':
-        return { valueInteger: parseInt(value) };
-      case 'decimal':
-        return { valueDecimal: parseFloat(value) };
-      case 'choice':
-        // 假設選擇題的值是數字（如評分）
-        return { valueInteger: parseInt(value) };
-      default:
-        return { valueString: String(value) };
-    }
-  }
-
   /**
    * 計算問卷分數並產生 Observation
    */
@@ -280,26 +360,43 @@ export class QuestionnaireService {
     let totalScore = 0;
     let suicideScore = 0;
 
-    // 計算前5題分數（mood-1 到 mood-5）
+    // 計算前5題分數（mood_1 到 mood_5），使用 itemWeight
     const moodItems = response.item.filter(item =>
-      item.linkId.startsWith('mood-') &&
-      ['mood-1', 'mood-2', 'mood-3', 'mood-4', 'mood-5'].includes(item.linkId)
+      item.linkId.startsWith('mood_') &&
+      ['mood_1', 'mood_2', 'mood_3', 'mood_4', 'mood_5'].includes(item.linkId)
     );
 
     moodItems.forEach(item => {
-      if (item.answer && item.answer[0]?.valueInteger !== undefined) {
-        totalScore += item.answer[0].valueInteger;
+      if (item.answer && item.answer[0]?.valueCoding) {
+        const coding = item.answer[0].valueCoding;
+        if (coding.extension) {
+          const weightExt = coding.extension.find(ext =>
+            ext.url === "http://hl7.org/fhir/StructureDefinition/itemWeight"
+          );
+          if (weightExt?.valueDecimal !== undefined) {
+            totalScore += weightExt.valueDecimal;
+          }
+        }
       }
     });
 
-    // 檢查自殺意念題目（mood-6）
-    const suicideItem = response.item.find(item => item.linkId === 'mood-6');
-    if (suicideItem?.answer && suicideItem.answer[0]?.valueInteger !== undefined) {
-      suicideScore = suicideItem.answer[0].valueInteger;
+    // 檢查自殺意念題目（mood_6）
+    const suicideItem = response.item.find(item => item.linkId === 'mood_6');
+    if (suicideItem?.answer && suicideItem.answer[0]?.valueCoding) {
+      const coding = suicideItem.answer[0].valueCoding;
+      if (coding.extension) {
+        const weightExt = coding.extension.find(ext =>
+          ext.url === "http://hl7.org/fhir/StructureDefinition/itemWeight"
+        );
+        if (weightExt?.valueDecimal !== undefined) {
+          suicideScore = weightExt.valueDecimal;
+        }
+      }
     }
 
     const observation: Observation = {
       resourceType: 'Observation',
+      id: '699851', // 使用範例中的固定ID
       status: 'final',
       category: [{
         coding: [{
@@ -316,6 +413,7 @@ export class QuestionnaireService {
         }],
         text: "BSRS-5 總分"
       },
+      subject: response.subject || { reference: "Patient/273fc652-8b48-48ac-b627-10064beffc6f" },
       effectiveDateTime: new Date().toISOString(),
       valueQuantity: {
         value: totalScore,
@@ -326,18 +424,13 @@ export class QuestionnaireService {
       method: {
         text: "Mood Thermometer (BSRS-5) scoring"
       },
+      derivedFrom: [{
+        reference: `QuestionnaireResponse/${response.id || '699850'}`
+      }],
       note: [{
         text: this.getScoreInterpretation(totalScore, suicideScore)
       }]
     };
-
-    if (response.subject) {
-      observation.subject = response.subject;
-    }
-
-    if (response.id) {
-      observation.derivedFrom = [{ reference: `QuestionnaireResponse/${response.id}` }];
-    }
 
     this.observationSubject.next(observation);
     return observation;
