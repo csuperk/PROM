@@ -484,7 +484,7 @@ export class QuestionnaireService {
     try {
       const client = this.fhirService.getFhirClient();
       if (client) {
-        const result = await client.request({url: `QuestionnaireResponse/${response.id}`,method:'PUT', body: response});
+        const result = await client.request({url: `QuestionnaireResponse/${response.id}`,method:'PUT', body: JSON.stringify(response)});
         console.log('問卷回答提交成功:', result);
         return true;
       }
@@ -502,7 +502,7 @@ export class QuestionnaireService {
     try {
       const client = this.fhirService.getFhirClient();
       if (client) {
-        const result = await client.request({url: `Observation/${observation.id}`,method:'PUT', body: observation});
+        const result = await client.request({url: `Observation/${observation.id}`,method:'PUT', body: JSON.stringify(observation)});
         console.log('觀察記錄提交成功:', result);
         return true;
       }
