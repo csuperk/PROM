@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FhirService, PatientData, MedicationData } from './services/fhir.service';
+import { QuestionnaireService, QuestionnaireResponse, Observation } from './services/questionnaire.service';
 
 @Component({
   selector: 'app-root',
@@ -13,12 +14,17 @@ export class AppComponent implements OnInit, OnDestroy {
   // FHIR 相關資料
   public patientData: PatientData | null = null;
   public medicationData: MedicationData | null = null;
+  public questionnaireResponseData: QuestionnaireResponse | null = null;
+  public observationData: Observation | null = null;
   public fhirError: string | null = null;
   public fhirLoading: boolean = false;
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private fhirService: FhirService) {}
+  constructor(
+    private fhirService: FhirService,
+    private questionnaireService: QuestionnaireService
+  ) {}
 
   ngOnInit(): void {
     console.log('Form2 Replier Demo with Smart on FHIR 已啟動');
@@ -111,6 +117,22 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.fhirService.loading$.subscribe(loading => {
         this.fhirLoading = loading;
+      })
+    );
+
+    // 訂閱 QuestionnaireResponse 資料
+    this.subscriptions.push(
+      this.questionnaireService.response$.subscribe(response => {
+        this.questionnaireResponseData = response;
+        console.log('QuestionnaireResponse 資料更新:', response);
+      })
+    );
+
+    // 訂閱 Observation 資料
+    this.subscriptions.push(
+      this.questionnaireService.observation$.subscribe(observation => {
+        this.observationData = observation;
+        console.log('Observation 資料更新:', observation);
       })
     );
   }

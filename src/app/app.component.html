@@ -47,6 +47,37 @@
         </details>
       </div>
 
+      <!-- QuestionnaireResponse 資料 -->
+      <div *ngIf="questionnaireResponseData">
+        <h4>📝 問卷回應資料</h4>
+        <div style="background: white; padding: 10px; border-radius: 3px; margin-bottom: 10px;">
+          <strong>問卷ID：</strong> {{ questionnaireResponseData.id }}<br>
+          <strong>狀態：</strong> {{ questionnaireResponseData.status }}<br>
+          <strong>填寫時間：</strong> {{ questionnaireResponseData.authored | date:'yyyy-MM-dd HH:mm:ss' }}<br>
+          <strong>項目數量：</strong> {{ questionnaireResponseData.item?.length || 0 }} 項
+        </div>
+        <details>
+          <summary style="cursor: pointer; font-weight: bold;">🔍 查看完整問卷回應</summary>
+          <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">{{ questionnaireResponseData | json }}</pre>
+        </details>
+      </div>
+
+      <!-- Observation 資料 -->
+      <div *ngIf="observationData">
+        <h4>📊 觀察資料 (BSRS-5 評分)</h4>
+        <div style="background: white; padding: 10px; border-radius: 3px; margin-bottom: 10px;">
+          <strong>觀察ID：</strong> {{ observationData.id }}<br>
+          <strong>狀態：</strong> {{ observationData.status }}<br>
+          <strong>評分：</strong> {{ observationData.valueQuantity?.value }} {{ observationData.valueQuantity?.unit }}<br>
+          <strong>測量時間：</strong> {{ observationData.effectiveDateTime | date:'yyyy-MM-dd HH:mm:ss' }}
+        </div>
+        <details>
+          <summary style="cursor: pointer; font-weight: bold;">🔍 查看完整觀察資料</summary>
+          <pre style="background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px;">{{ observationData | json }}</pre>
+        </details>
+      </div>
+
+
       <!-- 重新載入按鈕 -->
       <button
         (click)="refreshFhirData()"
