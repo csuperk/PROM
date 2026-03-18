@@ -94,19 +94,19 @@
                 clientSecret:"79f04b56b33491716c0880af72cdef7d3f0629111421cedd18353651cd313d9e",
 
                 // 請求的權限範圍
-                scope: "launch openid fhirUser patient/*.read",
+                scope: "launch openid fhirUser patient/*.read medicationrequest/*.read questionnaireResponse/*.read",
 
                 // 授權完成後的重導向 URL
                 redirectUri: "https://csuperk.github.io/PROM/",
 
-                // FHIR 伺服器的 base URL (從沙盒提供)
-                iss: iss,
+                // // FHIR 伺服器的 base URL (從沙盒提供)
+                // iss: iss,
 
-                // Launch context token (從沙盒提供)
-                launch: launch,
+                // // Launch context token (從沙盒提供)
+                // launch: launch,
 
-                // 使用 PKCE 提高安全性
-                pkce: true
+                // // 使用 PKCE 提高安全性
+                // pkce: true
             });
         } catch (error) {
             console.error('Smart Launch 錯誤:', error);
